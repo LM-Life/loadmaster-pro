@@ -53,7 +53,19 @@
     <option value="7500">7,500 lbs</option>
     <option value="10000" selected>10,000 lbs</option>
     <option value="25000">25,000 lbs</option>
+    <option calue="Custom...</option>
   </select>
+
+  <input
+    type="text"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    id="restraintFactorCustom"
+    class="form-control"
+    placeholder="Enter custom factor in lbs (e.g., 8000)"
+    style="display:none; margin-top:.5rem;"
+  />
+  <div id="factorError" style="color:#f66; font-size:.95rem; display:none;"></div>
 
   <div class="center mt-1">
     <button id="multiplierToggle" class="btn-outline" onclick="toggleMultiplier()">×2 OFF</button>

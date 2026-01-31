@@ -1,4 +1,6 @@
 /* Loadmaster Pro UI spacing fixes */
+input,
+select,
 textarea {
   margin-bottom: 0.75rem; /* breathing room before buttons */
 }
@@ -8,7 +10,19 @@ textarea {
   margin-top: 0.5rem; /* extra space above button rows */
 }
 
-.row button {
-  margin-top: 0.25rem;
+.row,
+  button {
+  margin-top: 0.75rem;
   margin-bottom: 0.25rem;
+}
+
+.row,
+.button-group {
+  display:flex;
+  gap: 0.75rem;
+  margin-top: 0.75;
+}
+
+.card {
+  margin-bottom:1rem;
 }

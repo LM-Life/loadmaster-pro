@@ -1,7 +1,8 @@
 {
   "name": "Loadmaster Pro",
   "short_name": "Loadmaster",
-  "start_url": "./index.html",
+  "start_url": "/loadmaster-pro/index.html",
+  "scope": "/loadmaster-pro/"
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#1f6f8b",

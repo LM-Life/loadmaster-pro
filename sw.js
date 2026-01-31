@@ -1,19 +1,21 @@
-const cacheName = "loadmaster-pro-cache-v2";
-const assets = [
-  "/",
-  "/index.html",
-  "/style.css",
-  "/manifest.json",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png",
-  "/modules/restraint.html",
-  "/modules/loadshift.html",
-  "/modules/winching.html",
-  "/modules/tires_over_100psi.html",
-  "/modules/vehiclecg.html",
-  "/modules/sleeper.html",
-  "/modules/approach.html",
-  "/modules/load_planning.html"
+const BASE = "/loadmaster-pro";
+
+const PRECACHE_URLS = [
+  `${BASE}/`,
+  `${BASE}/index.html`,
+  `${BASE}/offline.html`,
+  `${BASE}/style.css`,
+  `${BASE}/common.js`,
+  `${BASE}/manifest.json`,
+
+  `${BASE}/modules/sleeper.html`,
+  `${BASE}/modules/winching.html`,
+  `${BASE}/modules/restraint.html`,
+  `${BASE}/modules/loadshift.html`,
+  `${BASE}/modules/vehiclecg.html`,
+  `${BASE}/modules/approach.html`,
+  `${BASE}/modules/tires_over_100psi.html`,
+  `${BASE}/modules/loadability_5_steps.html`,
 ];
 
 self.addEventListener("install", event => {

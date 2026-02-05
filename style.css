@@ -256,19 +256,22 @@ textarea {
 }
 
 .totals-table {
-  margin-top: .75rem;
-  padding-top: .5rem;
+  margin-top: .5rem;
+  padding-top: .4rem;
   border-top: 1px solid rgba(255,255,255,.12);
 }
 
 /* Replace the flex row with a 2-column grid */
 .totals-row {
   display: grid;
-  grid-template-columns: 110px 1fr; /* left label column width */
-  gap: .75rem;
-  padding: .18rem 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  align-items: baseline;
+  grid-template-columns: 90px 1fr;
+  align-items: center;
+  gap: .5rem;
+
+  padding: .2rem 0;
+  margin: 0;
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 /* Optional: make the left labels look like a clean column */

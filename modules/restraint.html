@@ -26,12 +26,13 @@
   <h2>Actual Restraint Calculator</h2>
 
   <label for="restraintDirection">Direction:</label>
-  <select id="restraintDirection" class="form-control" onchange="onDirectionChange()">
-    <option value="FWD">FWD</option>
-    <option value="AFT">AFT</option>
-    <option value="LAT">LAT</option>
-    <option value="VERT">VERT</option>
-  </select>
+<select id="restraintDirection" class="form-control">
+  <option value="FWD">FWD</option>
+  <option value="AFT">AFT</option>
+  <option value="LAT-LEFT">LAT – LEFT</option>
+  <option value="LAT-RIGHT">LAT – RIGHT</option>
+  <option value="VERT">VERT</option>
+</select>
 
   <div id="latSideRow" class="mt-1" style="display:none;">
     <label for="latSide">Lateral Side:</label>
@@ -78,7 +79,13 @@
   <script>
     // State
     let requiredText = "";
-    let totalRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 };
+    let totalRestraint = {
+      FWD: 0,
+      AFT: 0,
+      "LAT-LEFT": 0,
+      "LAT-RIGHT": 0,
+      VERT: 0
+    };
     let doubleMultiplier = false;
 
     // UI helpers
@@ -119,16 +126,18 @@
       return v;
     }
 
-    function displayTotals(base) {
-      let out = base ? base + "\n\n" : "";
-      out += "Current Actual Totals:\n";
-      out += `FWD: ${totalRestraint.FWD} lbs\n`;
-      out += `AFT: ${totalRestraint.AFT} lbs\n`;
-      out += `LAT: ${totalRestraint.LAT} lbs\n`;
-      out += `VERT: ${totalRestraint.VERT} lbs`;
-      return out;
+    function displayTotals(baseText) {
+      return `
+    ${baseText}
+    
+    Current Actual Totals:
+    FWD:       ${totalRestraint.FWD} lbs
+    AFT:       ${totalRestraint.AFT} lbs
+    LAT-LEFT:  ${totalRestraint["LAT-LEFT"]} lbs
+    LAT-RIGHT: ${totalRestraint["LAT-RIGHT"]} lbs
+    VERT:      ${totalRestraint.VERT} lbs
+    `.trim();
     }
-
 
     function calculateRestraint() {
       const weight = parseFloat(document.getElementById("cargoWeight").value);
@@ -138,24 +147,35 @@
       }
       // Required forces (LAT shown once)
       const g = { FWD: 3.0, AFT: 1.5, LAT: 1.5, VERT: 2.0 };
-      requiredText = `Required Restraint Forces for ${Math.round(weight)} lbs:`;
-      requiredText += `\nFWD: ${Math.round(weight * g.FWD)} lbs`;
-      requiredText += `\nAFT: ${Math.round(weight * g.AFT)} lbs`;
-      requiredText += `\nLAT: ${Math.round(weight * g.LAT)} lbs`;
-      requiredText += `\nVERT: ${Math.round(weight * g.VERT)} lbs`;
-      document.getElementById("result").textContent = displayTotals(requiredText);
-    }
+      requiredText =
+      `Required Restraint Forces:
+      FWD:  ${Math.round(weight * g.FWD)} lbs
+      AFT:  ${Math.round(weight * g.AFT)} lbs
+      LAT:  ${Math.round(weight * g.LAT)} lbs (each side)
+      VERT: ${Math.round(weight * g.VERT)} lbs`;
+      }
 
     function calculateActualRestraint() {
       const actual = parseFloat(document.getElementById("actualLength").value);
       const effective = parseFloat(document.getElementById("effectiveLength").value);
+      const factor = getRestraintFactor();
       const direction = document.getElementById("restraintDirection").value;
-
+    
       if (isNaN(actual) || actual <= 0 || isNaN(effective) || effective <= 0) {
         document.getElementById("result").textContent =
           displayTotals(requiredText) + "\n\n⚠️ Enter valid actual and effective lengths.";
         return;
       }
+    
+      let value = (effective / actual) * factor;
+      if (doubleMultiplier) value *= 2;
+    
+      value = Math.round(value);
+      totalRestraint[direction] += value;
+    
+      document.getElementById("result").textContent =
+        displayTotals(requiredText);
+    }
 
       const factor = getSelectedFactor();
       if (factor === null) return; // invalid custom factor
@@ -188,7 +208,13 @@
       document.getElementById("restraintFactorCustom").style.display = "none";
       document.getElementById("factorError").style.display = "none";
 
-      totalRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 };
+      totalRestraint = {
+        FWD: 0,
+        AFT: 0,
+        "LAT-LEFT": 0,
+        "LAT-RIGHT": 0,
+        VERT: 0
+      };
       doubleMultiplier = false;
 
       const tgl = document.getElementById("multiplierToggle");

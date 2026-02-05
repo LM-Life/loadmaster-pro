@@ -1,4 +1,4 @@
-const CACHE_NAME = "loadmaster-pro-v2"; // bump version to force update
+const CACHE_NAME = "loadmaster-pro-v3"; // bump version to force update
 
 const CORE_FILES = [
   "./",
@@ -12,14 +12,15 @@ const CORE_FILES = [
 ];
 
 const OPTIONAL_FILES = [
-  "./modules/restraint.html",
+  "./modules/approach.html",
+  "./modules/load_planning.html",
+  "./modules/loadability_5_steps.html",
   "./modules/loadshift.html",
-  "./modules/winching.html",
+  "./modules/restraint.html",
+  "./modules/sleeper.html",
   "./modules/tires_over_100psi.html",
   "./modules/vehiclecg.html",
-  "./modules/sleeper.html",
-  "./modules/approach.html",
-  "./modules/load_planning.html" // include if you have it; safe even if missing
+  "./modules/winching.html"
 ];
 
 self.addEventListener("install", event => {

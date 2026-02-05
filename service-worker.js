@@ -1,8 +1,9 @@
-const CACHE_NAME = "loadmaster-pro-v3"; // bump version to force update
+const CACHE_NAME = "loadmaster-pro-v4"; // bump version to force update
 
 const CORE_FILES = [
   "./",
   "./index.html",
+  "./offline.html",
   "./style.css",
   "./style_patch.css",
   "./common.js",
@@ -11,7 +12,7 @@ const CORE_FILES = [
   "./icons/icon-512.png"
 ];
 
-const OPTIONAL_FILES = [
+const MODULE_FILES = [
   "./modules/approach.html",
   "./modules/load_planning.html",
   "./modules/loadability_5_steps.html",
@@ -23,62 +24,45 @@ const OPTIONAL_FILES = [
   "./modules/winching.html"
 ];
 
-self.addEventListener("install", event => {
-  event.waitUntil((async () => {
-    const cache = await caches.open(CACHE_NAME);
-
-    // 1) Core must cache successfully (or install fails)
-    await cache.addAll(CORE_FILES);
-
-    // 2) Optional best-effort cache (won't fail install if one is missing)
-    const results = await Promise.allSettled(
-      OPTIONAL_FILES.map(path => cache.add(path))
-    );
-
-    // Optional: log failures (you can remove this later)
-    results.forEach((r, i) => {
-      if (r.status === "rejected") {
-        console.warn("SW optional cache failed:", OPTIONAL_FILES[i], r.reason);
-      }
-    });
-
-    self.skipWaiting();
-  })());
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll([...CORE_FILES, ...MODULE_FILES]))
+  );
+  self.skipWaiting();
 });
 
-self.addEventListener("activate", event => {
-  event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(keys.map(key => (key !== CACHE_NAME ? caches.delete(key) : null)));
-    self.clients.claim();
-  })());
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)))
+    )
+  );
+  self.clients.claim();
 });
 
-self.addEventListener("fetch", event => {
-  // Only handle GET requests
+self.addEventListener("fetch", (event) => {
+  // Only handle GET
   if (event.request.method !== "GET") return;
 
-  event.respondWith((async () => {
-    const cached = await caches.match(event.request);
-    if (cached) return cached;
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      // Cache-first
+      if (cached) return cached;
 
-    try {
-      const fresh = await fetch(event.request);
-
-      // Cache successful same-origin requests so they work next time offline
-      const url = new URL(event.request.url);
-      if (url.origin === self.location.origin && fresh.ok) {
-        const cache = await caches.open(CACHE_NAME);
-        cache.put(event.request, fresh.clone());
-      }
-
-      return fresh;
-    } catch (err) {
-      // Offline + not cached
-      return cached || new Response("Offline and not cached.", {
-        status: 503,
-        headers: { "Content-Type": "text/plain" }
-      });
-    }
-  })());
+      // Network fallback
+      return fetch(event.request)
+        .then((resp) => {
+          // Optionally cache runtime-fetched files too
+          const copy = resp.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          return resp;
+        })
+        // If totally offline, show offline page for navigations
+        .catch(() => {
+          if (event.request.mode === "navigate") {
+            return caches.match("./offline.html");
+          }
+        });
+    })
+  );
 });

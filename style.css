@@ -250,4 +250,31 @@ textarea {
   gap: 0.75rem; /* increase gap between buttons */
   margin-top: 0.5rem; /* adds space before the button row */
 }
+/* Restraint results formatting */
+.result-block {
+  white-space: pre-line;
+}
+
+.totals-table {
+  margin-top: .75rem;
+  padding-top: .5rem;
+  border-top: 1px solid rgba(255,255,255,.12);
+}
+
+.totals-row {
+  display: flex;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .15rem 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.totals-row .left {
+  min-width: 120px;
+}
+
+.totals-row.pass { color: #7CFC90; }   /* green */
+.totals-row.fail { color: #ff6b6b; }   /* red */
+.totals-row.neutral { color: #e0e0e0; } /* default */
+
 

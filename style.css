@@ -245,11 +245,17 @@ textarea {
 }
 
 /* Make button rows stand out from surrounding content */
-.row button {
-.row {
-  gap: 0.75rem; /* increase gap between buttons */
-  margin-top: 0.5rem; /* adds space before the button row */
+.row{
+  display:flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
 }
+
+.row button{
+  margin: 0; /* optional */
+}
+
 /* Restraint results formatting */
 .result-block {
   white-space: pre-line;

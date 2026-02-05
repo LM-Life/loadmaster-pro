@@ -289,4 +289,3 @@ textarea {
 .totals-row.pass { color: #7CFC90; }   /* green */
 .totals-row.fail { color: #ff6b6b; }   /* red */
 .totals-row.neutral { color: #e0e0e0; } /* default */
-.totals-row { outline: 2px solid hotpink !important; }

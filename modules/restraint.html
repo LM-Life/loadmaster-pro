@@ -207,7 +207,7 @@
     function calculateRestraint() {
       const weight = parseFloat(document.getElementById("cargoWeight").value);
       if (isNaN(weight) || weight <= 0) {
-        document.getElementById("result").textContent = "Enter a valid cargo weight.";
+        document.getElementById("result").innerHTML = "Enter a valid cargo weight.";
         return;
       }
     
@@ -227,7 +227,7 @@
     LAT:  ${requiredRestraint.LAT} lbs (each side)
     VERT: ${requiredRestraint.VERT} lbs`;
     
-      document.getElementById("result").textContent = buildDisplay();
+      document.getElementById("result").innerHTML = buildDisplay();
     }
 
     function calculateActualRestraint() {
@@ -237,7 +237,7 @@
       const direction = document.getElementById("restraintDirection").value;
     
       if (isNaN(actual) || actual <= 0 || isNaN(effective) || effective <= 0) {
-        document.getElementById("result").textContent =
+        document.getElementById("result").innerHTML =
           buildDisplay() + "\n\n⚠️ Enter valid actual and effective lengths.";
         return;
       }
@@ -248,14 +248,14 @@
       value = Math.round(value);
     
       if (!(direction in totalRestraint)) {
-        document.getElementById("result").textContent =
+        document.getElementById("result").innerHTML =
           buildDisplay() + "\n\n⚠️ Invalid direction selection.";
         return;
       }
     
       totalRestraint[direction] += value;
     
-      document.getElementById("result").textContent = buildDisplay();
+      document.getElementById("result").innerHTML = buildDisplay();
     }
 
       const factor = getSelectedFactor();
@@ -272,7 +272,7 @@
         totalRestraint[direction] += value;
       }
 
-      document.getElementById("result").textContent = displayTotals(requiredText);
+      document.getElementById("result").innerHTML = displayTotals(requiredText);
     }
 
     function clearAll() {
@@ -302,7 +302,7 @@
       tgl.textContent = "×2 OFF";
       tgl.classList.remove("active");
 
-      document.getElementById("result").textContent = "";
+      document.getElementById("result").innerHTML = "";
       requiredText = "";
     }
 

@@ -280,10 +280,20 @@ textarea {
   opacity: 0.95;
 }
 
-/* Optional: tighten the right side so it reads like a list */
-.totals-row > div:last-child {
-  text-align: left;
-  word-break: break-word;
+.totals-row > div:last-child * {
+  display: inline !important;
+}
+
+.totals-row > div:last-child br {
+  display: none !important;
+}
+.totals-row {
+  display: grid !important;
+  grid-template-columns: 90px 1fr !important;
+  align-items: center !important;
+  gap: .5rem !important;
+  padding: .2rem 0 !important;
+  margin: 0 !important;
 }
 
 .totals-row.pass { color: #7CFC90; }   /* green */

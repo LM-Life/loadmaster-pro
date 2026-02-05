@@ -1,4 +1,4 @@
-const CACHE_NAME = "loadmaster-pro-v4"; // bump version to force update
+const CACHE_NAME = "loadmaster-pro-v5"; // bump version to force update
 
 const CORE_FILES = [
   "./",

@@ -121,13 +121,14 @@
 
     function displayTotals(base) {
       let out = base ? base + "\n\n" : "";
-      out += "Current Actual Totals:";
-      out += `   FWD: ${totalRestraint.FWD} lbs   |`;
-      out += `   AFT: ${totalRestraint.AFT} lbs   |`;
-      out += `   LAT: ${totalRestraint.LAT} lbs   |`;
-      out += `   VERT: ${totalRestraint.VERT} lbs`;
+      out += "Current Actual Totals:\n";
+      out += `FWD: ${totalRestraint.FWD} lbs\n`;
+      out += `AFT: ${totalRestraint.AFT} lbs\n`;
+      out += `LAT: ${totalRestraint.LAT} lbs\n`;
+      out += `VERT: ${totalRestraint.VERT} lbs`;
       return out;
     }
+
 
     function calculateRestraint() {
       const weight = parseFloat(document.getElementById("cargoWeight").value);

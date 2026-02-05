@@ -279,6 +279,15 @@ textarea {
   font-weight: 700;
   opacity: 0.95;
 }
+   
+.totals-row .right{
+  line-height: 1.2;
+  white-space: normal;
+}
+
+.totals-row .sep{
+  opacity: .6;
+}
 
 .totals-row > div:last-child * {
   display: inline !important;
@@ -287,6 +296,7 @@ textarea {
 .totals-row > div:last-child br {
   display: none !important;
 }
+
 .totals-row {
   display: grid !important;
   grid-template-columns: 90px 1fr !important;

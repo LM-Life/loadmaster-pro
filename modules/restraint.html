@@ -76,259 +76,214 @@
   <button onclick="calculateActualRestraint()">Add Actual Restraint</button>
   <button class="btn-danger" onclick="clearAll()">Clear All</button>
 
-  <script>
-    let requiredText = "";
-    let requiredRestraint = {
-      FWD: 0,
-      AFT: 0,
-      LAT: 0,   // requirement per side
-      VERT: 0
-    };
-    
-    let totalRestraint = {
-      FWD: 0,
-      AFT: 0,
-      "LAT-LEFT": 0,
-      "LAT-RIGHT": 0,
-      VERT: 0
-    };
-    
-    let doubleMultiplier = false;
+ <script>
+  let requiredText = "";
+  let requiredRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 }; // LAT is per side
+  let totalRestraint = { FWD: 0, AFT: 0, "LAT-LEFT": 0, "LAT-RIGHT": 0, VERT: 0 };
+  let doubleMultiplier = false;
 
-    // UI helpers
-    function onDirectionChange() {
-      const dir = document.getElementById("restraintDirection").value;
-      document.getElementById("latSideRow").style.display = (dir === "LAT") ? "block" : "none";
+  // --- UI helpers ---
+  function toggleMultiplier() {
+    doubleMultiplier = !doubleMultiplier;
+    const btn = document.getElementById("multiplierToggle");
+    btn.textContent = doubleMultiplier ? "×2 ON" : "×2 OFF";
+    btn.classList.toggle("active", doubleMultiplier);
+  }
+
+  function onFactorChange() {
+    const sel = document.getElementById("restraintFactor").value;
+    const custom = document.getElementById("restraintFactorCustom");
+    const err = document.getElementById("factorError");
+
+    const isCustom = sel === "custom";
+    custom.style.display = isCustom ? "block" : "none";
+
+    if (!isCustom) {
+      custom.value = "";
+      err.style.display = "none";
     }
+  }
 
-    function toggleMultiplier() {
-      doubleMultiplier = !doubleMultiplier;
-      const btn = document.getElementById("multiplierToggle");
-      btn.textContent = doubleMultiplier ? "×2 ON" : "×2 OFF";
-      btn.classList.toggle("active", doubleMultiplier);
-    }
+  function getSelectedFactor() {
+    const selVal = document.getElementById("restraintFactor").value;
 
-    // Factor selector: use custom if chosen
-    function onFactorChange() {
-      const sel = document.getElementById('restraintFactor').value;
-      const custom = document.getElementById('restraintFactorCustom');
-      const err = document.getElementById('factorError');
-      custom.style.display = sel === 'custom' ? 'block' : 'none';
-      if (sel !== 'custom') { custom.value = ''; err.style.display = 'none'; }
-    }
+    if (selVal !== "custom") return parseFloat(selVal);
 
-    function getSelectedFactor() {
-      const selVal = document.getElementById('restraintFactor').value;
-      if (selVal !== 'custom') return parseFloat(selVal);
+    const err = document.getElementById("factorError");
+    const raw = (document.getElementById("restraintFactorCustom").value || "").replace(/,/g, "");
+    const v = parseFloat(raw);
 
-      const err = document.getElementById('factorError');
-      const raw = document.getElementById('restraintFactorCustom').value.replace(/,/g,'');
-      const v = parseFloat(raw);
-      if (!Number.isFinite(v) || v <= 0) {
-        err.textContent = 'Enter a valid custom factor (lbs).';
-        err.style.display = 'block';
-        return null;
-      }
-      err.style.display = 'none';
-      return v;
-    }
-    
-    function getRestraintFactor() {
-      const sel = document.getElementById("restraintFactor")?.value || "10000";
-    
-      if (sel === "custom") {
-        const customVal = parseFloat(document.getElementById("restraintFactorCustom")?.value);
-        return Number.isFinite(customVal) && customVal > 0 ? customVal : NaN;
-      }
-    
-      return parseFloat(sel);
+    if (!Number.isFinite(v) || v <= 0) {
+      err.textContent = "Enter a valid custom factor (lbs).";
+      err.style.display = "block";
+      return null;
     }
 
-    function pill(ok) {
-      return ok ? "✅ PASS" : "❌ FAIL";
+    err.style.display = "none";
+    return v;
+  }
+
+  function nl2br(s) {
+    return (s || "").replace(/\n/g, "<br/>");
+  }
+
+  function hasRequirementSet() {
+    return (requiredRestraint.FWD + requiredRestraint.AFT + requiredRestraint.LAT + requiredRestraint.VERT) > 0;
+  }
+
+  function getRequiredForDirection(dir) {
+    // LAT requirement applies to EACH side
+    if (dir === "LAT-LEFT" || dir === "LAT-RIGHT") return requiredRestraint.LAT || 0;
+    return requiredRestraint[dir] || 0;
+  }
+
+  function buildDisplay(extraMessageHtml = "") {
+    const reqSet = hasRequirementSet();
+
+    const rows = [
+      { key: "FWD",       label: "FWD" },
+      { key: "AFT",       label: "AFT" },
+      { key: "LAT-LEFT",  label: "LAT-LEFT" },
+      { key: "LAT-RIGHT", label: "LAT-RIGHT" },
+      { key: "VERT",      label: "VERT" }
+    ];
+
+    let html = "";
+
+    if (requiredText) {
+      html += `<div class="result-block">${nl2br(requiredText)}</div>`;
     }
-    
-    function remaining(req, actual) {
-      return Math.max(req - actual, 0);
-    }
-    
-    // LAT requirement applies to BOTH sides
-    function getRequiredForDirection(dir) {
-      if (!requiredRestraint) return 0;
-      if (dir === "LAT-LEFT" || dir === "LAT-RIGHT") return requiredRestraint.LAT || 0;
-      return requiredRestraint[dir] || 0;
-    }
-    
-    function hasRequirementSet() {
-      return (requiredRestraint.FWD + requiredRestraint.AFT + requiredRestraint.LAT + requiredRestraint.VERT) > 0;
-    }
-    
-    function nl2br(s){ return (s || "").replace(/\n/g, "<br/>"); }
-    
-    function buildDisplay() {
-      const reqSet = hasRequirementSet();
-    
-      const rows = [
-        { key: "FWD",       label: "FWD" },
-        { key: "AFT",       label: "AFT" },
-        { key: "LAT-LEFT",  label: "LAT-LEFT" },
-        { key: "LAT-RIGHT", label: "LAT-RIGHT" },
-        { key: "VERT",      label: "VERT" }
-      ];
-    
-      let html = "";
-    
-      if (requiredText) {
-        html += `<div class="result-block">${nl2br(requiredText)}</div>`;
-      }
-    
-      html += `<div class="totals-table">`;
-      html += `<div style="font-weight:700; margin-bottom:.25rem;">Current Actual Totals:</div>`;
-    
-      rows.forEach(r => {
-        const act = totalRestraint[r.key] || 0;
-    
-        if (!reqSet) {
-          html += `
-            <div class="totals-row neutral">
-              <div class="left">${r.label}:</div>
-              <div>${act.toLocaleString()} lbs</div>
-            </div>`;
-          return;
-        }
-    
-        const req = getRequiredForDirection(r.key);
-        const ok = act >= req;
-        const rem = remaining(req, act);
-    
+
+    html += `<div class="totals-table">`;
+    html += `<div style="font-weight:700; margin-bottom:.35rem;">Current Actual Totals:</div>`;
+
+    rows.forEach(r => {
+      const act = totalRestraint[r.key] || 0;
+
+      if (!reqSet) {
         html += `
-          <div class="totals-row ${ok ? "pass" : "fail"}">
+          <div class="totals-row neutral">
             <div class="left">${r.label}:</div>
-            <div>
-              ${act.toLocaleString()} lbs
-              &nbsp; | &nbsp; ${ok ? "✅ PASS" : "❌ FAIL"}
-              &nbsp; | &nbsp; Remaining: ${rem.toLocaleString()} lbs
-            </div>
+            <div>${act.toLocaleString()} lbs</div>
           </div>`;
-      });
-    
-      html += `</div>`;
-    
-      if (reqSet) {
-        html += `<div style="margin-top:.5rem; opacity:.85; font-size:.95rem;">
-          Note: LAT requirement applies to <b>each side</b> (LEFT and RIGHT).
+        return;
+      }
+
+      const req = getRequiredForDirection(r.key);
+      const ok = act >= req;
+      const remaining = Math.max(req - act, 0);
+
+      html += `
+        <div class="totals-row ${ok ? "pass" : "fail"}">
+          <div class="left">${r.label}:</div>
+          <div>
+            ${act.toLocaleString()} lbs
+            &nbsp; | &nbsp; ${ok ? "✅ PASS" : "❌ FAIL"}
+            &nbsp; | &nbsp; Remaining: ${remaining.toLocaleString()} lbs
+          </div>
         </div>`;
-      }
-    
-      return html;
+    });
+
+    html += `</div>`;
+
+    if (reqSet) {
+      html += `<div style="margin-top:.5rem; opacity:.85; font-size:.95rem;">
+        Note: LAT requirement applies to <b>each side</b> (LEFT and RIGHT).
+      </div>`;
     }
 
-    function calculateRestraint() {
-      const weight = parseFloat(document.getElementById("cargoWeight").value);
-      if (isNaN(weight) || weight <= 0) {
-        document.getElementById("result").innerHTML = "Enter a valid cargo weight.";
-        return;
-      }
-    
-      const g = { FWD: 3.0, AFT: 1.5, LAT: 1.5, VERT: 2.0 };
-    
-      requiredRestraint = {
-        FWD: Math.round(weight * g.FWD),
-        AFT: Math.round(weight * g.AFT),
-        LAT: Math.round(weight * g.LAT), // per side
-        VERT: Math.round(weight * g.VERT)
-      };
-    
-      requiredText =
-    `Required Restraint for ${Math.round(weight)} lbs:
-    FWD:  ${requiredRestraint.FWD} lbs
-    AFT:  ${requiredRestraint.AFT} lbs
-    LAT:  ${requiredRestraint.LAT} lbs (each side)
-    VERT: ${requiredRestraint.VERT} lbs`;
-    
-      document.getElementById("result").innerHTML = buildDisplay();
+    if (extraMessageHtml) {
+      html += `<div style="margin-top:.75rem; color:#f66;">${extraMessageHtml}</div>`;
     }
 
-    function calculateActualRestraint() {
-      const actual = parseFloat(document.getElementById("actualLength").value);
-      const effective = parseFloat(document.getElementById("effectiveLength").value);
-      const factor = getRestraintFactor();
-      const direction = document.getElementById("restraintDirection").value;
-    
-      if (isNaN(actual) || actual <= 0 || isNaN(effective) || effective <= 0) {
-        document.getElementById("result").innerHTML =
-          buildDisplay() + "\n\n⚠️ Enter valid actual and effective lengths.";
-        return;
-      }
-    
-      let value = (effective / actual) * factor;
-      if (doubleMultiplier) value *= 2;
-    
-      value = Math.round(value);
-    
-      if (!(direction in totalRestraint)) {
-        document.getElementById("result").innerHTML =
-          buildDisplay() + "\n\n⚠️ Invalid direction selection.";
-        return;
-      }
-    
-      totalRestraint[direction] += value;
-    
-      document.getElementById("result").innerHTML = buildDisplay();
+    return html;
+  }
+
+  // --- Calculations ---
+  function calculateRestraint() {
+    const weight = parseFloat(document.getElementById("cargoWeight").value);
+    const resultEl = document.getElementById("result");
+
+    if (!Number.isFinite(weight) || weight <= 0) {
+      resultEl.innerHTML = "Enter a valid cargo weight.";
+      return;
     }
 
-      const factor = getSelectedFactor();
-      if (factor === null) return; // invalid custom factor
+    const g = { FWD: 3.0, AFT: 1.5, LAT: 1.5, VERT: 2.0 };
 
-      let value = (effective / actual) * factor;
-      if (doubleMultiplier) value *= 2;
-      value = Math.round(value);
+    requiredRestraint = {
+      FWD: Math.round(weight * g.FWD),
+      AFT: Math.round(weight * g.AFT),
+      LAT: Math.round(weight * g.LAT), // per side
+      VERT: Math.round(weight * g.VERT)
+    };
 
-      if (direction === "LAT") {
-        // LEFT/RIGHT is informational; totals roll into LAT
-        totalRestraint.LAT += value;
-      } else {
-        totalRestraint[direction] += value;
-      }
+    requiredText =
+`Required Restraint for ${Math.round(weight)} lbs:
+FWD:  ${requiredRestraint.FWD} lbs
+AFT:  ${requiredRestraint.AFT} lbs
+LAT:  ${requiredRestraint.LAT} lbs (each side)
+VERT: ${requiredRestraint.VERT} lbs`;
 
-      document.getElementById("result").innerHTML = displayTotals(requiredText);
+    resultEl.innerHTML = buildDisplay();
+  }
+
+  function calculateActualRestraint() {
+    const actual = parseFloat(document.getElementById("actualLength").value);
+    const effective = parseFloat(document.getElementById("effectiveLength").value);
+    const direction = document.getElementById("restraintDirection").value;
+    const resultEl = document.getElementById("result");
+
+    if (!Number.isFinite(actual) || actual <= 0 || !Number.isFinite(effective) || effective <= 0) {
+      resultEl.innerHTML = buildDisplay("⚠️ Enter valid actual and effective lengths.");
+      return;
     }
 
-    function clearAll() {
-      document.getElementById("cargoWeight").value = "";
-      document.getElementById("actualLength").value = "";
-      document.getElementById("effectiveLength").value = "";
-
-      document.getElementById("restraintDirection").value = "FWD";
-      document.getElementById("latSide").value = "LEFT";
-      onDirectionChange();
-
-      document.getElementById("restraintFactor").value = "10000";
-      document.getElementById("restraintFactorCustom").value = "";
-      document.getElementById("restraintFactorCustom").style.display = "none";
-      document.getElementById("factorError").style.display = "none";
-
-      totalRestraint = {
-        FWD: 0,
-        AFT: 0,
-        "LAT-LEFT": 0,
-        "LAT-RIGHT": 0,
-        VERT: 0
-      };
-      doubleMultiplier = false;
-
-      const tgl = document.getElementById("multiplierToggle");
-      tgl.textContent = "×2 OFF";
-      tgl.classList.remove("active");
-
-      document.getElementById("result").innerHTML = "";
-      requiredText = "";
+    const factor = getSelectedFactor();
+    if (factor === null) {
+      resultEl.innerHTML = buildDisplay("⚠️ Fix restraint factor input.");
+      return;
     }
 
-    // Init
-    document.getElementById('restraintFactor').addEventListener('change', onFactorChange);
-    onDirectionChange();
-    onFactorChange();
-  </script>
+    let value = (effective / actual) * factor;
+    if (doubleMultiplier) value *= 2;
+    value = Math.round(value);
+
+    if (!(direction in totalRestraint)) {
+      resultEl.innerHTML = buildDisplay("⚠️ Invalid direction selection.");
+      return;
+    }
+
+    totalRestraint[direction] += value;
+    resultEl.innerHTML = buildDisplay();
+  }
+
+  function clearAll() {
+    document.getElementById("cargoWeight").value = "";
+    document.getElementById("actualLength").value = "";
+    document.getElementById("effectiveLength").value = "";
+
+    document.getElementById("restraintDirection").value = "FWD";
+    document.getElementById("restraintFactor").value = "25000"; // keep your current default
+    document.getElementById("restraintFactorCustom").value = "";
+    document.getElementById("restraintFactorCustom").style.display = "none";
+    document.getElementById("factorError").style.display = "none";
+
+    totalRestraint = { FWD: 0, AFT: 0, "LAT-LEFT": 0, "LAT-RIGHT": 0, VERT: 0 };
+    requiredRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 };
+    requiredText = "";
+
+    doubleMultiplier = false;
+    const tgl = document.getElementById("multiplierToggle");
+    tgl.textContent = "×2 OFF";
+    tgl.classList.remove("active");
+
+    document.getElementById("result").innerHTML = "";
+  }
+
+  // --- Init ---
+  document.getElementById("restraintFactor").addEventListener("change", onFactorChange);
+  onFactorChange();
+</script>
 </body>
 </html>

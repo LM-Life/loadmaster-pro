@@ -261,20 +261,28 @@ textarea {
   border-top: 1px solid rgba(255,255,255,.12);
 }
 
+/* Replace the flex row with a 2-column grid */
 .totals-row {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 110px 1fr; /* left label column width */
   gap: .75rem;
-  padding: .15rem 0;
+  padding: .18rem 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  align-items: baseline;
 }
 
+/* Optional: make the left labels look like a clean column */
 .totals-row .left {
-  min-width: 120px;
+  font-weight: 700;
+  opacity: 0.95;
+}
+
+/* Optional: tighten the right side so it reads like a list */
+.totals-row > div:last-child {
+  text-align: left;
+  word-break: break-word;
 }
 
 .totals-row.pass { color: #7CFC90; }   /* green */
 .totals-row.fail { color: #ff6b6b; }   /* red */
 .totals-row.neutral { color: #e0e0e0; } /* default */
-
-

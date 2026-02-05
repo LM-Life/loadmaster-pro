@@ -163,28 +163,37 @@
       return (requiredRestraint.FWD + requiredRestraint.AFT + requiredRestraint.LAT + requiredRestraint.VERT) > 0;
     }
     
+    function nl2br(s){ return (s || "").replace(/\n/g, "<br/>"); }
+    
     function buildDisplay() {
       const reqSet = hasRequirementSet();
     
-      // Build a per-direction table-style summary
       const rows = [
-        { key: "FWD", label: "FWD" },
-        { key: "AFT", label: "AFT" },
-        { key: "LAT-LEFT", label: "LAT-LEFT" },
+        { key: "FWD",       label: "FWD" },
+        { key: "AFT",       label: "AFT" },
+        { key: "LAT-LEFT",  label: "LAT-LEFT" },
         { key: "LAT-RIGHT", label: "LAT-RIGHT" },
-        { key: "VERT", label: "VERT" }
+        { key: "VERT",      label: "VERT" }
       ];
     
-      let out = "";
-      if (requiredText) out += requiredText + "\n\n";
+      let html = "";
     
-      out += "Current Actual Totals:\n";
+      if (requiredText) {
+        html += `<div class="result-block">${nl2br(requiredText)}</div>`;
+      }
+    
+      html += `<div class="totals-table">`;
+      html += `<div style="font-weight:700; margin-bottom:.25rem;">Current Actual Totals:</div>`;
     
       rows.forEach(r => {
         const act = totalRestraint[r.key] || 0;
     
         if (!reqSet) {
-          out += `${r.label}: ${act} lbs\n`;
+          html += `
+            <div class="totals-row neutral">
+              <div class="left">${r.label}:</div>
+              <div>${act.toLocaleString()} lbs</div>
+            </div>`;
           return;
         }
     
@@ -192,16 +201,26 @@
         const ok = act >= req;
         const rem = remaining(req, act);
     
-        out += `${r.label}: ${act} lbs   ${pill(ok)}   Remaining: ${rem} lbs\n`;
+        html += `
+          <div class="totals-row ${ok ? "pass" : "fail"}">
+            <div class="left">${r.label}:</div>
+            <div>
+              ${act.toLocaleString()} lbs
+              &nbsp; | &nbsp; ${ok ? "✅ PASS" : "❌ FAIL"}
+              &nbsp; | &nbsp; Remaining: ${rem.toLocaleString()} lbs
+            </div>
+          </div>`;
       });
     
+      html += `</div>`;
+    
       if (reqSet) {
-        out += "\nNote: LAT requirement applies to each side (LEFT and RIGHT).";
-      } else {
-        out += "\nTip: Enter Cargo Weight and tap 'Calculate Required Restraint' to enable PASS/FAIL + Remaining.";
+        html += `<div style="margin-top:.5rem; opacity:.85; font-size:.95rem;">
+          Note: LAT requirement applies to <b>each side</b> (LEFT and RIGHT).
+        </div>`;
       }
     
-      return out.trim();
+      return html;
     }
 
     function calculateRestraint() {

@@ -10,7 +10,7 @@
 (() => {
   // ====== CHANGE THIS when you publish a new app release ======
   // Keep this in sync with service-worker CACHE_NAME (e.g., CACHE_NAME = "v1.11" -> APP_VERSION = "1.11")
-  const APP_VERSION = "1.18";
+  const APP_VERSION = "1.19";
 
   // ---------- Home navigation ----------
   function resolveHomeHref() {

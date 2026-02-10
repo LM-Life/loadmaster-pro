@@ -145,8 +145,7 @@
     let doubleMultiplier = false;
 
     // ---------- Helpers ----------
-    function nl2br(s){ return (s || "").replace(/
-/g, "<br/>"); }
+    function nl2br(s){ return (s || "").replace(/\n/g, "<br/>"); }
 
     function hasRequirementSet() {
       return (requiredRestraint.FWD + requiredRestraint.AFT + requiredRestraint.LAT + requiredRestraint.VERT) > 0;

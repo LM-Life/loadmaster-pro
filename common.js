@@ -195,7 +195,7 @@
 })();
 
 // ===== App Version =====
-const APP_VERSION = "v1.0.0"; // <-- bump this each release
+const APP_VERSION = "v1.0.1"; // <-- bump this each release
 
 function injectVersionBadge() {
   // Optional: show version in a small footer badge

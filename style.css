@@ -315,3 +315,22 @@ textarea {
 .totals-row.pass { color: #7CFC90; }   /* green */
 .totals-row.fail { color: #ff6b6b; }   /* red */
 .totals-row.neutral { color: #e0e0e0; } /* default */
+
+/* Two-column layout for form fields (collapses to one column on small screens) */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 520px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Keep labels tight inside grid cells */
+.grid-2 label {
+  margin-top: 0;
+}

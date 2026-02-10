@@ -402,3 +402,14 @@ textarea {
   border-radius: 10px;
   font-weight: 700;
 }
+
+.version-banner{
+  margin: .35rem 0 .75rem;
+  padding: .35rem .6rem;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 10px;
+  background: rgba(31,111,139,.12); /* Air Force blue tint */
+  color: #fff;
+  font-size: .9rem;
+  text-align: center;
+}

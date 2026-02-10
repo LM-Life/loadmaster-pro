@@ -3,11 +3,11 @@
    - Shows version/update banner ONLY on index (module selection screen)
 */
 
-const APP_VERSION = "v1.2.0";     // human-facing app version
-const CACHE_VERSION = "v4";       // must match service-worker.js
-
 (() => {
   "use strict";
+
+const APP_VERSION = "v1.2.0";     // human-facing app version
+const CACHE_VERSION = "v4";       // must match service-worker.js
 
   // =========
   // Home nav

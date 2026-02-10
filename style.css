@@ -116,6 +116,26 @@ button:hover{ background: var(--af-blue-2); }
   border-color: rgba(255,255,255,.22);
   box-shadow: var(--shadow);
 }
+
+/* 2x multiplier toggle button */
+.btn-multiplier {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* OFF = outline only */
+.btn-multiplier.off {
+  background: transparent;
+  color: #7fd3ff; /* or your accent text color */
+  border: 2px solid rgba(127, 211, 255, 0.6);
+}
+
+/* ON = solid */
+.btn-multiplier.on {
+  background: #2b8fb8; /* same as your primary buttons */
+  color: #fff;
+  border: 2px solid #2b8fb8;
+}
+
 /* Cards / output */
 .card, #result, #winchResult, #psiResult, #loadShiftResult, #approachResult, #vehicleCgResult{
   margin-top: 12px;

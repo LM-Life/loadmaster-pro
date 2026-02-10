@@ -334,3 +334,65 @@ textarea {
 .grid-2 label {
   margin-top: 0;
 }
+
+/* Version badge (bottom-right) */
+#versionBadge{
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  z-index: 9999;
+}
+
+/* Update banner (bottom, above badge) */
+#updateBanner{
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 58px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #0b1b2a;
+  border: 1px solid rgba(255,255,255,.18);
+  color: #fff;
+  z-index: 9999;
+}
+
+#updateBanner .update-sub{
+  opacity: 0.85;
+  font-size: 0.9rem;
+  margin-top: 2px;
+}
+
+#updateBanner .update-right{
+  display: flex;
+  gap: 8px;
+}
+
+/* Buttons that match your vibe */
+#updateBanner .btn-primary{
+  background: #1f6f8b;
+  border: none;
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+#updateBanner .btn-secondary{
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.25);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+}

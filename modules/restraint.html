@@ -334,6 +334,15 @@ VERT: ${requiredRestraint.VERT} lbs`;
       updateStickySummary();
  "";
     }
+    
+    document.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('focus', () => {
+        document.getElementById('stickySummary')?.classList.add('hidden');
+      });
+      el.addEventListener('blur', () => {
+        updateStickySummary();
+      });
+    });
 
     // ---------- Init ----------
     document.getElementById('restraintFactor').addEventListener('change', onFactorChange);

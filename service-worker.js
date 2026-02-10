@@ -1,4 +1,4 @@
-const CACHE_NAME = "v4";
+const CACHE_NAME = "loadmaster-pro-v5";
 
 const CORE_FILES = [
   "./",

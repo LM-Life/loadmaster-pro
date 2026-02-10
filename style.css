@@ -296,3 +296,26 @@ button:hover{ background: var(--af-blue-2); }
   font-weight:800;
   cursor:pointer;
 }
+
+/* Pull-to-refresh indicator */
+.ptr-indicator{
+  position: fixed;
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: rgba(15, 45, 80, 0.92);
+  border: 1px solid rgba(255,255,255,.18);
+  color: #fff;
+  padding: .45rem .75rem;
+  border-radius: 999px;
+  font-size: .85rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  display: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ptr-indicator.show{ display:block; }
+.ptr-indicator.ready{ background: rgba(31, 111, 139, 0.95); }

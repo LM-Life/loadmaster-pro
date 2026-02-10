@@ -319,3 +319,115 @@ button:hover{ background: var(--af-blue-2); }
 
 .ptr-indicator.show{ display:block; }
 .ptr-indicator.ready{ background: rgba(31, 111, 139, 0.95); }
+
+
+/* Restraint module UX pack (reduces scrolling on mobile) */
+.accordion {
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 14px;
+  background: rgba(0,0,0,.18);
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.accordion > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 12px 14px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  user-select: none;
+}
+
+.accordion > summary::-webkit-details-marker { display: none; }
+
+.accordion[open] > summary {
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.accordion-body {
+  padding: 12px 14px;
+}
+
+.sticky-summary {
+  position: sticky;
+  top: 8px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin: 10px 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.60);
+  backdrop-filter: blur(10px);
+}
+
+.sticky-summary.hidden { display: none; }
+
+.sticky-left {
+  font-weight: 800;
+  opacity: .9;
+  min-width: 54px;
+}
+
+.sticky-chips {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  flex: 1;
+}
+
+.chip {
+  border-radius: 12px;
+  padding: 8px 8px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+}
+
+.chip.pass  { border-color: rgba(80, 220, 140, .45); }
+.chip.fail  { border-color: rgba(255, 90, 90, .55); }
+.chip.neutral { border-color: rgba(255,255,255,.14); }
+
+.chip-top {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  opacity: .9;
+}
+.chip-bot {
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 800;
+  opacity: .95;
+  white-space: nowrap;
+}
+
+.sticky-jump {
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color: inherit;
+  padding: 8px 10px;
+  font-weight: 800;
+}
+
+@media (max-width: 420px) {
+  .sticky-summary { padding: 8px 10px; }
+  .sticky-left { display: none; }
+  .chip { padding: 7px 6px; }
+  .chip-top, .chip-bot { font-size: 11px; }
+  .sticky-jump { padding: 7px 9px; font-size: 12px; }
+}
+
+/* Make the detailed totals table more compact */
+.totals-table { margin-top: 10px; }
+.totals-row { padding: 8px 0; }
+.totals-row .left { min-width: 88px; font-weight: 900; }
+.totals-row .right { line-height: 1.25; }
+.totals-row .sep { opacity: .45; }
+.totals-row .remain { font-weight: 800; }
+.totals-row.pass .status { color: #3be17f; }
+.totals-row.fail .status { color: #ff5a5a; }

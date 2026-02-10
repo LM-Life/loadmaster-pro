@@ -7,6 +7,7 @@ const CORE_FILES = [
   "./index.html",
   "./offline.html",
   "./style.css",
+  "./style_patch.css",
   "./common.js",
   "./manifest.json",
   "./icons/icon-192.png",

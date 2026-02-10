@@ -130,7 +130,8 @@
 <div id="factorError" style="color:#f66; font-size:.95rem; display:none;"></div>
 
 <div class="center mt-1">
-  <button id="multiplierToggle" class="btn-outline" onclick="toggleMultiplier()">×2 OFF</button>
+  <button id="multiplierBtn" class="btn btn-multiplier off" onclick="toggleMultiplier()">×2 OFF</button>
+
 </div>
 
 <button onclick="calculateActualRestraint()">Add Actual Restraint</button>
@@ -189,9 +190,12 @@
 
     function toggleMultiplier() {
       doubleMultiplier = !doubleMultiplier;
-      const btn = document.getElementById("multiplierToggle");
+    
+      const btn = document.getElementById("multiplierBtn");
       btn.textContent = doubleMultiplier ? "×2 ON" : "×2 OFF";
-      btn.classList.toggle("active", doubleMultiplier);
+    
+      btn.classList.toggle("on", doubleMultiplier);
+      btn.classList.toggle("off", !doubleMultiplier);
     }
 
     // Build display (tight “column” totals)

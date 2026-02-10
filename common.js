@@ -136,3 +136,86 @@ document.addEventListener("DOMContentLoaded", () => {
     setupUpdateFlow();
   });
 })();
+
+// -------- Pull to Refresh (iOS/PWA friendly) --------
+(function enablePullToRefresh(){
+  let startY = 0;
+  let dist = 0;
+  let pulling = false;
+
+  const THRESHOLD = 70; // px to trigger refresh
+
+  // Create indicator once
+  const indicator = document.createElement("div");
+  indicator.className = "ptr-indicator";
+  indicator.id = "ptrIndicator";
+  indicator.textContent = "Pull to refresh";
+  document.body.appendChild(indicator);
+
+  function atTop(){
+    // Works for iOS Safari/PWA + most browsers
+    return (window.scrollY || document.documentElement.scrollTop || 0) <= 0;
+  }
+
+  function show(msg, ready=false){
+    indicator.textContent = msg;
+    indicator.classList.add("show");
+    indicator.classList.toggle("ready", !!ready);
+  }
+
+  function hide(){
+    indicator.classList.remove("show");
+    indicator.classList.remove("ready");
+  }
+
+  // Use passive:false so we can preventDefault ONLY when pulling at top
+  window.addEventListener("touchstart", (e) => {
+    if (!atTop()) return;
+    startY = e.touches[0].clientY;
+    dist = 0;
+    pulling = true;
+  }, { passive: true });
+
+  window.addEventListener("touchmove", (e) => {
+    if (!pulling) return;
+    if (!atTop()) { pulling = false; hide(); return; }
+
+    const y = e.touches[0].clientY;
+    dist = y - startY;
+
+    // Only when pulling down
+    if (dist > 0) {
+      // Stop iOS bounce/scroll from fighting us
+      e.preventDefault();
+
+      if (dist < THRESHOLD) {
+        show("Pull to refresh");
+      } else {
+        show("Release to refresh", true);
+      }
+    }
+  }, { passive: false });
+
+  window.addEventListener("touchend", async () => {
+    if (!pulling) return;
+    pulling = false;
+
+    if (dist >= THRESHOLD) {
+      show("Refreshing…", true);
+
+      // Optional: ask SW to update before refresh
+      try {
+        if ("serviceWorker" in navigator) {
+          const reg = await navigator.serviceWorker.getRegistration();
+          if (reg) await reg.update();
+        }
+      } catch (_) {}
+
+      // Hard reload is best for PWAs that cache aggressively
+      window.location.reload();
+      return;
+    }
+
+    hide();
+  }, { passive: true });
+})();

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -15,17 +14,18 @@
   <link rel="icon" href="icons/icon-192.png" sizes="192x192">
   <link rel="icon" href="icons/icon-512.png" sizes="512x512">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
-
-  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
-  <div class="version-banner" id="versionBanner"></div>
-  <div id="updateBanner" class="update-banner" style="display:none;"></div>
+
   <script src="common.js" defer></script>
 </head>
-
 <body>
   <h1>Loadmaster Pro</h1>
+
+  <!-- Banner is INDEX ONLY (common.js updates it) -->
+  <div class="version-banner" id="versionBanner"></div>
+
+  <!-- Update prompt is INDEX ONLY (common.js controls it) -->
+  <div id="updateBanner" style="display:none;"></div>
 
   <div class="icon-grid" id="modules">
     <div class="module-icon" role="button" tabindex="0" data-path="modules/restraint.html" aria-label="Restraint">
@@ -43,8 +43,7 @@
       <div class="icon-label">Winching</div>
     </div>
 
-    <div class="module-icon" role="button" tabindex="0" data-path="modules/tires_over_100psi.html"
-      aria-label="Tires over 100 PSI">
+    <div class="module-icon" role="button" tabindex="0" data-path="modules/tires_over_100psi.html" aria-label="Tires over 100 PSI">
       <img src="icons/tires_over_100psi-icon.png" alt="" class="module-icon-img" />
       <div class="icon-label">Tires &gt; 100 PSI</div>
     </div>
@@ -63,83 +62,27 @@
       <img src="icons/approach-icon.png" alt="" class="module-icon-img" />
       <div class="icon-label">Approach Shoring</div>
     </div>
-
-    <div class="module-icon" role="button" tabindex="0" data-path="modules/load_planning.html"
-      aria-label="Load Planning">
-      <img src="icons/load-planning.png" alt="" class="module-icon-img" />
-      <div class="icon-label">Load Planning</div>
-    </div>
-
-    <div class="module-icon" role="button" tabindex="0" data-path="modules/loadability_5_steps.html"
-      aria-label="5 Steps of Loadability">
-      <img src="icons/5steps-icon.PNG" alt="" class="module-icon-img" />
-      <div class="icon-label">5 Steps of Loadability</div>
-    </div>
   </div>
 
   <script>
-    // SPA-like navigation for tiles (click or Enter/Space)
-    function navigate(path) {
-      window.location.href = path;
-    }
-
+    // Tile navigation (click or Enter/Space)
     const grid = document.getElementById('modules');
+
     grid.addEventListener('click', (e) => {
       const tile = e.target.closest('.module-icon');
       if (!tile) return;
       const path = tile.getAttribute('data-path');
-      if (path) navigate(path);
+      if (path) window.location.href = path;
     });
 
     grid.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        const tile = e.target.closest('.module-icon');
-        if (!tile) return;
-        e.preventDefault();
-        const path = tile.getAttribute('data-path');
-        if (path) navigate(path);
-      }
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const tile = e.target.closest('.module-icon');
+      if (!tile) return;
+      e.preventDefault();
+      const path = tile.getAttribute('data-path');
+      if (path) window.location.href = path;
     });
-
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./service-worker.js");
-
-      navigator.serviceWorker.addEventListener("message", (event) => {
-        if (event.data === "SW_UPDATED") {
-          // You can show a banner instead of alert later
-          console.log("Updated!");
-        }
-      });
-    }
-
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js").then((reg) => {
-        // If there’s already a waiting worker, show update prompt
-        if (reg.waiting) {
-          navigator.serviceWorker.controller?.postMessage({ type: "UPDATE_READY" });
-        }
-
-        reg.addEventListener("updatefound", () => {
-          const newWorker = reg.installing;
-          if (!newWorker) return;
-
-          newWorker.addEventListener("statechange", () => {
-            // When it reaches installed, it’s waiting for activation
-            if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-              // Tell the page to show the update banner
-              navigator.serviceWorker.controller.postMessage({ type: "UPDATE_READY" });
-            }
-          });
-        });
-      });
-    }
-
-    // Set this manually OR read from a single source
-    const APP_VERSION = "v1.0";
-
-    const vb = document.getElementById("versionBanner");
-    if (vb) vb.textContent = APP_VERSION;
   </script>
 </body>
-
 </html>

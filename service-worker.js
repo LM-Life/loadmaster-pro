@@ -1,4 +1,6 @@
-const CACHE_NAME = "loadmaster-pro-v5";
+// Loadmaster Pro service-worker.js
+// NOTE: Bump CACHE_NAME every time you want users to get a fresh cache.
+const CACHE_NAME = "v1.11";
 
 const CORE_FILES = [
   "./",
@@ -14,8 +16,6 @@ const CORE_FILES = [
 
 const MODULE_FILES = [
   "./modules/approach.html",
-  "./modules/load_planning.html",
-  "./modules/loadability_5_steps.html",
   "./modules/loadshift.html",
   "./modules/restraint.html",
   "./modules/sleeper.html",
@@ -32,23 +32,29 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    (async () => {
-      const keys = await caches.keys();
-      await Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)));
-      await self.clients.claim();
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)));
+    await self.clients.claim();
 
-      // Tell all open tabs “reload now” after activation
-      const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
-      clients.forEach((c) => c.postMessage({ type: "RELOAD_PAGE" }));
-    })()
-  );
+    // Tell all open tabs to reload so they pick up the new cache/controller
+    const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    clients.forEach((c) => c.postMessage({ type: "RELOAD_PAGE" }));
+  })());
 });
 
-// Let page tell SW to activate immediately
+// Page <-> SW messaging
 self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
+  const data = event.data || {};
+
+  if (data.type === "SKIP_WAITING") {
     self.skipWaiting();
+    return;
+  }
+
+  if (data.type === "GET_CACHE_VERSION") {
+    event.source?.postMessage({ type: "CACHE_VERSION", cache: CACHE_NAME });
+    return;
   }
 });
 
@@ -57,8 +63,10 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
+      // Cache-first
       if (cached) return cached;
 
+      // Network fallback + runtime cache
       return fetch(event.request)
         .then((resp) => {
           const copy = resp.clone();
@@ -66,15 +74,11 @@ self.addEventListener("fetch", (event) => {
           return resp;
         })
         .catch(() => {
+          // If totally offline, show offline page for navigations
           if (event.request.mode === "navigate") {
             return caches.match("./offline.html");
           }
         });
     })
   );
-});
-
-// When a new SW is installed and waiting, notify clients
-self.addEventListener("install", () => {
-  self.skipWaiting();
 });

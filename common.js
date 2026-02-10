@@ -1,100 +1,194 @@
-// common.js (clean shared helpers for ALL modules + index)
+/*
+  Loadmaster Pro — common.js
+  Shared helpers across modules + SW update/version UI.
 
-// --------------------
-// Versions you control
-// --------------------
-const APP_VERSION = "1.0.0";   // <-- change this when you release
-const CACHE_VERSION = "v5";    // <-- must match service-worker CACHE_NAME suffix
+  Include:
+    Index:   <script src="common.js" defer></script>
+    Modules: <script src="../common.js" defer></script>
+*/
 
-// --------------------
-// Home navigation
-// --------------------
-function goHome() {
-  // Works from /modules/* pages and from index.html
-  const inModules = window.location.pathname.includes("/modules/");
-  window.location.href = inModules ? "../index.html" : "./index.html";
-}
-window.goHome = goHome;
+(() => {
+  // ====== CHANGE THIS when you publish a new app release ======
+  const APP_VERSION = "1.0.0";
 
-// --------------------
-// Version banner (index ONLY)
-// --------------------
-function setVersionBanner() {
-  const el = document.getElementById("versionBanner");
-  if (!el) return;
-
-  // show only on index (module selection screen)
-  const path = window.location.pathname;
-  const isIndex = path.endsWith("/") || path.endsWith("/index.html");
-  if (!isIndex) {
-    el.style.display = "none";
-    return;
+  // ---------- Home navigation ----------
+  function resolveHomeHref() {
+    // If page is inside /modules/ (or any subfolder), go up to index
+    const parts = location.pathname.split("/").filter(Boolean);
+    return parts.length > 1 ? "../index.html" : "index.html";
   }
 
-  el.textContent = `App: v${APP_VERSION}   |   Cache: ${CACHE_VERSION}`;
-}
+  const LP = (window.LP = window.LP || {});
 
-// --------------------
-// Service Worker register + update prompt (index)
-// --------------------
-async function registerServiceWorker() {
-  if (!("serviceWorker" in navigator)) return;
+  LP.goHome = function () {
+    location.href = resolveHomeHref();
+  };
+  LP.goBack = function () {
+    history.back();
+  };
+  LP.linkHomeButton = function (selector = ".home-button") {
+    document.querySelectorAll(selector).forEach((btn) => {
+      // If the button already has onclick="goHome()", that's fine—this just reinforces it.
+      btn.addEventListener("click", LP.goHome);
+    });
+  };
+  // Backwards compatibility for pages using onclick="goHome()"
+  window.goHome = LP.goHome;
 
-  try {
-    const reg = await navigator.serviceWorker.register("./service-worker.js");
+  // ---------- DOM helpers ----------
+  LP.$ = (sel, root = document) => root.querySelector(sel);
+  LP.$$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  LP.setText = (idOrEl, text) => {
+    const el = typeof idOrEl === "string" ? document.getElementById(idOrEl) : idOrEl;
+    if (el) el.textContent = text;
+  };
+  LP.setHTML = (idOrEl, html) => {
+    const el = typeof idOrEl === "string" ? document.getElementById(idOrEl) : idOrEl;
+    if (el) el.innerHTML = html;
+  };
 
-    // If a SW is already waiting, show update banner now
-    if (reg.waiting) showUpdateBanner(reg);
+  // ---------- Version banner (INDEX ONLY) ----------
+  let cacheVersion = "—";
 
-    reg.addEventListener("updatefound", () => {
-      const sw = reg.installing;
-      if (!sw) return;
+  function formatBanner() {
+    return `App: v${APP_VERSION}  |  Cache: ${cacheVersion}`;
+  }
 
-      sw.addEventListener("statechange", () => {
-        if (sw.state === "installed" && navigator.serviceWorker.controller) {
-          showUpdateBanner(reg);
-        }
+  function updateVersionBanner() {
+    const vb = document.getElementById("versionBanner");
+    if (!vb) return; // modules won't have this element
+    vb.textContent = formatBanner();
+  }
+
+  // Ask SW what cache version it's running
+  function requestCacheVersion() {
+    if (!("serviceWorker" in navigator)) return;
+    if (!navigator.serviceWorker.controller) {
+      // Controller may not exist on first load; we'll still show App version now.
+      updateVersionBanner();
+      return;
+    }
+    navigator.serviceWorker.controller.postMessage({ type: "GET_CACHE_VERSION" });
+  }
+
+  // ---------- SW update flow (INDEX ONLY) ----------
+  function showUpdateBanner() {
+    const el = document.getElementById("updateBanner");
+    if (!el) return; // modules won't have this element
+    el.style.display = "flex";
+    el.innerHTML = `
+      <div>
+        <div style="font-weight:800; letter-spacing:.02em;">Update available</div>
+        <div class="update-sub">Tap update to load the newest cached calculators.</div>
+      </div>
+      <div class="update-right">
+        <button class="btn-secondary" type="button" id="btnLater">Later</button>
+        <button class="btn-primary" type="button" id="btnUpdate">Update</button>
+      </div>
+    `;
+
+    document.getElementById("btnLater")?.addEventListener("click", () => {
+      el.style.display = "none";
+    });
+
+    document.getElementById("btnUpdate")?.addEventListener("click", async () => {
+      // Tell SW to activate immediately, then reload
+      if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: "SKIP_WAITING" });
+      }
+      // Small delay helps iOS apply controllerchange cleanly
+      setTimeout(() => location.reload(), 250);
+    });
+  }
+
+  async function registerServiceWorker() {
+    if (!("serviceWorker" in navigator)) return null;
+    try {
+      // Works on both index and modules (path differs)
+      const swPath = location.pathname.includes("/modules/") ? "../service-worker.js" : "./service-worker.js";
+      const reg = await navigator.serviceWorker.register(swPath);
+      return reg;
+    } catch (e) {
+      console.warn("Service Worker registration failed:", e);
+      return null;
+    }
+  }
+
+  function setupServiceWorkerUpdateFlow() {
+    // Only index has update banner UI; avoid doing anything heavy on modules.
+    const hasIndexUI = !!document.getElementById("updateBanner") || !!document.getElementById("versionBanner");
+
+    registerServiceWorker().then((reg) => {
+      if (!reg) return;
+
+      // If there is already a waiting worker, show the update banner
+      if (hasIndexUI && reg.waiting && navigator.serviceWorker.controller) {
+        showUpdateBanner();
+      }
+
+      reg.addEventListener("updatefound", () => {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener("statechange", () => {
+          if (nw.state === "installed" && navigator.serviceWorker.controller) {
+            if (hasIndexUI) showUpdateBanner();
+          }
+        });
       });
     });
 
-    // When the new SW takes control, reload for fresh assets
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      window.location.reload();
+    // Listen for SW messages (cache version + "reload now")
+    navigator.serviceWorker?.addEventListener("message", (event) => {
+      const data = event.data || {};
+      if (data.type === "CACHE_VERSION") {
+        cacheVersion = data.cache || "—";
+        updateVersionBanner();
+      }
+      if (data.type === "RELOAD_PAGE") {
+        location.reload();
+      }
     });
-  } catch (e) {
-    console.warn("SW registration failed:", e);
+
+    // Reload once when the new SW takes control
+    let refreshing = false;
+    navigator.serviceWorker?.addEventListener("controllerchange", () => {
+      if (refreshing) return;
+      refreshing = true;
+      location.reload();
+    });
   }
-}
 
-function showUpdateBanner(reg) {
-  const host = document.getElementById("updateBanner");
-  if (!host) return;
+  // ---------- Pull-to-refresh (optional, safe on iOS home-screen) ----------
+  function setupPullToRefresh() {
+    let startY = 0;
+    let pulling = false;
 
-  // Only show on index
-  const path = window.location.pathname;
-  const isIndex = path.endsWith("/") || path.endsWith("/index.html");
-  if (!isIndex) return;
+    window.addEventListener("touchstart", (e) => {
+      if (window.scrollY === 0) {
+        startY = e.touches[0].clientY;
+        pulling = true;
+      } else {
+        pulling = false;
+      }
+    }, { passive: true });
 
-  host.style.display = "block";
-  host.innerHTML = `
-    <div class="update-inner">
-      <span>Update available</span>
-      <button type="button" class="btn-primary" id="applyUpdateBtn">Update</button>
-    </div>
-  `;
+    window.addEventListener("touchmove", (e) => {
+      if (!pulling) return;
+      const y = e.touches[0].clientY;
+      // If pulled down enough, refresh
+      if (y - startY > 90) {
+        pulling = false;
+        location.reload();
+      }
+    }, { passive: true });
+  }
 
-  const btn = document.getElementById("applyUpdateBtn");
-  if (!btn) return;
-
-  btn.onclick = () => {
-    if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
-  };
-}
-
-// --------------------
-// Init
-// --------------------
-document.addEventListener("DOMContentLoaded", () => {
-  setVersionBanner();
-  registerServiceWorker();
-});
+  // ---------- Bootstrap ----------
+  document.addEventListener("DOMContentLoaded", () => {
+    LP.linkHomeButton();
+    updateVersionBanner();      // show App version immediately
+    setupServiceWorkerUpdateFlow();
+    requestCacheVersion();      // fill Cache version once SW responds
+    setupPullToRefresh();
+  });
+})();

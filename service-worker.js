@@ -1,4 +1,4 @@
-const CACHE_NAME = "v1.14"; // bump version to force update
+const CACHE_NAME = "v1.15"; // bump version to force update
 
 const CORE_FILES = [
   "./",

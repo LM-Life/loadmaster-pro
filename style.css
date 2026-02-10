@@ -1,434 +1,253 @@
-/* =========================================
-   Loadmaster Pro - Military Theme Styles
-   Black bg • Air Force blue • White text
-   Block-letter headings (Oswald) + mono numbers
-   ========================================= */
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap');
+/* Loadmaster Pro — unified theme (AF Blue / White / Black) */
 
 :root{
-  --af-blue: #1f6f8b;      /* Air Force blue (primary) */
-  --af-blue-strong:#195a70;/* darker variant */
-  --bg: #0a0d10;           /* near-black background */
-  --card: #121821;         /* panel/card background */
-  --card-2: #17212b;       /* input background */
-  --text: #eef4fa;         /* main text */
-  --muted: #a8b5c3;        /* secondary text */
-  --ok: #18a558;
-  --warn: #ffb020;
-  --bad: #db4455;
-  --border: #25303b;
-  --shadow: 0 6px 18px rgba(0,0,0,.35);
-}
+  --bg: #0b0f14;
+  --card: #111a24;
+  --card-2:#0f1620;
+  --border: rgba(255,255,255,.14);
 
-* { box-sizing: border-box; }
-html,body { margin:0; padding:0; }
+  --af-blue:#1f6f8b;
+  --af-blue-2:#2a86a8;
+
+  --text:#ffffff;
+  --muted: rgba(255,255,255,.75);
+
+  --good:#18a558;
+  --warn:#ffb020;
+  --bad:#db4455;
+
+  --shadow: 0 8px 20px rgba(0,0,0,.35);
+}
 
 /* Base */
+*{ box-sizing:border-box; }
+html, body{ height:100%; }
+
 body{
+  margin:0;
+  padding:16px;
   background: var(--bg);
   color: var(--text);
-  font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  line-height: 1.45;
-  padding: 16px;
+  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
 }
 
-/* Headings use block-letter look */
-h1,h2,h3{
-  margin: 0 0 12px;
-  font-weight: 700;
-  font-family: "Oswald", Arial, sans-serif;
-  letter-spacing: .5px;
-  color: var(--text);
+h1, h2, h3{
+  margin: 10px 0 8px;
+  letter-spacing: .6px;
   text-transform: uppercase;
+  font-weight: 800;
 }
-h1{ font-size: 1.8rem; text-align:center; }
-h2{ font-size: 1.35rem; }
-h3{ font-size: 1.1rem; }
 
-/* Labels look like stenciled headers */
+h1{ font-size: 1.55rem; }
+h2{ font-size: 1.15rem; opacity:.95; }
+h3{ font-size: 1.05rem; opacity:.9; }
+
 label{
   display:block;
-  margin: 10px 0 6px;
-  color: var(--text);
-  font-family: "Oswald", Arial, sans-serif;
-  letter-spacing: .3px;
-  text-transform: uppercase;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-weight: 700;
+  letter-spacing: .2px;
 }
-
-/* Panels / sections */
-.section{ 
-  background: var(--card);
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  padding: 14px;
-  margin: 14px 0;
-  box-shadow: var(--shadow);
-}
-.card{
-  background: var(--card);
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  padding: 12px;
-  box-shadow: var(--shadow);
-  white-space: pre-line;
-}
-.divider{ border:0; border-top:2px dashed var(--border); margin:24px 0; }
-
-.grid-2{ display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
-.grid-3{ display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
-.center{ text-align:center; }
-.mt-1{ margin-top:.5rem; } .mt-2{ margin-top:1rem; }
-.mb-1{ margin-bottom:.5rem; } .mb-2{ margin-bottom:1rem; }
 
 /* Inputs */
-input, select, textarea, button{ font: inherit; }
-.form-control, input[type="text"], input[type="number"], select, textarea{
+input, select, textarea{
   width: 100%;
-  background: var(--card-2);
-  color: var(--text);
+  padding: 12px 12px;
+  border-radius: 10px;
   border: 2px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 12px;
+  background: #0d141d;
+  color: var(--text);
   outline: none;
-  transition: border .2s ease, box-shadow .2s ease, background .2s ease;
-}
-.form-control::placeholder{ color: var(--muted); }
-.form-control:focus, input:focus, select:focus, textarea:focus{
-  border-color: var(--af-blue);
-  box-shadow: 0 0 0 3px rgba(31,111,139,.25);
 }
 
-/* Buttons (block-letter look) */
+input:focus, select:focus, textarea:focus{
+  border-color: rgba(31,111,139,.7);
+  box-shadow: 0 0 0 3px rgba(31,111,139,.18);
+}
+
+textarea{
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Buttons */
 button{
-  display:inline-block;
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,.18);
   background: var(--af-blue);
   color: #fff;
-  border: 2px solid #ffffff20;
-  border-radius: 6px;
-  padding: 10px 14px;
-  cursor: pointer;
-  font-weight: 700;
-  font-family: "Oswald", Arial, sans-serif;
+  font-weight: 800;
   letter-spacing: .4px;
-  text-transform: uppercase;
-  transition: transform .05s ease, background .2s ease, box-shadow .2s ease;
+  cursor: pointer;
+  margin-top: 10px;
 }
-button:hover{ background: var(--af-blue-strong); box-shadow: 0 4px 14px rgba(31,111,139,.35); }
-button:active{ transform: translateY(1px); }
 
-.btn-primary{ background: var(--af-blue); }
-.btn-secondary{ background: var(--card-2); color: var(--text); border-color: var(--border); }
-.btn-danger{ background: var(--bad); border-color: #a82f3d; }
-.btn-outline{
+button:hover{ background: var(--af-blue-2); }
+
+.btn-danger{
+  background: var(--bad);
+  border-color: rgba(255,255,255,.18);
+}
+.btn-danger:hover{ filter: brightness(1.05); }
+
+.btn-secondary{
   background: transparent;
-  color: var(--af-blue);
-  border: 2px solid var(--af-blue);
+  border-color: rgba(255,255,255,.22);
 }
-.btn-outline.active{ background: var(--af-blue); color:#fff; }
+.btn-secondary:hover{ background: rgba(255,255,255,.06); }
 
-/* Home / Back button */
+/* Home button */
 .home-button, .back-button{
   position: sticky;
-  top: 8px;
-  background: var(--af-blue);
-  color: #fff;
-  border: 2px solid #ffffff20;
-  border-radius: 999px;
+  top: 10px;
+  z-index: 5;
+
+  width: auto;
+  display: inline-block;
+
   padding: 8px 14px;
-  box-shadow: var(--shadow);
-  z-index: 2;
-}
-
-/* Status tags */
-.tag{
-  display:inline-block;
-  font-size: .85rem;
-  font-weight: 800;
-  padding: 4px 10px;
   border-radius: 999px;
-  border: 2px solid var(--border);
-  background: var(--card-2);
-  color: var(--text);
-  text-transform: uppercase;
-  font-family: "Oswald", Arial, sans-serif;
-  letter-spacing: .3px;
-}
-.tag.pass{ background: rgba(24,165,88,.12); color: #c7f5df; border-color: rgba(24,165,88,.45); }
-.tag.fail{ background: rgba(219,68,85,.12); color: #ffd6db; border-color: rgba(219,68,85,.45); }
-.pill{ /* legacy alias used by some modules */ @apply .tag; }
-.pill.ok{ background: rgba(24,165,88,.12); color:#c7f5df; border-color: rgba(24,165,88,.45);}
-.pill.warn{ background: rgba(255,176,32,.12); color:#ffe2b5; border-color: rgba(255,176,32,.45);}
-.pill.bad{ background: rgba(219,68,85,.12); color:#ffd6db; border-color: rgba(219,68,85,.45);}
+  margin-top: 0;
 
-/* Muted helper */
-.muted{ color: var(--muted); font-size: .95rem; }
-
-/* ---------- Home screen grid & icons ----------
-   NOTE: You asked not to change module icons.
-   These rules keep the previous sizing/behavior. */
-.icon-grid{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 14px;
-  margin-top: 18px;
+  background: var(--af-blue);
+  border-color: rgba(255,255,255,.22);
+  box-shadow: var(--shadow);
 }
-.module-icon{
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:10px;
+
+/* Cards / output */
+.card, #result, #winchResult, #psiResult, #loadShiftResult, #approachResult, #vehicleCgResult{
+  margin-top: 12px;
+  padding: 12px;
   background: var(--card);
   border: 2px solid var(--border);
+  border-left: 5px solid var(--af-blue);
   border-radius: 12px;
-  padding: 16px 12px;
-  box-shadow: var(--shadow);
-  transition: transform .08s ease, border .2s ease;
-  cursor: pointer;
-}
-.module-icon:hover{ transform: translateY(-2px); border-color: var(--af-blue); }
-.module-icon-img{
-  width: 64px; height: 64px;      /* unchanged */
-  object-fit: contain;
-  display: block;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
-}
-.module-icon .emoji{ font-size: 2.25rem; line-height: 1; } /* for emoji-only tiles */
-.icon-label{
-  color: var(--text);
-  font-weight: 700;
-  font-family: "Oswald", Arial, sans-serif;
-  letter-spacing: .3px;
-  text-transform: uppercase;
-  text-align:center;
+  white-space: pre-line;
 }
 
-/* Tables (Load Planning) */
-table{
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--card);
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-thead th{
-  background: #0f151d;
-  color: var(--text);
-  text-align: left;
-  padding: 10px;
-  border-bottom: 2px solid var(--border);
-  font-family: "Oswald", Arial, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: .3px;
-}
-tbody td, tfoot td, tfoot th{
-  padding: 10px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text);
-}
-tbody tr:hover{ background: rgba(255,255,255,.03); }
-
-/* Textarea (envelope CSV) */
-textarea{ min-height: 120px; resize: vertical; }
-
-/* Constrain module width on larger screens */
-.container{ max-width: 920px; margin: 0 auto; }
-
-/* Mobile tap targets */
-@media (hover:none){
-  button{ padding: 12px 16px; }
-  .form-control{ padding: 12px 14px; }
+/* Divider */
+.divider{
+  border: 0;
+  height: 2px;
+  background: rgba(255,255,255,.12);
+  margin: 18px 0;
 }
 
-/* Add breathing room between text areas and buttons */
-textarea {
-  margin-bottom: 0.75rem; /* or 1rem if you want more spacing */
+/* Grid helpers */
+.grid-2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.grid-3{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
 }
 
-/* Make button rows stand out from surrounding content */
+@media (max-width: 640px){
+  body{ padding: 12px; }
+  .grid-2, .grid-3{ grid-template-columns: 1fr; }
+}
+
+/* Button rows (this replaces your broken row CSS) */
 .row{
   display:flex;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
+  gap: 12px;
+  margin-top: 10px;
   flex-wrap: wrap;
 }
-
 .row button{
-  margin: 0; /* optional */
+  width: auto;
+  margin-top: 0;
 }
 
-/* Restraint results formatting */
-.result-block {
-  margin-bottom: .35rem;
-  line-height: 1.35;
+/* Home screen module grid */
+.icon-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
 }
 
-.totals-table {
-  margin-top: .25rem;
-  padding-top: .2rem;
+.module-icon{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap: 10px;
+
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 12px;
+  box-shadow: var(--shadow);
+
+  cursor:pointer;
+  transition: transform .08s ease, border .2s ease;
+}
+.module-icon:hover{
+  transform: translateY(-2px);
+  border-color: rgba(31,111,139,.8);
+}
+
+.module-icon-img{
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  display:block;
+}
+
+.icon-label{
+  text-align:center;
+  font-weight: 800;
+  letter-spacing: .3px;
+}
+
+/* Totals table (restraint module) */
+.totals-table{
+  margin-top: .5rem;
+  padding-top: .4rem;
   border-top: 1px solid rgba(255,255,255,.12);
 }
 
-.totals-header {
-  font-weight: 700;
-  margin-bottom: .15rem;
-}
-
-/* Replace the flex row with a 2-column grid */
-.totals-row {
+.totals-row{
   display: grid;
   grid-template-columns: 90px 1fr;
   align-items: center;
   gap: .5rem;
-
-  padding: .2rem 0;
+  padding: .18rem 0;
   margin: 0;
-
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* Optional: make the left labels look like a clean column */
-.totals-row .left {
-  font-weight: 700;
-  opacity: 0.95;
+.totals-row .left{
+  font-weight: 800;
+  opacity: .95;
 }
-   
+
 .totals-row .right{
-  line-height: 1.2;
-  white-space: normal;
+  text-align: left;
+  word-break: break-word;
 }
 
-.totals-row .sep{
-  opacity: .6;
+/* Status “tag” style used by winching */
+.tag{
+  display:inline-block;
+  font-size: .85rem;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,.18);
+  background: var(--card-2);
+  text-transform: uppercase;
+  letter-spacing: .6px;
 }
+.tag.pass{ background: rgba(24,165,88,.12); border-color: rgba(24,165,88,.45); }
+.tag.fail{ background: rgba(219,68,85,.12); border-color: rgba(219,68,85,.45); }
 
-.totals-row > div:last-child * {
-  display: inline !important;
-}
-
-.totals-row > div:last-child br {
-  display: none !important;
-}
-
-.totals-row {
-  display: grid !important;
-  grid-template-columns: 90px 1fr !important;
-  align-items: center !important;
-  gap: .5rem !important;
-  padding: .2rem 0 !important;
-  margin: 0 !important;
-}
-
-.totals-row.pass { color: #7CFC90; }   /* green */
-.totals-row.fail { color: #ff6b6b; }   /* red */
-.totals-row.neutral { color: #e0e0e0; } /* default */
-
-/* Two-column layout for form fields (collapses to one column on small screens) */
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
-}
-
-@media (max-width: 520px) {
-  .grid-2 {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Keep labels tight inside grid cells */
-.grid-2 label {
-  margin-top: 0;
-}
-
-/* Update banner (bottom, above badge) */
-#updateBanner{
-  position: fixed;
-  left: 12px;
-  right: 12px;
-  bottom: 58px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 12px;
-  background: #0b1b2a;
-  border: 1px solid rgba(255,255,255,.18);
-  color: #fff;
-  z-index: 9999;
-}
-
-#updateBanner .update-sub{
-  opacity: 0.85;
-  font-size: 0.9rem;
-  margin-top: 2px;
-}
-
-#updateBanner .update-right{
-  display: flex;
-  gap: 8px;
-}
-
-/* Buttons that match your vibe */
-#updateBanner .btn-primary{
-  background: #1f6f8b;
-  border: none;
-  color: #fff;
-  padding: 10px 12px;
-  border-radius: 10px;
-  font-weight: 700;
-}
-
-#updateBanner .btn-secondary{
-  background: transparent;
-  border: 1px solid rgba(255,255,255,.25);
-  color: #fff;
-  padding: 10px 12px;
-  border-radius: 10px;
-  font-weight: 700;
-}
-
-.version-banner{
-  margin: .35rem 0 .75rem;
-  padding: .35rem .6rem;
-  border: 1px solid rgba(255,255,255,.18);
-  border-radius: 10px;
-  background: rgba(31,111,139,.12); /* Air Force blue tint */
-  color: #fff;
-  font-size: .9rem;
-  text-align: center;
-}
-
-/* Mobile tightening */
-@media (max-width: 480px) {
-  body{
-    padding: .75rem;
-  }
-
-  h1{
-    margin: .5rem 0 .25rem;
-    font-size: 1.5rem;
-  }
-
-  .icon-grid{
-    gap: .65rem;
-    margin-top: .75rem;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .module-icon{
-    padding: .75rem .6rem;
-    border-radius: 14px;
-  }
-
-  .module-icon-img{
-    width: 56px;
-    height: 56px;
-  }
-
-  .icon-label{
-    font-size: .95rem;
-    margin-top: .35rem;
-  }
-}
+.muted{ color: var(--muted); }
+.center{ text-align:center; }

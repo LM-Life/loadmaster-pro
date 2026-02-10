@@ -194,23 +194,87 @@
   };
 })();
 
-    // SW tells us it has activated new version; reload to use it
-    if (event.data.type === "RELOAD_PAGE") {
+// ------------------------------
+// Version badge + SW update flow
+// ------------------------------
+function isHomeScreen() {
+  // Only show version banner on the module selection screen
+  return !!document.getElementById("modules");
+}
+
+function injectVersionBadge() {
+  if (!isHomeScreen()) return;
+
+  // If you already have a badge, don’t duplicate it
+  if (document.getElementById("versionBadge")) return;
+
+  // Pull version from CACHE_NAME (service-worker.js) or hardcode below
+  const APP_VERSION = "v1.11"; // <-- update this when you bump SW cache
+
+  const badge = document.createElement("div");
+  badge.id = "versionBadge";
+  badge.className = "version-badge";
+  badge.textContent = `Version: ${APP_VERSION}`;
+
+  // Put it directly under the H1 on index
+  const h1 = document.querySelector("h1");
+  if (h1 && h1.parentNode) h1.insertAdjacentElement("afterend", badge);
+}
+
+function setupServiceWorkerUpdateFlow() {
+  if (!("serviceWorker" in navigator)) return;
+
+  navigator.serviceWorker.register("./service-worker.js").then((reg) => {
+    // If a new SW is already waiting, show update UI
+    if (reg.waiting) showUpdateBanner(reg);
+
+    reg.addEventListener("updatefound", () => {
+      const newWorker = reg.installing;
+      if (!newWorker) return;
+
+      newWorker.addEventListener("statechange", () => {
+        if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+          showUpdateBanner(reg);
+        }
+      });
+    });
+  });
+
+  // Listen for messages (optional)
+  navigator.serviceWorker.addEventListener("message", (event) => {
+    if (event.data && event.data.type === "RELOAD_PAGE") {
       window.location.reload();
     }
   });
+}
 
-  // If a new SW takes control, reload once to ensure newest assets
-  let refreshing = false;
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (refreshing) return;
-    refreshing = true;
-    window.location.reload();
+function showUpdateBanner(reg) {
+  // Only show update banner on home screen (keeps modules clean)
+  if (!isHomeScreen()) return;
+
+  if (document.getElementById("updateBanner")) return;
+
+  const banner = document.createElement("div");
+  banner.id = "updateBanner";
+  banner.className = "update-banner";
+  banner.innerHTML = `
+    <div><b>Update available.</b> Tap to refresh.</div>
+    <button type="button" class="btn-primary" id="updateNowBtn">Update</button>
+  `;
+
+  const h1 = document.querySelector("h1");
+  if (h1 && h1.parentNode) h1.insertAdjacentElement("afterend", banner);
+
+  document.getElementById("updateNowBtn").addEventListener("click", () => {
+    if (reg && reg.waiting) {
+      reg.waiting.postMessage({ type: "SKIP_WAITING" });
+    }
   });
 }
 
-// Init on every page that includes common.js
+// Run once
 document.addEventListener("DOMContentLoaded", () => {
   injectVersionBadge();
   setupServiceWorkerUpdateFlow();
 });
+

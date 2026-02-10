@@ -321,51 +321,55 @@ button:hover{ background: var(--af-blue-2); }
 
 
 
-/* ===== Restraint fixed Totals bar (always visible while adding Actual) ===== */
+/* ===== Docked Totals Bar (does not block buttons) ===== */
+
 #stickySummary.sticky-summary{
   position: fixed;
   left: 12px;
   right: 12px;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
-  top: auto;
 
+  /* Dock BELOW action buttons */
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+
+  z-index: 1500;
   margin: 0;
-  z-index: 2000;
 
-  /* solid background to avoid iOS blur/ghosting */
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  background: rgba(10, 14, 20, 0.95);
+  background: rgba(10, 14, 20, 0.96);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
 
   isolation: isolate;
   contain: paint;
   transform: translateZ(0);
-  will-change: transform;
 }
 
-/* Room so fixed bar doesn't cover fields/buttons */
+/* Push page content so buttons stay above the bar */
 body.restraint-page{
-  padding-bottom: 160px;
+  padding-bottom: 220px;
 }
 
-/* Compact chips (no overlap) */
-#stickySummary .sticky-left{ display:none; }
+/* Totals bar layout: readable + mobile-safe */
 #stickySummary .sticky-chips{
-  display:flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  flex: 1;
-  align-items: stretch;
 }
+
 #stickySummary .chip{
-  flex: 1 1 0;
-  min-width: 0;
   padding: 8px 6px;
+  text-align: center;
 }
-#stickySummary .chip-top{ font-size: 11px; }
-#stickySummary .chip-bot{
+
+#stickySummary .chip-top{
   font-size: 11px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-weight: 800;
+  letter-spacing: .04em;
+  opacity: .85;
+}
+
+#stickySummary .chip-bot{
+  font-size: 13px;
+  font-weight: 900;
   white-space: nowrap;
 }
-#stickySummary .sticky-jump{ white-space: nowrap; }
+

@@ -258,12 +258,13 @@ textarea {
 
 /* Restraint results formatting */
 .result-block {
-  white-space: pre-line;
+  margin-bottom: .35rem;
+  line-height: 1.35;
 }
 
 .totals-table {
-  margin-top: .5rem;
-  padding-top: .4rem;
+  margin-top: .25rem;
+  padding-top: .2rem;
   border-top: 1px solid rgba(255,255,255,.12);
 }
 

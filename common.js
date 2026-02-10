@@ -45,8 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Insert directly UNDER the h1
     h1.insertAdjacentElement("afterend", banner);
     return banner;
-  }
-
+  
   function setStatus(text) {
     const el = document.getElementById("swStatus");
     if (el) el.textContent = text;
@@ -127,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
     registerSWIndexOnly();
     setupUpdateFlow();
   });
-})();
 
 // -------- Pull to Refresh (iOS/PWA friendly) --------
 (function enablePullToRefresh(){

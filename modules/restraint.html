@@ -9,10 +9,14 @@
 </head>
 <body>
   <button type="button" class="home-button">🏠 Home</button>
+  <div id="stickySummary" class="sticky-summary hidden"></div>
 
-<h1>Restraint Calculator</h1>
+  <h1>Restraint Calculator</h1>
 
-  <!-- Required Restraint -->
+  <details class="accordion" open>
+  <summary class="accordion-title">Required Restraint</summary>
+  <div class="accordion-body">
+<!-- Required Restraint -->
   <label for="cargoWeight">Cargo Weight (lbs):</label>
   <input id="cargoWeight" class="form-control" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 12000" />
 
@@ -20,9 +24,15 @@
   <div id="result" class="card mt-2"></div>
 
   <hr class="divider" />
+  </div>
+</details>
 
+
+<details class="accordion" open>
+  <summary class="accordion-title">Actual Restraint Calculator</summary>
+  <div class="accordion-body">
 <!-- Actual Restraint -->
-<h2>Actual Restraint Calculator</h2>
+
 
 <div class="grid-2">
   <div>
@@ -86,7 +96,56 @@
     let totalRestraint = { FWD: 0, AFT: 0, "LAT-LEFT": 0, "LAT-RIGHT": 0, VERT: 0 };
     let doubleMultiplier = false;
 
-    // ---------- Helpers ----------
+    
+    function updateStickySummary() {
+      const el = document.getElementById("stickySummary");
+      if (!el) return;
+
+      const reqSet = hasRequirementSet();
+
+      const items = [
+        { key: "FWD",       label: "FWD" },
+        { key: "AFT",       label: "AFT" },
+        { key: "LAT-LEFT",  label: "LAT-L" },
+        { key: "LAT-RIGHT", label: "LAT-R" },
+        { key: "VERT",      label: "VERT" }
+      ];
+
+      if (!reqSet && !requiredText) {
+        el.classList.add("hidden");
+        el.innerHTML = "";
+        return;
+      }
+
+      const chips = items.map(it => {
+        const act = totalRestraint[it.key] || 0;
+
+        if (!reqSet) {
+          return `<div class="chip neutral">
+            <div class="chip-top">${it.label}</div>
+            <div class="chip-bot">${act.toLocaleString()}</div>
+          </div>`;
+        }
+
+        const req = getRequiredForDirection(it.key);
+        const ok  = act >= req;
+        const rem = remaining(req, act);
+
+        // Show Remaining only when failing (saves vertical space and is what matters)
+        return `<div class="chip ${ok ? "pass" : "fail"}">
+          <div class="chip-top">${it.label}</div>
+          <div class="chip-bot">${ok ? "OK" : ("REM " + rem.toLocaleString())}</div>
+        </div>`;
+      }).join("");
+
+      el.innerHTML = `
+        <div class="sticky-left">Totals</div>
+        <div class="sticky-chips">${chips}</div>
+        <button type="button" class="sticky-jump" onclick="document.getElementById('result')?.scrollIntoView({behavior:'smooth', block:'start'})">Results</button>
+      `;
+      el.classList.remove("hidden");
+    }
+// ---------- Helpers ----------
     function nl2br(s){ return (s || "").replace(/\n/g, "<br/>"); }
 
     function hasRequirementSet() {
@@ -109,6 +168,8 @@
       const err = document.getElementById('factorError');
       custom.style.display = (sel === 'custom') ? 'block' : 'none';
       if (sel !== 'custom') { custom.value = ''; err.style.display = 'none'; }
+    
+      updateStickySummary();
     }
 
     function getSelectedFactor() {
@@ -133,6 +194,8 @@
       const btn = document.getElementById("multiplierToggle");
       btn.textContent = doubleMultiplier ? "×2 ON" : "×2 OFF";
       btn.classList.toggle("active", doubleMultiplier);
+    
+      updateStickySummary();
     }
 
     // Build display (tight “column” totals)
@@ -281,5 +344,7 @@ VERT: ${requiredRestraint.VERT} lbs`;
     document.getElementById('restraintFactor').addEventListener('change', onFactorChange);
     onFactorChange();
   </script>
+  </div>
+</details>
 </body>
 </html>

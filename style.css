@@ -341,20 +341,6 @@ textarea {
   margin-top: 0;
 }
 
-/* Version badge (bottom-right) */
-#versionBadge{
-  position: fixed;
-  right: 12px;
-  bottom: 12px;
-  padding: 6px 10px;
-  border: 1px solid rgba(255,255,255,.15);
-  background: rgba(0,0,0,.55);
-  color: #fff;
-  border-radius: 10px;
-  font-size: 0.85rem;
-  z-index: 9999;
-}
-
 /* Update banner (bottom, above badge) */
 #updateBanner{
   position: fixed;

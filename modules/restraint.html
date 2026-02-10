@@ -157,9 +157,8 @@
       const custom = document.getElementById('restraintFactorCustom');
       const err = document.getElementById('factorError');
       custom.style.display = (sel === 'custom') ? 'block' : 'none';
-      if (sel !== 'custom') { custom.value = ''; err.style.
+      if (sel !== 'custom') { custom.value = ''; err.style.display = 'none'; }
       updateStickySummary();
-display = 'none'; }
     }
 
     function getSelectedFactor() {

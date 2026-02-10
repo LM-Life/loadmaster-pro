@@ -77,8 +77,10 @@
   <button id="multiplierToggle" class="btn-outline" onclick="toggleMultiplier()">×2 OFF</button>
 </div>
 
-<button onclick="calculateActualRestraint()">Add Actual Restraint</button>
+<div id="actualActions" class="actual-actions">
+    <button onclick="calculateActualRestraint()">Add Actual Restraint</button>
 <button class="btn-danger" onclick="clearAll()">Clear All</button>
+  </div>
 
   <script>
     // ---------- State ----------
@@ -140,13 +142,14 @@
         const ok = act >= req;
         const rem = remaining(req, act);
         return `<div class="chip ${ok ? "pass" : "fail"}">
-          <div class="chip-top">${it.label}</div>
+          <div class="chip-top">${ok ? "✅" : "❌"} ${it.label}</div>
           <div class="chip-bot">${ok ? "OK" : ("REM " + rem.toLocaleString())}</div>
         </div>`;
       }).join("");
 
       el.innerHTML = `
         <div class="sticky-chips">${chips}</div>
+        <button type="button" class="sticky-toggle" id="stickyToggle" aria-label="Toggle totals">▾</button>
         <button type="button" class="sticky-jump" onclick="document.getElementById('result')?.scrollIntoView({behavior:'smooth', block:'start'})">Results</button>
       `;
       el.classList.remove("hidden");
@@ -334,19 +337,59 @@ VERT: ${requiredRestraint.VERT} lbs`;
       updateStickySummary();
  "";
     }
-    
-    document.querySelectorAll('input, select').forEach(el => {
-      el.addEventListener('focus', () => {
-        document.getElementById('stickySummary')?.classList.add('hidden');
-      });
-      el.addEventListener('blur', () => {
-        updateStickySummary();
-      });
-    });
 
     // ---------- Init ----------
     document.getElementById('restraintFactor').addEventListener('change', onFactorChange);
     onFactorChange();
-  </script>
+  
+
+
+    function setupStickyBehavior() {
+      const sticky = document.getElementById('stickySummary');
+      if (!sticky) return;
+
+      // Restore user's preference
+      const saved = localStorage.getItem('restraintStickyCompact');
+      if (saved === '1') sticky.classList.add('compact');
+
+      // Toggle button (created by updateStickySummary)
+      sticky.addEventListener('click', (e) => {
+        const t = e.target;
+        if (t && t.id === 'stickyToggle') {
+          e.preventDefault();
+          sticky.classList.toggle('compact');
+          localStorage.setItem('restraintStickyCompact', sticky.classList.contains('compact') ? '1' : '0');
+          // Flip caret
+          t.textContent = sticky.classList.contains('compact') ? '▸' : '▾';
+        }
+      });
+
+      // Auto-compact when the actual action buttons are visible (prevents blocking)
+      const actions = document.getElementById('actualActions');
+      if (actions && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver(([entry]) => {
+          if (!sticky) return;
+          // If user explicitly expanded, don't force-compact
+          const userCompact = localStorage.getItem('restraintStickyCompact') === '1';
+          if (userCompact) return;
+
+          if (entry.isIntersecting) {
+            sticky.classList.add('compact');
+          } else {
+            sticky.classList.remove('compact');
+          }
+
+          // Keep caret state consistent when present
+          const btn = document.getElementById('stickyToggle');
+          if (btn) btn.textContent = sticky.classList.contains('compact') ? '▸' : '▾';
+        }, { threshold: 0.25 });
+
+        io.observe(actions);
+      }
+    }
+
+
+document.addEventListener('DOMContentLoaded', () => { setupStickyBehavior(); });
+</script>
 </body>
 </html>

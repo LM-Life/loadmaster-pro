@@ -103,13 +103,63 @@
       return Math.max(req - actual, 0);
     }
 
-    // Custom factor UI
+    
+
+    // ---------- Sticky Totals Bar ----------
+    function updateStickySummary() {
+      const el = document.getElementById("stickySummary");
+      if (!el) return;
+
+      // Show once we have either requirements set or any actual totals entered
+      const anyActual = Object.values(totalRestraint || {}).some(v => (Number(v) || 0) > 0);
+      const reqSet = hasRequirementSet();
+
+      if (!reqSet && !anyActual) {
+        el.classList.add("hidden");
+        el.innerHTML = "";
+        return;
+      }
+
+      const items = [
+        { key: "FWD",       label: "FWD" },
+        { key: "AFT",       label: "AFT" },
+        { key: "LAT-LEFT",  label: "LAT-L" },
+        { key: "LAT-RIGHT", label: "LAT-R" },
+        { key: "VERT",      label: "VERT" }
+      ];
+
+      const chips = items.map(it => {
+        const act = Number(totalRestraint[it.key] || 0);
+        if (!reqSet) {
+          return `<div class="chip neutral">
+            <div class="chip-top">${it.label}</div>
+            <div class="chip-bot">${act.toLocaleString()}</div>
+          </div>`;
+        }
+        const req = Number(getRequiredForDirection(it.key) || 0);
+        const ok = act >= req;
+        const rem = remaining(req, act);
+        return `<div class="chip ${ok ? "pass" : "fail"}">
+          <div class="chip-top">${it.label}</div>
+          <div class="chip-bot">${ok ? "OK" : ("REM " + rem.toLocaleString())}</div>
+        </div>`;
+      }).join("");
+
+      el.innerHTML = `
+        <div class="sticky-chips">${chips}</div>
+        <button type="button" class="sticky-jump" onclick="document.getElementById('result')?.scrollIntoView({behavior:'smooth', block:'start'})">Results</button>
+      `;
+      el.classList.remove("hidden");
+    }
+// Custom factor UI
     function onFactorChange() {
       const sel = document.getElementById('restraintFactor').value;
       const custom = document.getElementById('restraintFactorCustom');
       const err = document.getElementById('factorError');
       custom.style.display = (sel === 'custom') ? 'block' : 'none';
-      if (sel !== 'custom') { custom.value = ''; err.style.display = 'none'; }
+      if (sel !== 'custom') { custom.value = ''; err.style.
+      updateStickySummary();
+display = 'none'; }
     }
 
     function getSelectedFactor() {
@@ -131,6 +181,8 @@
 
     function toggleMultiplier() {
       doubleMultiplier = !doubleMultiplier;
+      updateStickySummary();
+
       const btn = document.getElementById("multiplierToggle");
       btn.textContent = doubleMultiplier ? "×2 ON" : "×2 OFF";
       btn.classList.toggle("active", doubleMultiplier);
@@ -205,7 +257,9 @@
     function calculateRestraint() {
       const weight = parseFloat(document.getElementById("cargoWeight").value);
       if (!Number.isFinite(weight) || weight <= 0) {
-        document.getElementById("result").innerHTML = "Enter a valid cargo weight.";
+        document.getElementById("result").innerHTML =
+      updateStickySummary();
+ "Enter a valid cargo weight.";
         return;
       }
 
@@ -234,7 +288,9 @@ VERT: ${requiredRestraint.VERT} lbs`;
       const direction = document.getElementById("restraintDirection").value;
 
       if (!Number.isFinite(actual) || actual <= 0 || !Number.isFinite(effective) || effective <= 0) {
-        document.getElementById("result").innerHTML = buildDisplay("Enter valid actual and effective lengths.");
+        document.getElementById("result").innerHTML =
+      updateStickySummary();
+ buildDisplay("Enter valid actual and effective lengths.");
         return;
       }
 
@@ -275,7 +331,9 @@ VERT: ${requiredRestraint.VERT} lbs`;
       tgl.textContent = "×2 OFF";
       tgl.classList.remove("active");
 
-      document.getElementById("result").innerHTML = "";
+      document.getElementById("result").innerHTML =
+      updateStickySummary();
+ "";
     }
 
     // ---------- Init ----------

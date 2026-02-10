@@ -6,15 +6,15 @@
   <title>Restraint Calculator</title>
   <link rel="stylesheet" href="../style.css" />
   <script src="../common.js" defer></script>
-  <button type="button" onclick="goHome()" class="home-button">🏠 Home</button>
+  <button onclick="goHome()" class="home-button">🏠 Home</button>
 
   <style>
-    /* Restraint results: compact status grid (instead of floating totals bar) */
+    /* Restraint results: compact status grid */
     .status-grid{
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
-      margin: 12px 0 8px;
+      margin: 12px 0 10px;
     }
     .status-card{
       border: 1px solid rgba(255,255,255,.12);
@@ -36,7 +36,15 @@
       gap:6px;
       white-space: nowrap;
     }
+    .status-mid{
+      margin-top: 6px;
+      font-weight: 800;
+      font-size: 12px;
+      opacity: .9;
+      white-space: nowrap;
+    }
     .status-bot{
+
       margin-top: 4px;
       font-weight: 900;
       font-size: 14px;
@@ -44,12 +52,20 @@
     }
     @media (max-width: 420px){
       .status-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .status-bot{ font-size: 13px; }
+      .status-mid{
+      margin-top: 6px;
+      font-weight: 800;
+      font-size: 12px;
+      opacity: .9;
+      white-space: nowrap;
+    }
+    .status-bot{
+ font-size: 13px; }
     }
   </style>
 
 </head>
-<body class="restraint-page">
+<body>
   
   <h1>Restraint Calculator</h1>
 
@@ -143,48 +159,15 @@
       return Math.max(req - actual, 0);
     }
 
-    
-
-    // ---------- Sticky Totals Bar ----------
-      const items = [
-        { key: "FWD",       label: "FWD" },
-        { key: "AFT",       label: "AFT" },
-        { key: "LAT-LEFT",  label: "LAT-L" },
-        { key: "LAT-RIGHT", label: "LAT-R" },
-        { key: "VERT",      label: "VERT" }
-      ];
-
-      const chips = items.map(it => {
-        const act = Number(totalRestraint[it.key] || 0);
-        if (!reqSet) {
-          return `<div class="chip neutral">
-            <div class="chip-top">${it.label}</div>
-            <div class="chip-bot">${act.toLocaleString()}</div>
-          </div>`;
-        }
-        const req = Number(getRequiredForDirection(it.key) || 0);
-        const ok = act >= req;
-        const rem = remaining(req, act);
-        return `<div class="chip ${ok ? "pass" : "fail"}">
-          <div class="chip-top">${it.label}</div>
-          <div class="chip-bot">${ok ? "OK" : ("REM " + rem.toLocaleString())}</div>
-        </div>`;
-      }).join("");
-
-      el.innerHTML = `
-        <div class="sticky-chips">${chips}</div>
-        <button type="button" class="sticky-jump" onclick="document.getElementById('result')?.scrollIntoView({behavior:'smooth', block:'start'})">Results</button>
-      `;
-      el.classList.remove("hidden");
-    
-// Custom factor UI
+    // Custom factor UI
     function onFactorChange() {
       const sel = document.getElementById('restraintFactor').value;
       const custom = document.getElementById('restraintFactorCustom');
       const err = document.getElementById('factorError');
+      if (!custom || !err) return;
       custom.style.display = (sel === 'custom') ? 'block' : 'none';
       if (sel !== 'custom') { custom.value = ''; err.style.display = 'none'; }
-}
+    }
 
     function getSelectedFactor() {
       const selVal = document.getElementById('restraintFactor').value;
@@ -205,7 +188,7 @@
 
     function toggleMultiplier() {
       doubleMultiplier = !doubleMultiplier;
-const btn = document.getElementById("multiplierToggle");
+      const btn = document.getElementById("multiplierToggle");
       btn.textContent = doubleMultiplier ? "×2 ON" : "×2 OFF";
       btn.classList.toggle("active", doubleMultiplier);
     }
@@ -222,17 +205,21 @@ const btn = document.getElementById("multiplierToggle");
         { key: "VERT",      label: "VERT" }
       ];
 
-      const statusGridHtml = (hasRequirementSet() ? statusItems.map(it => {
-        const act = Number(totalRestraint[it.key] || 0);
-        const req = Number(getRequiredForDirection(it.key) || 0);
-        const ok  = act >= req;
-        const rem = remaining(req, act);
-        return `
-          <div class="status-card ${ok ? 'pass' : 'fail'}">
-            <div class="status-top">${it.label} <span class="status-emoji">${ok ? '✅' : '❌'}</span></div>
-            <div class="status-bot">REM ${rem.toLocaleString()}</div>
-          </div>`;
-      }).join('') : '');
+      let statusGridHtml = "";
+      if (hasRequirementSet()) {
+        statusGridHtml = '<div class="status-grid">' + statusItems.map(it => {
+          const act = Number(totalRestraint[it.key] || 0);
+          const req = Number(getRequiredForDirection(it.key) || 0);
+          const ok  = act >= req;
+          const rem = remaining(req, act);
+          return (
+            '<div class="status-card ' + (ok ? 'pass' : 'fail') + '">' +
+              '<div class="status-top">' + it.label + ' <span class="status-emoji">' + (ok ? '✅' : '❌') + '</span></div>' +
+              '<div class="status-bot">REM ' + rem.toLocaleString() + '</div>' +
+            '</div>'
+          );
+        }).join('') + '</div>';
+      }
 
 const reqSet = hasRequirementSet();
 
@@ -249,43 +236,7 @@ const reqSet = hasRequirementSet();
       if (requiredText) {
         html += `<div class="result-block">${nl2br(requiredText)}</div>`;
       }
-
-      html += `<div class="totals-table">`;
-      html += `<div class="totals-header">Current Actual Totals:
-          ${statusGridHtml ? `<div class="status-grid">${statusGridHtml}</div>` : ``}</div>`;
-
-      rows.forEach(r => {
-        const act = totalRestraint[r.key] || 0;
-
-        if (!reqSet) {
-          html += `
-            <div class="totals-row neutral">
-              <div class="left">${r.label}:</div>
-              <div class="right"><span class="amt">${act.toLocaleString()} lbs</span></div>
-            </div>`;
-          return;
-        }
-
-        const req = getRequiredForDirection(r.key);
-        const ok  = act >= req;
-        const rem = remaining(req, act);
-
-        html += `
-          <div class="totals-row ${ok ? "pass" : "fail"}">
-            <div class="left">${r.label}:</div>
-            <div class="right">
-              <span class="amt">${act.toLocaleString()} lbs</span>
-              <span class="sep"> | </span>
-              <span class="status">${ok ? "✅ PASS" : "❌ FAIL"}</span>
-              <span class="sep"> | </span>
-              <span class="remain">Remaining: ${rem.toLocaleString()} lbs</span>
-            </div>
-          </div>`;
-      });
-
-      html += `</div>`;
-
-      if (reqSet) {
+if (reqSet) {
         html += `<div style="margin-top:.35rem; opacity:.85; font-size:.95rem;">
           Note: LAT requirement applies to <b>each side</b> (LEFT and RIGHT).
         </div>`;
@@ -302,8 +253,7 @@ const reqSet = hasRequirementSet();
     function calculateRestraint() {
       const weight = parseFloat(document.getElementById("cargoWeight").value);
       if (!Number.isFinite(weight) || weight <= 0) {
-        document.getElementById("result").innerHTML =
-"Enter a valid cargo weight.";
+        document.getElementById("result").innerHTML = "Enter a valid cargo weight.";
         return;
       }
 
@@ -332,8 +282,7 @@ VERT: ${requiredRestraint.VERT} lbs`;
       const direction = document.getElementById("restraintDirection").value;
 
       if (!Number.isFinite(actual) || actual <= 0 || !Number.isFinite(effective) || effective <= 0) {
-        document.getElementById("result").innerHTML =
-buildDisplay("Enter valid actual and effective lengths.");
+        document.getElementById("result").innerHTML = buildDisplay("Enter valid actual and effective lengths.");
         return;
       }
 
@@ -374,8 +323,7 @@ buildDisplay("Enter valid actual and effective lengths.");
       tgl.textContent = "×2 OFF";
       tgl.classList.remove("active");
 
-      document.getElementById("result").innerHTML =
-"";
+      document.getElementById("result").innerHTML = "";
     }
 
     // ---------- Init ----------

@@ -440,3 +440,12 @@ button:hover{ background: var(--af-blue-2); }
     background: rgba(10, 14, 20, 0.95); /* solid fallback */
   }
 }
+
+.sticky-summary {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+#result {
+  scroll-margin-top: 96px; /* matches sticky height */
+}

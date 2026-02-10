@@ -33,31 +33,38 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)))
-    )
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)));
+      await self.clients.claim();
+
+      // Tell all open tabs “reload now” after activation
+      const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      clients.forEach((c) => c.postMessage({ type: "RELOAD_PAGE" }));
+    })()
   );
-  self.clients.claim();
+});
+
+// Let page tell SW to activate immediately
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("fetch", (event) => {
-  // Only handle GET
   if (event.request.method !== "GET") return;
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
-      // Cache-first
       if (cached) return cached;
 
-      // Network fallback
       return fetch(event.request)
         .then((resp) => {
-          // Optionally cache runtime-fetched files too
           const copy = resp.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
           return resp;
         })
-        // If totally offline, show offline page for navigations
         .catch(() => {
           if (event.request.mode === "navigate") {
             return caches.match("./offline.html");
@@ -65,4 +72,9 @@ self.addEventListener("fetch", (event) => {
         });
     })
   );
+});
+
+// When a new SW is installed and waiting, notify clients
+self.addEventListener("install", () => {
+  self.skipWaiting();
 });

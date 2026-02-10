@@ -194,58 +194,6 @@
   };
 })();
 
-// ===== App Version =====
-const APP_VERSION = "v1.0.1"; // <-- bump this each release
-
-function injectVersionBadge() {
-  // Optional: show version in a small footer badge
-  const badge = document.createElement("div");
-  badge.id = "versionBadge";
-  badge.textContent = `Loadmaster Pro ${APP_VERSION}`;
-  document.body.appendChild(badge);
-}
-
-// ===== Update Banner (Service Worker) =====
-function createUpdateBanner() {
-  if (document.getElementById("updateBanner")) return;
-
-  const banner = document.createElement("div");
-  banner.id = "updateBanner";
-  banner.innerHTML = `
-    <div class="update-left">
-      <strong>Update available</strong>
-      <div class="update-sub">Tap update to load the newest version.</div>
-    </div>
-    <div class="update-right">
-      <button id="updateNowBtn" class="btn-primary">Update</button>
-      <button id="updateDismissBtn" class="btn-secondary">Later</button>
-    </div>
-  `;
-
-  document.body.appendChild(banner);
-
-  document.getElementById("updateDismissBtn").onclick = () => banner.remove();
-}
-
-function setupServiceWorkerUpdateFlow() {
-  if (!("serviceWorker" in navigator)) return;
-
-  navigator.serviceWorker.addEventListener("message", (event) => {
-    if (!event.data) return;
-
-    // SW tells us an update is ready
-    if (event.data.type === "UPDATE_READY") {
-      createUpdateBanner();
-
-      document.getElementById("updateNowBtn").onclick = async () => {
-        // Tell SW to activate the waiting worker immediately
-        const reg = await navigator.serviceWorker.getRegistration();
-        if (reg && reg.waiting) {
-          reg.waiting.postMessage({ type: "SKIP_WAITING" });
-        }
-      };
-    }
-
     // SW tells us it has activated new version; reload to use it
     if (event.data.type === "RELOAD_PAGE") {
       window.location.reload();

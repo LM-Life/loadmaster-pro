@@ -9,7 +9,8 @@
 
 (() => {
   // ====== CHANGE THIS when you publish a new app release ======
-  const APP_VERSION = "1.0.0";
+  // Keep this in sync with service-worker CACHE_NAME (e.g., CACHE_NAME = "v1.11" -> APP_VERSION = "1.11")
+  const APP_VERSION = "1.11";
 
   // ---------- Home navigation ----------
   function resolveHomeHref() {
@@ -26,12 +27,26 @@
   LP.goBack = function () {
     history.back();
   };
+
+  // IMPORTANT: many module pages place buttons inside <form>.
+  // If a Home button defaults to type="submit", the form submit can prevent navigation.
+  // This helper forces type="button" and prevents default.
   LP.linkHomeButton = function (selector = ".home-button") {
     document.querySelectorAll(selector).forEach((btn) => {
-      // If the button already has onclick="goHome()", that's fine—this just reinforces it.
-      btn.addEventListener("click", LP.goHome);
+      try {
+        // Defensive: force "button" to avoid form submits
+        if (btn.tagName === "BUTTON" && (!btn.getAttribute("type") || btn.getAttribute("type") === "submit")) {
+          btn.setAttribute("type", "button");
+        }
+      } catch {}
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        LP.goHome();
+      });
     });
   };
+
   // Backwards compatibility for pages using onclick="goHome()"
   window.goHome = LP.goHome;
 
@@ -63,12 +78,23 @@
   // Ask SW what cache version it's running
   function requestCacheVersion() {
     if (!("serviceWorker" in navigator)) return;
-    if (!navigator.serviceWorker.controller) {
-      // Controller may not exist on first load; we'll still show App version now.
+
+    // If controller doesn't exist yet (first-ever visit), wait until SW is ready.
+    // On iOS, controller can become available after the first reload.
+    const send = () => {
+      if (!navigator.serviceWorker.controller) return;
+      navigator.serviceWorker.controller.postMessage({ type: "GET_CACHE_VERSION" });
+    };
+
+    if (navigator.serviceWorker.controller) {
+      send();
+    } else {
+      // Update banner now (so user sees App version), then try again once ready.
       updateVersionBanner();
-      return;
+      navigator.serviceWorker.ready
+        .then(() => send())
+        .catch(() => {});
     }
-    navigator.serviceWorker.controller.postMessage({ type: "GET_CACHE_VERSION" });
   }
 
   // ---------- SW update flow (INDEX ONLY) ----------
@@ -137,15 +163,12 @@
       });
     });
 
-    // Listen for SW messages (cache version + "reload now")
+    // Listen for SW messages (cache version)
     navigator.serviceWorker?.addEventListener("message", (event) => {
       const data = event.data || {};
       if (data.type === "CACHE_VERSION") {
         cacheVersion = data.cache || "—";
         updateVersionBanner();
-      }
-      if (data.type === "RELOAD_PAGE") {
-        location.reload();
       }
     });
 
@@ -163,32 +186,40 @@
     let startY = 0;
     let pulling = false;
 
-    window.addEventListener("touchstart", (e) => {
-      if (window.scrollY === 0) {
-        startY = e.touches[0].clientY;
-        pulling = true;
-      } else {
-        pulling = false;
-      }
-    }, { passive: true });
+    window.addEventListener(
+      "touchstart",
+      (e) => {
+        if (window.scrollY === 0) {
+          startY = e.touches[0].clientY;
+          pulling = true;
+        } else {
+          pulling = false;
+        }
+      },
+      { passive: true }
+    );
 
-    window.addEventListener("touchmove", (e) => {
-      if (!pulling) return;
-      const y = e.touches[0].clientY;
-      // If pulled down enough, refresh
-      if (y - startY > 90) {
-        pulling = false;
-        location.reload();
-      }
-    }, { passive: true });
+    window.addEventListener(
+      "touchmove",
+      (e) => {
+        if (!pulling) return;
+        const y = e.touches[0].clientY;
+        // If pulled down enough, refresh
+        if (y - startY > 90) {
+          pulling = false;
+          location.reload();
+        }
+      },
+      { passive: true }
+    );
   }
 
   // ---------- Bootstrap ----------
   document.addEventListener("DOMContentLoaded", () => {
     LP.linkHomeButton();
-    updateVersionBanner();      // show App version immediately
+    updateVersionBanner(); // show App version immediately
     setupServiceWorkerUpdateFlow();
-    requestCacheVersion();      // fill Cache version once SW responds
+    requestCacheVersion(); // fill Cache version once SW responds
     setupPullToRefresh();
   });
 })();

@@ -36,10 +36,8 @@ self.addEventListener("activate", (event) => {
     const keys = await caches.keys();
     await Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)));
     await self.clients.claim();
-
-    // Tell all open tabs to reload so they pick up the new cache/controller
-    const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
-    clients.forEach((c) => c.postMessage({ type: "RELOAD_PAGE" }));
+    // NOTE: We intentionally do NOT force-reload all tabs here.
+    // The page code handles update prompts and reload-on-controllerchange.
   })());
 });
 

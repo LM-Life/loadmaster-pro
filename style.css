@@ -449,3 +449,26 @@ button:hover{ background: var(--af-blue-2); }
 #result {
   scroll-margin-top: 96px; /* matches sticky height */
 }
+
+/* ---- Restraint sticky UX: fix overlap + iOS repaint ---- */
+
+/* Because stickySummary is inserted right after the Home button,
+   offset it so it sits *below* the Home pill while both are sticky. */
+.home-button + .sticky-summary {
+  top: 58px; /* adjust if you change home button size */
+}
+
+/* Extra iOS stability: isolate/contain the sticky layer to stop text bleed */
+.sticky-summary {
+  isolation: isolate;
+  contain: paint;
+  -webkit-transform: translateZ(0);
+}
+
+/* On narrow phones, 5 chips across gets tight; go 3 + 2 to prevent squish/overpaint */
+@media (max-width: 420px) {
+  .sticky-chips {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+

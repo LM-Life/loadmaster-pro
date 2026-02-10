@@ -101,9 +101,9 @@ button:hover{ background: var(--af-blue-2); }
 
 /* Home button */
 .home-button, .back-button{
-  position: sticky;
-  top: 10px;
-  z-index: 5;
+  position: static;
+  top: auto;
+  z-index: auto;
 
   width: auto;
   display: inline-block;

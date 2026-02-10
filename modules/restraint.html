@@ -137,6 +137,7 @@
 <button class="btn-danger" onclick="clearAll()">Clear All</button>
 
   <script>
+
     // ---------- State ----------
     let requiredText = "";
     let requiredRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 }; // LAT = per side requirement
@@ -144,7 +145,8 @@
     let doubleMultiplier = false;
 
     // ---------- Helpers ----------
-    function nl2br(s){ return (s || "").replace(/\n/g, "<br/>"); }
+    function nl2br(s){ return (s || "").replace(/
+/g, "<br/>"); }
 
     function hasRequirementSet() {
       return (requiredRestraint.FWD + requiredRestraint.AFT + requiredRestraint.LAT + requiredRestraint.VERT) > 0;
@@ -215,7 +217,7 @@
           return (
             '<div class="status-card ' + (ok ? 'pass' : 'fail') + '">' +
               '<div class="status-top">' + it.label + ' <span class="status-emoji">' + (ok ? '✅' : '❌') + '</span></div>' +
-              '<div class="status-bot">REM ' + rem.toLocaleString() + '</div>' +
+              '<div class="status-mid">ACT ' + act.toLocaleString() + '</div>' +'<div class="status-bot">REM ' + rem.toLocaleString() + '</div>' +
             '</div>'
           );
         }).join('') + '</div>';
@@ -233,13 +235,10 @@ const reqSet = hasRequirementSet();
 
       let html = "";
 
-      if (requiredText) {
-        html += `<div class="result-block">${nl2br(requiredText)}</div>`;
-      }
-if (reqSet) {
-        html += `<div style="margin-top:.35rem; opacity:.85; font-size:.95rem;">
-          Note: LAT requirement applies to <b>each side</b> (LEFT and RIGHT).
-        </div>`;
+      if (reqSet) {
+        html += statusGridHtml;
+      } else {
+        html += `<div class="result-block" style="opacity:.9;">Enter cargo weight and tap <b>Calculate Required Restraint</b> to populate totals.</div>`;
       }
 
       if (extraMessageHtml) {
@@ -329,6 +328,7 @@ VERT: ${requiredRestraint.VERT} lbs`;
     // ---------- Init ----------
     document.getElementById('restraintFactor').addEventListener('change', onFactorChange);
     onFactorChange();
-  </script>
+  
+</script>
 </body>
 </html>

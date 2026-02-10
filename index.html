@@ -104,6 +104,28 @@
       }
     });
   }
+    
+      if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js").then((reg) => {
+      // If there’s already a waiting worker, show update prompt
+      if (reg.waiting) {
+        navigator.serviceWorker.controller?.postMessage({ type: "UPDATE_READY" });
+      }
+
+      reg.addEventListener("updatefound", () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+
+        newWorker.addEventListener("statechange", () => {
+          // When it reaches installed, it’s waiting for activation
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            // Tell the page to show the update banner
+            navigator.serviceWorker.controller.postMessage({ type: "UPDATE_READY" });
+          }
+        });
+      });
+    });
+  }
   </script>
 </body>
 </html>

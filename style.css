@@ -136,6 +136,10 @@ button:hover{ background: var(--af-blue-2); }
   border: 2px solid #2b8fb8;
 }
 
+.btn-multiplier.on:active {
+  transform: scale(0.98);
+}
+
 /* Cards / output */
 .card, #result, #winchResult, #psiResult, #loadShiftResult, #approachResult, #vehicleCgResult{
   margin-top: 12px;

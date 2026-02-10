@@ -303,26 +303,36 @@ VERT: ${requiredRestraint.VERT} lbs`;
     }
 
     function clearAll() {
+      // Clear inputs
       document.getElementById("cargoWeight").value = "";
       document.getElementById("actualLength").value = "";
       document.getElementById("effectiveLength").value = "";
-
+    
+      // Reset dropdowns
       document.getElementById("restraintDirection").value = "FWD";
-
-      document.getElementById("restraintFactor").value = "10000";
+      document.getElementById("restraintFactor").value = "25000"; // match your default option
       document.getElementById("restraintFactorCustom").value = "";
       document.getElementById("restraintFactorCustom").style.display = "none";
       document.getElementById("factorError").style.display = "none";
-
+    
+      // Reset state
       totalRestraint = { FWD: 0, AFT: 0, "LAT-LEFT": 0, "LAT-RIGHT": 0, VERT: 0 };
       requiredRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 };
       requiredText = "";
-
+    
+      // Reset 2x toggle (supports BOTH old + new IDs/classes)
       doubleMultiplier = false;
-      const tgl = document.getElementById("multiplierToggle");
-      tgl.textContent = "×2 OFF";
-      tgl.classList.remove("active");
-
+      const tgl =
+        document.getElementById("multiplierBtn") ||
+        document.getElementById("multiplierToggle");
+    
+      if (tgl) {
+        tgl.textContent = "×2 OFF";
+        tgl.classList.remove("on", "active");
+        tgl.classList.add("off");
+      }
+    
+      // Clear results
       document.getElementById("result").innerHTML = "";
     }
 

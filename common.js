@@ -3,6 +3,9 @@
    - Shows version/update banner ONLY on index (module selection screen)
 */
 
+const APP_VERSION = "v1.2.0";     // human-facing app version
+const CACHE_VERSION = "v4";       // must match service-worker.js
+
 (() => {
   "use strict";
 
@@ -28,29 +31,24 @@
     return !!document.querySelector(".icon-grid");
   }
 
-  // Set your app version here (bump when you release)
-  const APP_VERSION = "v1.0.0";
+document.addEventListener("DOMContentLoaded", () => {
+  // Only show banner on home screen (index.html)
+  if (!location.pathname.endsWith("index.html") && location.pathname !== "/") return;
 
-  function ensureBanner() {
-    if (!isIndexScreen()) return null;
+  const header = document.querySelector("h1");
+  if (!header) return;
 
-    const h1 = document.querySelector("h1");
-    if (!h1) return null;
+  let banner = document.getElementById("versionBanner");
 
-    // If already exists, reuse
-    let banner = document.getElementById("versionBanner");
-    if (banner) return banner;
-
+  if (!banner) {
     banner = document.createElement("div");
     banner.id = "versionBanner";
     banner.className = "version-banner";
-    banner.innerHTML = `
-      <div class="version-left">
-        <span class="version-pill">Loadmaster Pro ${APP_VERSION}</span>
-        <span id="swStatus" class="version-status">Ready</span>
-      </div>
-      <button id="updateBtn" class="btn-update" style="display:none;">Update</button>
-    `;
+    header.insertAdjacentElement("afterend", banner);
+  }
+
+  banner.textContent = `App: ${APP_VERSION}  |  Cache: ${CACHE_VERSION}`;
+});
 
     // Insert directly UNDER the h1
     h1.insertAdjacentElement("afterend", banner);

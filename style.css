@@ -101,9 +101,9 @@ button:hover{ background: var(--af-blue-2); }
 
 /* Home button */
 .home-button, .back-button{
-  position: sticky;
-  top: 10px;
-  z-index: 5;
+  position: static; /* non-sticky */
+  top: auto;
+  z-index: auto;
 
   width: auto;
   display: inline-block;
@@ -116,7 +116,6 @@ button:hover{ background: var(--af-blue-2); }
   border-color: rgba(255,255,255,.22);
   box-shadow: var(--shadow);
 }
-
 /* Cards / output */
 .card, #result, #winchResult, #psiResult, #loadShiftResult, #approachResult, #vehicleCgResult{
   margin-top: 12px;
@@ -321,28 +320,38 @@ button:hover{ background: var(--af-blue-2); }
 .ptr-indicator.ready{ background: rgba(31, 111, 139, 0.95); }
 
 
-/* ===== Restraint sticky results bar: fixed + mobile-friendly =====
-   Why: position: sticky only sticks within its parent/scroll context; on iOS it can "let go"
-   when you scroll past the containing block. Fixed keeps it visible while you work in Actual.
-*/
+
+/* ===== Restraint fixed Totals bar (always visible while adding Actual) ===== */
 #stickySummary.sticky-summary{
   position: fixed;
   left: 12px;
   right: 12px;
   bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
   top: auto;
+
   margin: 0;
   z-index: 2000;
+
+  /* solid background to avoid iOS blur/ghosting */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(10, 14, 20, 0.95);
+
+  isolation: isolate;
+  contain: paint;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
-/* Give page room so the fixed bar doesn't cover inputs/buttons */
+/* Room so fixed bar doesn't cover fields/buttons */
 body.restraint-page{
-  padding-bottom: 140px;
+  padding-bottom: 160px;
 }
 
-/* Compact, non-overlapping chip layout */
+/* Compact chips (no overlap) */
+#stickySummary .sticky-left{ display:none; }
 #stickySummary .sticky-chips{
-  display: flex;
+  display:flex;
   gap: 8px;
   flex: 1;
   align-items: stretch;
@@ -352,26 +361,11 @@ body.restraint-page{
   min-width: 0;
   padding: 8px 6px;
 }
-#stickySummary .chip-top{
-  font-size: 11px;
-}
+#stickySummary .chip-top{ font-size: 11px; }
 #stickySummary .chip-bot{
   font-size: 11px;
-  letter-spacing: .01em;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-#stickySummary .sticky-left{
-  display: none; /* save horizontal space */
-}
-#stickySummary .sticky-jump{
   white-space: nowrap;
 }
-
-/* Extra safety for iOS repaint */
-#stickySummary.sticky-summary{
-  isolation: isolate;
-  contain: paint;
-  transform: translateZ(0);
-  will-change: transform;
-}
+#stickySummary .sticky-jump{ white-space: nowrap; }

@@ -7,7 +7,47 @@
   <link rel="stylesheet" href="../style.css" />
   <script src="../common.js" defer></script>
   <button type="button" onclick="goHome()" class="home-button">🏠 Home</button>
-  <div id="stickySummary" class="sticky-summary hidden"></div>
+
+  <style>
+    /* Restraint results: compact status grid (instead of floating totals bar) */
+    .status-grid{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0 8px;
+    }
+    .status-card{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      border-radius: 14px;
+      padding: 10px 10px;
+      text-align: center;
+    }
+    .status-card.pass{ border-color: rgba(80, 220, 140, .45); }
+    .status-card.fail{ border-color: rgba(255, 90, 90, .55); }
+    .status-top{
+      font-weight: 900;
+      letter-spacing: .04em;
+      opacity: .95;
+      font-size: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      white-space: nowrap;
+    }
+    .status-bot{
+      margin-top: 4px;
+      font-weight: 900;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    @media (max-width: 420px){
+      .status-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .status-bot{ font-size: 13px; }
+    }
+  </style>
+
 </head>
 <body class="restraint-page">
   
@@ -77,10 +117,8 @@
   <button id="multiplierToggle" class="btn-outline" onclick="toggleMultiplier()">×2 OFF</button>
 </div>
 
-<div id="actualActions" class="actual-actions">
-    <button onclick="calculateActualRestraint()">Add Actual Restraint</button>
+<button onclick="calculateActualRestraint()">Add Actual Restraint</button>
 <button class="btn-danger" onclick="clearAll()">Clear All</button>
-  </div>
 
   <script>
     // ---------- State ----------
@@ -108,20 +146,6 @@
     
 
     // ---------- Sticky Totals Bar ----------
-    function updateStickySummary() {
-      const el = document.getElementById("stickySummary");
-      if (!el) return;
-
-      // Show once we have either requirements set or any actual totals entered
-      const anyActual = Object.values(totalRestraint || {}).some(v => (Number(v) || 0) > 0);
-      const reqSet = hasRequirementSet();
-
-      if (!reqSet && !anyActual) {
-        el.classList.add("hidden");
-        el.innerHTML = "";
-        return;
-      }
-
       const items = [
         { key: "FWD",       label: "FWD" },
         { key: "AFT",       label: "AFT" },
@@ -142,14 +166,13 @@
         const ok = act >= req;
         const rem = remaining(req, act);
         return `<div class="chip ${ok ? "pass" : "fail"}">
-          <div class="chip-top">${ok ? "✅" : "❌"} ${it.label}</div>
+          <div class="chip-top">${it.label}</div>
           <div class="chip-bot">${ok ? "OK" : ("REM " + rem.toLocaleString())}</div>
         </div>`;
       }).join("");
 
       el.innerHTML = `
         <div class="sticky-chips">${chips}</div>
-        <button type="button" class="sticky-toggle" id="stickyToggle" aria-label="Toggle totals">▾</button>
         <button type="button" class="sticky-jump" onclick="document.getElementById('result')?.scrollIntoView({behavior:'smooth', block:'start'})">Results</button>
       `;
       el.classList.remove("hidden");
@@ -161,8 +184,7 @@
       const err = document.getElementById('factorError');
       custom.style.display = (sel === 'custom') ? 'block' : 'none';
       if (sel !== 'custom') { custom.value = ''; err.style.display = 'none'; }
-      updateStickySummary();
-    }
+}
 
     function getSelectedFactor() {
       const selVal = document.getElementById('restraintFactor').value;
@@ -183,16 +205,36 @@
 
     function toggleMultiplier() {
       doubleMultiplier = !doubleMultiplier;
-      updateStickySummary();
-
-      const btn = document.getElementById("multiplierToggle");
+const btn = document.getElementById("multiplierToggle");
       btn.textContent = doubleMultiplier ? "×2 ON" : "×2 OFF";
       btn.classList.toggle("active", doubleMultiplier);
     }
 
     // Build display (tight “column” totals)
     function buildDisplay(extraMessageHtml = "") {
-      const reqSet = hasRequirementSet();
+      
+
+      const statusItems = [
+        { key: "FWD",       label: "FWD" },
+        { key: "AFT",       label: "AFT" },
+        { key: "LAT-LEFT",  label: "LAT-L" },
+        { key: "LAT-RIGHT", label: "LAT-R" },
+        { key: "VERT",      label: "VERT" }
+      ];
+
+      const statusGridHtml = (hasRequirementSet() ? statusItems.map(it => {
+        const act = Number(totalRestraint[it.key] || 0);
+        const req = Number(getRequiredForDirection(it.key) || 0);
+        const ok  = act >= req;
+        const rem = remaining(req, act);
+        return `
+          <div class="status-card ${ok ? 'pass' : 'fail'}">
+            <div class="status-top">${it.label} <span class="status-emoji">${ok ? '✅' : '❌'}</span></div>
+            <div class="status-bot">REM ${rem.toLocaleString()}</div>
+          </div>`;
+      }).join('') : '');
+
+const reqSet = hasRequirementSet();
 
       const rows = [
         { key: "FWD",       label: "FWD" },
@@ -209,7 +251,8 @@
       }
 
       html += `<div class="totals-table">`;
-      html += `<div class="totals-header">Current Actual Totals:</div>`;
+      html += `<div class="totals-header">Current Actual Totals:
+          ${statusGridHtml ? `<div class="status-grid">${statusGridHtml}</div>` : ``}</div>`;
 
       rows.forEach(r => {
         const act = totalRestraint[r.key] || 0;
@@ -260,8 +303,7 @@
       const weight = parseFloat(document.getElementById("cargoWeight").value);
       if (!Number.isFinite(weight) || weight <= 0) {
         document.getElementById("result").innerHTML =
-      updateStickySummary();
- "Enter a valid cargo weight.";
+"Enter a valid cargo weight.";
         return;
       }
 
@@ -291,8 +333,7 @@ VERT: ${requiredRestraint.VERT} lbs`;
 
       if (!Number.isFinite(actual) || actual <= 0 || !Number.isFinite(effective) || effective <= 0) {
         document.getElementById("result").innerHTML =
-      updateStickySummary();
- buildDisplay("Enter valid actual and effective lengths.");
+buildDisplay("Enter valid actual and effective lengths.");
         return;
       }
 
@@ -334,62 +375,12 @@ VERT: ${requiredRestraint.VERT} lbs`;
       tgl.classList.remove("active");
 
       document.getElementById("result").innerHTML =
-      updateStickySummary();
- "";
+"";
     }
 
     // ---------- Init ----------
     document.getElementById('restraintFactor').addEventListener('change', onFactorChange);
     onFactorChange();
-  
-
-
-    function setupStickyBehavior() {
-      const sticky = document.getElementById('stickySummary');
-      if (!sticky) return;
-
-      // Restore user's preference
-      const saved = localStorage.getItem('restraintStickyCompact');
-      if (saved === '1') sticky.classList.add('compact');
-
-      // Toggle button (created by updateStickySummary)
-      sticky.addEventListener('click', (e) => {
-        const t = e.target;
-        if (t && t.id === 'stickyToggle') {
-          e.preventDefault();
-          sticky.classList.toggle('compact');
-          localStorage.setItem('restraintStickyCompact', sticky.classList.contains('compact') ? '1' : '0');
-          // Flip caret
-          t.textContent = sticky.classList.contains('compact') ? '▸' : '▾';
-        }
-      });
-
-      // Auto-compact when the actual action buttons are visible (prevents blocking)
-      const actions = document.getElementById('actualActions');
-      if (actions && 'IntersectionObserver' in window) {
-        const io = new IntersectionObserver(([entry]) => {
-          if (!sticky) return;
-          // If user explicitly expanded, don't force-compact
-          const userCompact = localStorage.getItem('restraintStickyCompact') === '1';
-          if (userCompact) return;
-
-          if (entry.isIntersecting) {
-            sticky.classList.add('compact');
-          } else {
-            sticky.classList.remove('compact');
-          }
-
-          // Keep caret state consistent when present
-          const btn = document.getElementById('stickyToggle');
-          if (btn) btn.textContent = sticky.classList.contains('compact') ? '▸' : '▾';
-        }, { threshold: 0.25 });
-
-        io.observe(actions);
-      }
-    }
-
-
-document.addEventListener('DOMContentLoaded', () => { setupStickyBehavior(); });
-</script>
+  </script>
 </body>
 </html>

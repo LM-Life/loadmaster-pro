@@ -406,3 +406,11 @@ body.restraint-page{
   /* Extra room above the fixed bar when you reach the buttons */
   margin-bottom: 140px;
 }
+
+/* Prevent iOS input zoom */
+input,
+select,
+textarea,
+button {
+  font-size: 16px;
+}

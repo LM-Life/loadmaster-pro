@@ -1,22 +1,22 @@
 /* Loadmaster Pro — unified theme (AF Blue / White / Black) */
 
 :root{
-  --bg: #0b0f10;
-  --card: #151b1c;
-  --card-2: #1d2526;
-  --border: rgba(233,241,241,.14);
+  --bg: #0b0f14;
+  --card: #111a24;
+  --card-2:#0f1620;
+  --border: rgba(255,255,255,.14);
 
-  --af-blue: #29d391;
-  --af-blue-2: #1bb67b;
+  --af-blue:#1f6f8b;
+  --af-blue-2:#2a86a8;
 
-  --text: #e9f1f1;
-  --muted: rgba(233,241,241,.70);
+  --text:#ffffff;
+  --muted: rgba(255,255,255,.75);
 
-  --good: #29d391;
-  --warn: #e3b04d;
-  --bad: #e34d5d;
+  --good:#18a558;
+  --warn:#ffb020;
+  --bad:#db4455;
 
-  --shadow: 0 10px 30px rgba(0,0,0,.55);
+  --shadow: 0 8px 20px rgba(0,0,0,.35);
 }
 
 /* Base */
@@ -440,81 +440,97 @@ button {
 }
 
 /* =========================
-   P1-inspired theme (dark + tactical green)
-   Override layer (updated to match existing selectors)
+   P1-inspired theme (v3) — green primary + orange clear
+   Strong override layer (uses !important to beat legacy blue styles)
    ========================= */
 
 :root{
-  --accent: #29d391;
-  --accent-2: #1bb67b;
-  --danger: #e34d5d;
+  /* P1 ChatOps green + orange action */
+  --p1-green: #29d391;
+  --p1-green-2: #1bb67b;
+  --p1-orange: #f4a340;
+  --p1-orange-2: #e8922f;
+
+  /* Remap existing palette vars so legacy rules flip automatically */
+  --af-blue: var(--p1-green);
+  --af-blue-2: var(--p1-green-2);
+
+  /* Optional status vars */
+  --bad: var(--p1-orange);
 }
 
-/* Background */
+/* Background: green → orange ambience */
 html, body{
   background:
-    radial-gradient(1200px 600px at 20% 0%, rgba(41,211,145,.10), transparent 55%),
-    radial-gradient(900px 500px at 90% 10%, rgba(41,211,145,.06), transparent 60%),
-    var(--bg);
-  color: var(--text);
+    radial-gradient(1100px 700px at 15% 0%, rgba(41,211,145,.18), transparent 58%),
+    radial-gradient(900px 650px at 85% 105%, rgba(244,163,64,.16), transparent 60%),
+    linear-gradient(180deg, rgba(41,211,145,.06), rgba(244,163,64,.05)),
+    var(--bg) !important;
 }
 
-/* Optional thin green strip at top */
-.p1-topstrip{
-  height: 10px;
-  background: var(--accent);
-  box-shadow: 0 0 0 1px rgba(0,0,0,.35) inset;
+/* Primary buttons: force green (covers plain <button> as well) */
+button,
+.btn,
+.primary-btn,
+.btn-primary,
+button.primary{
+  background: var(--p1-green) !important;
+  color: #06110c !important;
+  border-color: rgba(0,0,0,.35) !important;
+}
+button:hover,
+.btn:hover,
+.primary-btn:hover,
+.btn-primary:hover,
+button.primary:hover{
+  background: var(--p1-green-2) !important;
 }
 
-/* Cards / outputs: keep your existing structure but P1-ify the left border */
-.card, #result, #winchResult, #psiResult, #loadShiftResult, #approachResult, #vehicleCgResult{
-  border-left-color: var(--accent);
+/* Secondary / outline buttons (if used) */
+.btn-secondary,
+.btn-outline,
+.secondary-btn,
+button.secondary{
+  background: transparent !important;
+  color: var(--p1-green) !important;
+  border-color: rgba(41,211,145,.55) !important;
+}
+.btn-secondary:hover,
+.btn-outline:hover,
+.secondary-btn:hover,
+button.secondary:hover{
+  background: rgba(41,211,145,.12) !important;
 }
 
-/* Inputs: green focus */
-input:focus, select:focus, textarea:focus{
-  border-color: rgba(41,211,145,.70);
-  box-shadow: 0 0 0 3px rgba(41,211,145,.20);
+/* Clear buttons: force orange */
+.btn-danger,
+button.danger,
+.danger-btn,
+.clear-btn,
+button.clear,
+#clearAllBtn{
+  background: var(--p1-orange) !important;
+  color: #120a02 !important;
+  border-color: rgba(0,0,0,.35) !important;
+}
+.btn-danger:hover,
+button.danger:hover,
+.danger-btn:hover,
+.clear-btn:hover,
+button.clear:hover,
+#clearAllBtn:hover{
+  background: var(--p1-orange-2) !important;
 }
 
-/* Buttons: make the default buttons solid green (your app uses plain button tags) */
-button{
-  background: var(--accent);
-  color: #06110c;
-  border-color: rgba(0,0,0,.35);
-}
-button:hover{ background: var(--accent-2); }
-
-/* Secondary stays outline */
-.btn-secondary{
-  background: transparent;
-  color: var(--accent);
-  border-color: rgba(41,211,145,.55);
-}
-.btn-secondary:hover{ background: rgba(41,211,145,.12); }
-
-/* Danger keeps red */
-.btn-danger{
-  background: var(--danger);
-  color: #120509;
-  border-color: rgba(0,0,0,.35);
-}
-
-/* Home button: subtle green glass */
+/* Home button stays subtle */
 .home-button, .back-button{
-  background: rgba(41,211,145,.12);
-  color: var(--text);
-  border-color: rgba(41,211,145,.45);
-}
-.home-button:hover, .back-button:hover{
-  background: rgba(41,211,145,.18);
+  background: rgba(41,211,145,.12) !important;
+  color: var(--text) !important;
+  border-color: rgba(41,211,145,.45) !important;
 }
 
-/* Version banner pills and update button */
-.version-pill{ background: var(--accent); color:#06110c; }
-.btn-update{ background: var(--accent); color:#06110c; border-color: rgba(0,0,0,.35); }
-.btn-update:hover{ background: var(--accent-2); }
-
-/* Links */
-a{ color: var(--accent); }
-a:hover{ color: rgba(41,211,145,.85); }
+/* Inputs: green focus ring */
+input:focus, select:focus, textarea:focus{
+  border-color: rgba(41,211,145,.70) !important;
+  box-shadow: 0 0 0 3px rgba(41,211,145,.20) !important;
+}

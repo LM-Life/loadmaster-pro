@@ -133,11 +133,19 @@
     <button id="multiplierBtn" class="btn btn-multiplier off" onclick="toggleMultiplier()">×2 OFF</button>
   </div>
   <div>
-    <button class="btn btn-primary" onclick="calculateActualRestraint()">Add Restraint</button>
+    <button class="btn btn-primary" onclick="calculateActualRestraint()">Add Actual Restraint</button>
   </div>
 </div>
 
-<button class="btn-danger mt-1" onclick="clearAll()">Clear All</button>
+<!-- Undo + Clear -->
+<div class="grid-2 mt-1 actual-actions">
+  <div>
+    <button id="undoBtn" class="btn btn-secondary" onclick="undoLast()" disabled>Undo</button>
+  </div>
+  <div>
+    <button class="btn-danger" onclick="clearAll()">Clear All</button>
+  </div>
+</div>
 
   <script>
 
@@ -146,6 +154,7 @@
     let requiredRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 }; // LAT = per side requirement
     let totalRestraint = { FWD: 0, AFT: 0, "LAT-LEFT": 0, "LAT-RIGHT": 0, VERT: 0 };
     let doubleMultiplier = false;
+    let undoStack = []; // history of actual restraint adds
 
     // ---------- Helpers ----------
     function nl2br(s){ return (s || "").replace(/\n/g, "<br/>"); }
@@ -304,9 +313,31 @@ VERT: ${requiredRestraint.VERT} lbs`;
 
       totalRestraint[direction] += value;
       document.getElementById("result").innerHTML = buildDisplay();
+          undoStack.push({ direction, value });
+      const ub = document.getElementById("undoBtn");
+      if (ub) ub.disabled = undoStack.length === 0;
     }
 
-    function clearAll() {
+    
+    function undoLast() {
+      if (!undoStack.length) return;
+
+      const last = undoStack.pop();
+      if (last && last.direction in totalRestraint) {
+        totalRestraint[last.direction] = Math.max(0, (totalRestraint[last.direction] || 0) - last.value);
+      }
+
+      const ub = document.getElementById("undoBtn");
+      if (ub) ub.disabled = undoStack.length === 0;
+
+      document.getElementById("result").innerHTML = buildDisplay();
+    }
+
+function clearAll() {
+      undoStack = [];
+      const ub = document.getElementById("undoBtn");
+      if (ub) ub.disabled = true;
+
       // Clear inputs
       document.getElementById("cargoWeight").value = "";
       document.getElementById("actualLength").value = "";

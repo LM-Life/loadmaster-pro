@@ -1,6 +1,6 @@
 // Loadmaster Pro service-worker.js
 // NOTE: Bump CACHE_NAME every time you want users to get a fresh cache.
-const CACHE_NAME = "v2026.02.22-c63aa9f";
+const CACHE_NAME = "v2026.02.22-2a25975-1";
 
 const CORE_FILES = [
   "./",
@@ -15,13 +15,13 @@ const CORE_FILES = [
 
 const MODULE_FILES = [
   "./modules/approach.html",
+  "./modules/flight-time.html",
   "./modules/loadshift.html",
   "./modules/restraint.html",
   "./modules/sleeper.html",
   "./modules/tires_over_100psi.html",
   "./modules/vehiclecg.html",
   "./modules/winching.html"
-  "./modules/flight-time.html",
 ];
 
 self.addEventListener("install", (event) => {

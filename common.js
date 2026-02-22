@@ -11,6 +11,7 @@
   // ====== CHANGE THIS when you publish a new app release ======
   // Keep this in sync with service-worker CACHE_NAME (e.g., CACHE_NAME = "v1.11" -> APP_VERSION = "1.11")
 const APP_VERSION = "2026.02.22-255cd61";
+const APP_SEMVER = "1.31";
 
   // ---------- Home navigation ----------
   function resolveHomeHref() {
@@ -64,9 +65,21 @@ const APP_VERSION = "2026.02.22-255cd61";
 
   // ---------- Version banner (INDEX ONLY) ----------
   let cacheVersion = "—";
+  
+  function formatAppVersion(rawVersion) {
+    // rawVersion example: "2026.02.22-255cd61"
+    const [datePart] = rawVersion.split("-"); // strip git hash
+    const [year, month, day] = datePart.split(".");
+  
+    const prettyDate = new Date(Date.UTC(year, month - 1, day))
+      .toLocaleDateString(undefined, { month: "short", day: "2-digit" });
+  
+    // vX.XX  MMM DD
+    return `v${APP_SEMVER}  ${prettyDate}`;
+  }
 
   function formatBanner() {
-    return `App: v${APP_VERSION}  |  Cache: ${cacheVersion}`;
+    return `App: ${formatAppVersion(APP_VERSION)}  |  Cache: ${cacheVersion}`;
   }
 
   function updateVersionBanner() {
@@ -94,20 +107,6 @@ const APP_VERSION = "2026.02.22-255cd61";
       navigator.serviceWorker.ready
         .then(() => send())
         .catch(() => {});
-    }
-    
-    function formatAppVersion(rawVersion) {
-      // rawVersion example: "2026.02.22-a1b2c3d"
-      const [datePart] = rawVersion.split("-"); // strip git hash
-      const [year, month, day] = datePart.split(".");
-    
-      const prettyDate = new Date(Date.UTC(year, month - 1, day))
-        .toLocaleDateString(undefined, {
-          month: "short",
-          day: "2-digit"
-        });
-    
-      return `v1.31  ${prettyDate}`;
     }
   }
 

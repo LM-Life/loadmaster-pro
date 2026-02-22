@@ -1,0 +1,40 @@
+name: Auto-bump App & Cache version
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute version
+        id: ver
+        run: |
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          DATE=$(date -u +"%Y.%m.%d")
+          echo "VERSION=${DATE}-${SHORT_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Patch version strings
+        run: |
+          VERSION="${{ steps.ver.outputs.VERSION }}"
+
+          # common.js (allow leading whitespace)
+          sed -i "s/^[[:space:]]*const APP_VERSION = \".*\";/const APP_VERSION = \"${VERSION}\";/" common.js
+
+          # service-worker.js (allow leading whitespace)
+          sed -i "s/^[[:space:]]*const CACHE_NAME = \".*\";/const CACHE_NAME = \"v${VERSION}\";/" service-worker.js
+
+      - name: Commit and push
+        run: |
+          VERSION="${{ steps.ver.outputs.VERSION }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add common.js service-worker.js
+          git commit -m "Auto bump version ${VERSION}" || exit 0
+          git push

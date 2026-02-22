@@ -565,3 +565,22 @@ input:focus, select:focus, textarea:focus{
     grid-column: 1 / -1;
   }
 }
+
+@media (max-width: 768px) {
+  .restraint-module .grid-2{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .restraint-module input,
+  .restraint-module select,
+  .restraint-module button{
+    width: 100%;
+  }
+
+  /* Make sure Clear All spans both columns if it's inside a grid row */
+  .restraint-module .clear-row{
+    grid-column: 1 / -1;
+  }
+}

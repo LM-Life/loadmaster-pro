@@ -95,6 +95,20 @@ const APP_VERSION = "2026.02.22-f7cd09d";
         .then(() => send())
         .catch(() => {});
     }
+    
+    function formatAppVersion(rawVersion) {
+      // rawVersion example: "2026.02.22-a1b2c3d"
+      const [datePart] = rawVersion.split("-"); // strip git hash
+      const [year, month, day] = datePart.split(".");
+    
+      const prettyDate = new Date(Date.UTC(year, month - 1, day))
+        .toLocaleDateString(undefined, {
+          month: "short",
+          day: "2-digit"
+        });
+    
+      return `v1.31  ${prettyDate}`;
+    }
   }
 
   // ---------- SW update flow (INDEX ONLY) ----------

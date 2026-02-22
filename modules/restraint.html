@@ -312,6 +312,14 @@ VERT: ${requiredRestraint.VERT} lbs`;
     }
   </style>
 
+
+  <style>
+    /* LM_RESTRAINT_MOBILE_LABEL_TIGHTEN: tighter labels on small screens */
+    @media (max-width: 430px) {
+      .restraint-module label { font-size: 16px; }
+    }
+  </style>
+
 </head>
 <body>
   
@@ -330,7 +338,7 @@ VERT: ${requiredRestraint.VERT} lbs`;
 <!-- Actual Restraint -->
 <h2>Actual Restraint Calculator</h2>
 
-<div class="grid-2">
+<div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
   <div>
     <label for="actualLength">Actual Length (in):</label>
     <input id="actualLength" class="form-control" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 100" />
@@ -342,7 +350,7 @@ VERT: ${requiredRestraint.VERT} lbs`;
   </div>
 </div>
 
-<div class="grid-2">
+<div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
   <div>
     <label for="restraintDirection">Direction:</label>
     <select id="restraintDirection" class="form-control">

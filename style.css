@@ -534,3 +534,34 @@ input:focus, select:focus, textarea:focus{
   border-color: rgba(41,211,145,.70) !important;
   box-shadow: 0 0 0 3px rgba(41,211,145,.20) !important;
 }
+
+/* =========================
+   Restraint – compact mobile layout
+   ========================= */
+
+@media (max-width: 768px) {
+
+  /* Only affect the restraint module */
+  .restraint-module .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* Make inputs + selects fill their grid cells */
+  .restraint-module input,
+  .restraint-module select,
+  .restraint-module button {
+    width: 100%;
+  }
+
+  /* Action row spacing */
+  .restraint-module .actual-actions {
+    margin-top: 8px;
+  }
+
+  /* Clear All stays full width */
+  .restraint-module .clear-row {
+    grid-column: 1 / -1;
+  }
+}

@@ -440,12 +440,15 @@ button {
 }
 
 /* =========================
-   P1-inspired theme (v3) — green primary + orange clear
+   P1-inspired theme (v4)
+   - Primary buttons: P1 ChatOps green
+   - Clear/Destructive: P1 orange
+   - Background: green → orange ambience
+   - Multiplier toggle: outline when OFF, solid when ON
    Strong override layer (uses !important to beat legacy blue styles)
    ========================= */
 
 :root{
-  /* P1 ChatOps green + orange action */
   --p1-green: #29d391;
   --p1-green-2: #1bb67b;
   --p1-orange: #f4a340;
@@ -454,17 +457,14 @@ button {
   /* Remap existing palette vars so legacy rules flip automatically */
   --af-blue: var(--p1-green);
   --af-blue-2: var(--p1-green-2);
-
-  /* Optional status vars */
-  --bad: var(--p1-orange);
 }
 
 /* Background: green → orange ambience */
 html, body{
   background:
-    radial-gradient(1100px 700px at 15% 0%, rgba(41,211,145,.18), transparent 58%),
-    radial-gradient(900px 650px at 85% 105%, rgba(244,163,64,.16), transparent 60%),
-    linear-gradient(180deg, rgba(41,211,145,.06), rgba(244,163,64,.05)),
+    radial-gradient(1100px 700px at 15% 0%, rgba(41,211,145,.20), transparent 58%),
+    radial-gradient(900px 650px at 85% 105%, rgba(244,163,64,.18), transparent 60%),
+    linear-gradient(180deg, rgba(41,211,145,.06), rgba(244,163,64,.06)),
     var(--bg) !important;
 }
 
@@ -486,7 +486,21 @@ button.primary:hover{
   background: var(--p1-green-2) !important;
 }
 
-/* Secondary / outline buttons (if used) */
+/* Multiplier toggle (Restraint ×2) */
+.btn-multiplier.off{
+  background: transparent !important;
+  color: var(--p1-green) !important;
+  border: 2px solid rgba(41,211,145,.55) !important;
+}
+.btn-multiplier.on{
+  background: var(--p1-green) !important;
+  color: #06110c !important;
+  border: 2px solid rgba(0,0,0,.35) !important;
+}
+.btn-multiplier.on:hover{ background: var(--p1-green-2) !important; }
+.btn-multiplier.off:hover{ background: rgba(41,211,145,.12) !important; }
+
+/* Secondary stays outline */
 .btn-secondary,
 .btn-outline,
 .secondary-btn,
@@ -507,26 +521,27 @@ button.secondary:hover{
 button.danger,
 .danger-btn,
 .clear-btn,
-button.clear,
-#clearAllBtn{
+button.clear{
   background: var(--p1-orange) !important;
-  color: #120a02 !important;
+  color: #140a00 !important;
   border-color: rgba(0,0,0,.35) !important;
 }
 .btn-danger:hover,
 button.danger:hover,
 .danger-btn:hover,
 .clear-btn:hover,
-button.clear:hover,
-#clearAllBtn:hover{
+button.clear:hover{
   background: var(--p1-orange-2) !important;
 }
 
-/* Home button stays subtle */
+/* Home button */
 .home-button, .back-button{
   background: rgba(41,211,145,.12) !important;
   color: var(--text) !important;
   border-color: rgba(41,211,145,.45) !important;
+}
+.home-button:hover, .back-button:hover{
+  background: rgba(41,211,145,.18) !important;
 }
 
 /* Inputs: green focus ring */
@@ -534,10 +549,6 @@ input:focus, select:focus, textarea:focus{
   border-color: rgba(41,211,145,.70) !important;
   box-shadow: 0 0 0 3px rgba(41,211,145,.20) !important;
 }
-
-/* =========================
-   Restraint – compact mobile layout
-   ========================= */
 
 @media (max-width: 768px) {
 

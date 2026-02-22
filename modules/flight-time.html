@@ -5,100 +5,141 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Loadmaster Pro | Flight Time</title>
   <link rel="stylesheet" href="../style.css">
+  
   <style>
+    /* Flight Time module: keep logic, align UI with Loadmaster Pro theme */
     .container { max-width: 820px; margin: 0 auto; padding: 16px; }
-    .card { border: 1px solid rgba(255,255,255,0.14); border-radius: 16px; padding: 14px; background: rgba(255,255,255,0.05); }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 640px){ .grid { grid-template-columns: 1fr; } }
-    label { display:block; font-weight: 700; margin-bottom: 6px; }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.06);
-      color: #fff;
-      font-size: 16px;
-      box-sizing: border-box;
+
+    .module-title{
+      margin: 10px 0 14px;
+      font-size: 34px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-weight: 900;
     }
-    button { font-weight: 800; cursor: pointer; }
-    .row { display:flex; gap:10px; margin-top:12px; flex-wrap: wrap; }
-    .row button { flex: 1 1 180px; }
-    .result { margin-top: 12px; font-size: 18px; font-weight: 900; }
-    .subtle { opacity:.85; font-size:13px; margin-top:8px; line-height: 1.35; }
-    .error { opacity: 1; font-weight: 800; }
-    .badge { display:inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); font-size: 12px; opacity: .9; }
-      .time-row { display: flex; gap: 10px; align-items: center; }
+
+    .card {
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.04);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 640px){ .grid-2 { grid-template-columns: 1fr; } }
+
+    label { display:block; font-weight: 800; margin-bottom: 6px; letter-spacing: .02em; }
+
+    /* Don't fight global input/button styles; just ensure comfortable sizing */
+    input { min-height: 48px; }
+
+    .time-row { display: flex; gap: 10px; align-items: center; }
     .time-row input { flex: 1 1 auto; }
-    .mini { width: auto; flex: 0 0 auto; padding: 10px 12px; border-radius: 12px; font-weight: 900; }
-    @media (max-width: 640px){
-      .time-row { flex-direction: row; }
-      .mini { padding: 10px 10px; }
+
+    .mini {
+      width: auto;
+      flex: 0 0 auto;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 900;
+      white-space: nowrap;
     }
 
-/* One-hand iPhone optimization */
-.sticky-actions{
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin-top: 14px;
-  padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
-  background: rgba(15,15,18,0.92);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255,255,255,0.12);
-  border-radius: 16px 16px 0 0;
-}
-.sticky-actions .row { margin-top: 0; }
-.sticky-actions button{ min-height: 48px; }
-.mini{ min-height: 44px; }
-input{ min-height: 48px; }
-h2{ margin: 6px 0 10px; }
-.container{ padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
-/* Keep primary buttons closest to thumb on the right (common right-hand use) */
-.row.primary { justify-content: space-between; }
-.row.primary button:nth-child(1){ order: 2; } /* Calculate */
-.row.primary button:nth-child(2){ order: 1; } /* Clear */
-.row.primary button:nth-child(3){ order: 3; } /* Home */
-/* Optional: slightly bigger text on small screens */
-@media (max-width: 430px){
-  .result{ font-size: 20px; }
-  .subtle{ font-size: 13px; }
-}
-/* Collapsible details for reduced scroll */
-details.conv { margin-top: 12px; }
-details.conv summary{
-  cursor: pointer;
-  list-style: none;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.05);
-  font-weight: 800;
-}
-details.conv summary::-webkit-details-marker{ display:none; }
-details.conv .conv-body{ padding: 10px 6px 2px; }
+    /* Result card (matches your restraint "totals boxes" vibe) */
+    .result-card{
+      margin-top: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(10,14,20,0.55);
+      padding: 14px;
+    }
+    .result-top{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .result-top .label{
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      opacity: .9;
+      font-size: 13px;
+    }
+    .result-main{
+      font-size: 44px;
+      font-weight: 950;
+      line-height: 1;
+      margin: 2px 0 6px;
+    }
+    .result-sub{
+      font-size: 14px;
+      opacity: .9;
+    }
 
-</style>
+    .badge { display:inline-block; padding: 2px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); font-size: 12px; opacity: .9; }
+
+    .helper{
+      margin-top: 10px;
+      font-size: 13px;
+      opacity: .9;
+      line-height: 1.35;
+    }
+    .error { opacity: 1; font-weight: 900; }
+
+    /* Actions: match restraint grid layout; Home is NOT sticky */
+    .actions{
+      margin-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.10);
+      padding-top: 14px;
+    }
+
+    .action-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .action-grid button{ width:100%; }
+    @media (max-width: 640px){
+      .action-grid{ grid-template-columns: 1fr; }
+      .mini{ padding: 10px 10px; }
+    }
+
+    /* Collapsible details for reduced scroll */
+    details.conv { margin-top: 12px; }
+    details.conv summary{
+      cursor: pointer;
+      list-style: none;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      font-weight: 900;
+    }
+    details.conv summary::-webkit-details-marker{ display:none; }
+    details.conv .conv-body{ padding: 10px 6px 2px; }
+  </style>
+
 
 </head>
 <body>
 <div class="container">
-  <h2>Flight Time</h2>
+  <a class="home-button" href="../index.html">🏠 Home</a>
+  <h1 class="module-title">FLIGHT TIME CALCULATOR</h1>
 
   <div class="card">
-    <div class="grid">
+    <div class="grid-2">
   <div>
     <label for="startTime">Takeoff (Z)</label>
     <div class="time-row">
-      <input id="startTime" type="text" inputmode="numeric" pattern="^([01]\d|2[0-3]):[0-5]\d$" placeholder="HH:MM (24h Z)" value="12:00" />
+      <input id="startTime" type="text" inputmode="numeric" pattern="^([01]\d|2[0-3]):[0-5]\d$" placeholder="HH:MM (24h Z)" value="12:00"  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <button class="mini" type="button" onclick="setNowZ('startTime')" aria-label="Set Takeoff to current Zulu time">Now (Z)</button>
     </div>
   </div>
   <div>
     <label for="endTime">Landing (Z)</label>
     <div class="time-row">
-      <input id="endTime" type="text" inputmode="numeric" pattern="^([01]\d|2[0-3]):[0-5]\d$" placeholder="HH:MM (24h Z)" value="14:55" />
+      <input id="endTime" type="text" inputmode="numeric" pattern="^([01]\d|2[0-3]):[0-5]\d$" placeholder="HH:MM (24h Z)" value="14:55"  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <button class="mini" type="button" onclick="setNowZ('endTime')" aria-label="Set Landing to current Zulu time">Now (Z)</button>
     </div>
   </div>
@@ -106,17 +147,20 @@ details.conv .conv-body{ padding: 10px 6px 2px; }
 
 <div id="zuluClock" class="subtle" style="margin-top:10px;"></div>
 
+    <div class="result-card" aria-live="polite">
+      <div class="result-top">
+        <div class="label">Flight Time</div>
+        <div class="badge">Zulu • HH.MM</div>
+      </div>
+      <div id="resultMain" class="result-main">0.0</div>
+      <div id="resultSub" class="result-sub">Elapsed: —</div>
+      <div id="note" class="helper"></div>
+      <div id="rollover" class="helper" style="font-weight:900;"></div>
+      <div id="legs" class="helper"></div>
+    </div>
 
-    
-    <div id="result" class="result">Flight Time: 0.0</div>
-    <div id="details" class="subtle"></div>
-    <div id="note" class="subtle"></div>
-    <div id="legs" class="subtle" style="margin-top:10px;"></div>
-    <div id="rollover" class="subtle" style="margin-top:6px;font-weight:800;"></div>
 
-
-
-    <div class="subtle"><span class="badge">Time Format</span> 24‑hour clock (HH:MM) in Zulu only.</div>
+    <div class="helper"><span class="badge">Time Format</span> 24‑hour clock (HH:MM) in Zulu only.</div>
 
     <details class="conv">
   <summary>Minutes → Decimal Conversion (TO table)</summary>
@@ -125,22 +169,41 @@ details.conv .conv-body{ padding: 10px 6px 2px; }
   </div>
 </details>
 
-<div class="sticky-actions" role="region" aria-label="Actions">
-  <div class="row primary">
-  <button type="button" onclick="calc()">Calculate</button>
-  <button type="button" onclick="clearAll()">Clear</button>
-  <button type="button" onclick="location.href='../index.html'">Home</button>
-</div>
-  <div class="row" style="margin-top:10px;">
-    <button type="button" onclick="addLeg()">Add Leg</button>
-    <button type="button" onclick="resetLegs()">Reset Legs</button>
-  </div>
-</div>
+
+    <div class="actions" role="region" aria-label="Actions">
+      <div class="action-grid">
+        <button type="button" onclick="calc()">Calculate</button>
+        <button type="button" onclick="clearAll()">Clear</button>
+      </div>
+
+      <div class="action-grid" style="margin-top:12px;">
+        <button type="button" onclick="addLeg()">Add Leg</button>
+        <button type="button" onclick="resetLegs()">Reset Legs</button>
+      </div>
+    </div>
+
 
   </div>
+</div>
 </div>
 
 <script>
+  
+  // LM_NUMERIC_FOCUS_SCROLL: smooth focus scroll for numeric inputs (iPhone keyboard)
+  document.addEventListener("focusin", (e) => {
+    const el = e.target;
+    if (!(el instanceof HTMLInputElement)) return;
+    const im = (el.getAttribute("inputmode") || "").toLowerCase();
+    if (im !== "numeric" && im !== "decimal") return;
+    setTimeout(() => {
+      try {
+        el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+      } catch(_) {
+        el.scrollIntoView();
+      }
+    }, 250);
+  });
+
   // Conversion table from your photo
   function convertMinutes(min){
     // min: 0-60
@@ -176,18 +239,14 @@ details.conv .conv-body{ padding: 10px 6px 2px; }
     const s = parseHHMM(document.getElementById("startTime").value);
     const e = parseHHMM(document.getElementById("endTime").value);
 
-    const resultEl  = document.getElementById("result");
-    const detailsEl = document.getElementById("details");
-    const noteEl    = document.getElementById("note");
-
-    detailsEl.classList.remove("error");
-    noteEl.classList.remove("error");
-
-    if(!s || !e){
-      resultEl.textContent = "Flight Time: —";
-      detailsEl.textContent = "Enter times in HH:MM format.";
-      detailsEl.classList.add("error");
+    const resultEl  = document.getElementById("resultMain");    const noteEl    = document.getElementById("note");    noteEl.classList.remove("error");
+    const subEl = document.getElementById("resultSub");
+if(!s || !e){
+      resultEl.textContent = "—";
+      const subEl = document.getElementById("resultSub");
+      if(subEl) subEl.textContent = "Enter times in HH:MM format.";
       noteEl.textContent = "";
+      noteEl.classList.add("error");
       return;
     }
 
@@ -208,13 +267,14 @@ details.conv .conv-body{ padding: 10px 6px 2px; }
     }
 
     const total = (hours + (conv.dec || 0)).toFixed(1);
-    resultEl.textContent = "Flight Time: " + total;
+    resultEl.textContent = total;
 
     const rolloverEl=document.getElementById('rollover');
     rolloverEl.textContent = end < start ? '+1 DAY (UTC rollover)' : '';
 
-    detailsEl.textContent = `Elapsed: ${hours - (conv.addHour ? 1 : 0)}:${String(mins).padStart(2,'0')} (H:MM)`;
-    if(conv.addHour){
+    const subEl2 = document.getElementById("resultSub");
+    if(subEl2) subEl2.textContent = `Elapsed: ${hours - (conv.addHour ? 1 : 0)}:${String(mins).padStart(2,"0")} (H:MM)`;
+if(conv.addHour){
       noteEl.textContent = "Minutes 58–60 round to next hour (+1.0).";
     } else {
       noteEl.textContent = `Minutes ${mins} → ${conv.band}`;
@@ -294,10 +354,12 @@ function renderLegs(){
   function clearAll(){
     document.getElementById("startTime").value = "00:00";
     document.getElementById("endTime").value = "00:00";
-    document.getElementById("result").textContent = "Flight Time: 0.0";
-    document.getElementById("details").textContent = "";
-    document.getElementById("note").textContent = "";
-  }
+    document.getElementById("resultMain").textContent = "0.0";
+    const subEl = document.getElementById("resultSub");
+    if(subEl) subEl.textContent = "Elapsed: —";    document.getElementById("note").textContent = "";
+    document.getElementById("rollover").textContent = "";
+    document.getElementById("legs").textContent = "";
+}
 
   // Auto-calc on change for convenience
   ["startTime","endTime"].forEach(id => {

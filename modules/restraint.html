@@ -127,13 +127,17 @@
 />
 <div id="factorError" style="color:#f66; font-size:.95rem; display:none;"></div>
 
-<div class="center mt-1">
-  <button id="multiplierBtn" class="btn btn-multiplier off" onclick="toggleMultiplier()">×2 OFF</button>
-
+<!-- Actions -->
+<div class="grid-2 mt-1 actual-actions">
+  <div>
+    <button id="multiplierBtn" class="btn btn-multiplier off" onclick="toggleMultiplier()">×2 OFF</button>
+  </div>
+  <div>
+    <button class="btn btn-primary" onclick="calculateActualRestraint()">Add Actual Restraint</button>
+  </div>
 </div>
 
-<button onclick="calculateActualRestraint()">Add Actual Restraint</button>
-<button class="btn-danger" onclick="clearAll()">Clear All</button>
+<button class="btn-danger mt-1" onclick="clearAll()">Clear All</button>
 
   <script>
 

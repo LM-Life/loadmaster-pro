@@ -438,3 +438,114 @@ textarea,
 button {
   font-size: 16px;
 }
+
+/* =========================
+   P1-inspired theme (dark + tactical green)
+   Drop-in override layer
+   ========================= */
+
+:root{
+  /* Core */
+  --bg: #0b0f10;
+  --panel: #151b1c;
+  --panel-2: #1d2526;
+  --text: #e9f1f1;
+  --muted: rgba(233,241,241,.70);
+
+  /* Borders & shadows */
+  --border: rgba(233,241,241,.14);
+  --shadow: 0 10px 30px rgba(0,0,0,.55);
+
+  /* Accent (P1 green) */
+  --accent: #29d391;
+  --accent-2: #1bb67b;
+
+  /* Status */
+  --danger: #e34d5d;
+}
+
+/* App background */
+html, body{
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(41,211,145,.10), transparent 55%),
+    radial-gradient(900px 500px at 90% 10%, rgba(41,211,145,.06), transparent 60%),
+    var(--bg);
+  color: var(--text);
+}
+
+/* Optional thin green strip at the very top */
+.p1-topstrip{
+  height: 10px;
+  background: var(--accent);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.35) inset;
+}
+
+/* Cards / containers (best-effort selectors) */
+.card, .panel, .module, .container, .results-box, .result-box, .box{
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)) , var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+/* Inputs */
+input, select, textarea{
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.25) inset;
+}
+input::placeholder, textarea::placeholder{
+  color: rgba(233,241,241,.45);
+}
+input:focus, select:focus, textarea:focus{
+  outline: none;
+  border-color: rgba(41,211,145,.65);
+  box-shadow: 0 0 0 2px rgba(41,211,145,.20), 0 0 0 1px rgba(0,0,0,.35) inset;
+}
+
+/* Buttons */
+button, .btn{ border-radius: 14px; }
+
+/* Primary (solid green) */
+.btn-primary, button.primary, .primary-btn{
+  background: var(--accent);
+  color: #06110c;
+  border: 1px solid rgba(0,0,0,.35);
+  box-shadow: 0 8px 22px rgba(0,0,0,.35);
+}
+.btn-primary:hover, button.primary:hover, .primary-btn:hover{ background: var(--accent-2); }
+.btn-primary:active, button.primary:active, .primary-btn:active{ transform: translateY(1px); }
+
+/* Secondary (outline green) */
+.btn-outline, .btn-secondary, button.secondary, .secondary-btn{
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(41,211,145,.55);
+}
+.btn-outline:hover, .btn-secondary:hover, button.secondary:hover, .secondary-btn:hover{
+  background: rgba(41,211,145,.12);
+}
+
+/* Danger */
+.btn-danger, button.danger, .danger-btn{
+  background: rgba(227,77,93,.92);
+  color: #120509;
+  border: 1px solid rgba(0,0,0,.35);
+}
+
+/* Home button */
+.home-button, .back-button{
+  background: rgba(41,211,145,.12);
+  color: var(--text);
+  border: 1px solid rgba(41,211,145,.45);
+}
+.home-button:hover, .back-button:hover{ background: rgba(41,211,145,.18); }
+
+/* Links + dividers */
+a{ color: var(--accent); }
+a:hover{ color: rgba(41,211,145,.85); }
+hr, .divider{
+  border: none;
+  height: 1px;
+  background: rgba(233,241,241,.10);
+}

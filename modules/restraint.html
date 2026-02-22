@@ -237,9 +237,7 @@ VERT: ${requiredRestraint.VERT} lbs`;
     onFactorChange();
   
 </script>
-  <button onclick="goHome()" class="home-button">🏠 Home</button>
-
-  <style>
+<style>
     /* Restraint results: compact status grid */
     .status-grid{
       display: grid;
@@ -317,7 +315,8 @@ VERT: ${requiredRestraint.VERT} lbs`;
 </head>
 <body>
   
-  <h1>Restraint Calculator</h1>
+    <a class="home-button" href="../index.html">🏠 Home</a>
+<h1>Restraint Calculator</h1>
 
   <!-- Required Restraint -->
   <label for="cargoWeight">Cargo Weight (lbs):</label>
@@ -380,11 +379,11 @@ VERT: ${requiredRestraint.VERT} lbs`;
 <div id="factorError" style="color:#f66; font-size:.95rem; display:none;"></div>
 
 <div class="actual-actions">
-  <div class="grid-2 action-grid">
+  <div class="grid-2 action-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
     <button id="multiplierBtn" class="btn btn-multiplier off" onclick="toggleMultiplier()">×2 OFF</button>
     <button onclick="calculateActualRestraint()">Add Restraint</button>
   </div>
-  <div class="grid-2 action-grid">
+  <div class="grid-2 action-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
     <button id="undoBtn" class="btn-secondary" onclick="undoLast()" disabled>Undo</button>
     <button class="btn-danger" onclick="clearAll()">Clear All</button>
   </div>

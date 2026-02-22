@@ -35,6 +35,50 @@
       .time-row { flex-direction: row; }
       .mini { padding: 10px 10px; }
     }
+
+/* One-hand iPhone optimization */
+.sticky-actions{
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: 14px;
+  padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(15,15,18,0.92);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px 16px 0 0;
+}
+.sticky-actions .row { margin-top: 0; }
+.sticky-actions button{ min-height: 48px; }
+.mini{ min-height: 44px; }
+input{ min-height: 48px; }
+h2{ margin: 6px 0 10px; }
+.container{ padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
+/* Keep primary buttons closest to thumb on the right (common right-hand use) */
+.row.primary { justify-content: space-between; }
+.row.primary button:nth-child(1){ order: 2; } /* Calculate */
+.row.primary button:nth-child(2){ order: 1; } /* Clear */
+.row.primary button:nth-child(3){ order: 3; } /* Home */
+/* Optional: slightly bigger text on small screens */
+@media (max-width: 430px){
+  .result{ font-size: 20px; }
+  .subtle{ font-size: 13px; }
+}
+/* Collapsible details for reduced scroll */
+details.conv { margin-top: 12px; }
+details.conv summary{
+  cursor: pointer;
+  list-style: none;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.05);
+  font-weight: 800;
+}
+details.conv summary::-webkit-details-marker{ display:none; }
+details.conv .conv-body{ padding: 10px 6px 2px; }
+
 </style>
 
 </head>
@@ -63,31 +107,36 @@
 <div id="zuluClock" class="subtle" style="margin-top:10px;"></div>
 
 
-    <div class="row">
-      <button type="button" onclick="calc()">Calculate</button>
-      <button type="button" onclick="clearAll()">Clear</button>
-      <button type="button" onclick="location.href='../index.html'">Home</button>
-    </div>
-
+    
     <div id="result" class="result">Flight Time: 0.0</div>
     <div id="details" class="subtle"></div>
     <div id="note" class="subtle"></div>
+    <div id="legs" class="subtle" style="margin-top:10px;"></div>
+    <div id="rollover" class="subtle" style="margin-top:6px;font-weight:800;"></div>
 
-<div class="row" style="margin-top:6px;">
-  <button type="button" onclick="addLeg()">Add Leg</button>
-  <button type="button" onclick="resetLegs()">Reset Legs</button>
-</div>
-
-<div id="legs" class="subtle" style="margin-top:10px;"></div>
-<div id="rollover" class="subtle" style="margin-top:6px;font-weight:800;"></div>
 
 
     <div class="subtle"><span class="badge">Time Format</span> 24‑hour clock (HH:MM) in Zulu only.</div>
 
-    <div class="subtle" style="margin-top: 12px;">
-      <span class="badge">Conversion</span>
-      Minutes are converted using the Loadmaster table (not true decimals). 58–60 rounds to the next hour.
-    </div>
+    <details class="conv">
+  <summary>Minutes → Decimal Conversion (TO table)</summary>
+  <div class="conv-body subtle">
+    1–2=.0 • 3–8=.1 • 9–14=.2 • 15–20=.3 • 21–26=.4 • 27–33=.5 • 34–39=.6 • 40–45=.7 • 46–51=.8 • 52–57=.9 • 58–60=Next hour
+  </div>
+</details>
+
+<div class="sticky-actions" role="region" aria-label="Actions">
+  <div class="row primary">
+  <button type="button" onclick="calc()">Calculate</button>
+  <button type="button" onclick="clearAll()">Clear</button>
+  <button type="button" onclick="location.href='../index.html'">Home</button>
+</div>
+  <div class="row" style="margin-top:10px;">
+    <button type="button" onclick="addLeg()">Add Leg</button>
+    <button type="button" onclick="resetLegs()">Reset Legs</button>
+  </div>
+</div>
+
   </div>
 </div>
 

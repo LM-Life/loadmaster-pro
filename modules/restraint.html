@@ -299,6 +299,21 @@ VERT: ${requiredRestraint.VERT} lbs`;
     .actual-actions .action-grid{ gap: 12px; margin-top: 12px; }
     .actual-actions .action-grid button{ width:100%; }
   </style>
+
+  <style>
+    /* LM_RESTRAINT_ACTION_GRID_MOBILEFIX: force Undo/Clear and x2/Add to remain 2-column on mobile */
+    @media (max-width: 768px) {
+      .actual-actions .action-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px !important;
+      }
+      .actual-actions .action-grid button {
+        width: 100% !important;
+      }
+    }
+  </style>
+
 </head>
 <body>
   

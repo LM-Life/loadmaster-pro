@@ -21,6 +21,7 @@ const MODULE_FILES = [
   "./modules/tires_over_100psi.html",
   "./modules/vehiclecg.html",
   "./modules/winching.html"
+  "./modules/flight-time.html",
 ];
 
 self.addEventListener("install", (event) => {

@@ -6,8 +6,9 @@
   <title>Loadmaster Pro</title>
 
   <!-- Theme & PWA -->
-  <meta name="theme-color" content="#1f6f8b">
+  <meta name="theme-color" content="#29d391">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.json">
 
   <!-- Icons (ensure files exist and case matches exactly) -->
@@ -19,13 +20,16 @@
   <script src="common.js" defer></script>
 </head>
 <body>
-  <h1>Loadmaster Pro</h1>
+  <div class="p1-topstrip" aria-hidden="true"></div>
+  <header class="app-header">
+    <h1>Loadmaster Pro</h1>
 
-  <!-- Banner is INDEX ONLY (common.js updates it) -->
-  <div class="version-banner" id="versionBanner"></div>
+    <!-- Banner is INDEX ONLY (common.js updates it) -->
+    <div class="version-banner" id="versionBanner"></div>
 
-  <!-- Update prompt is INDEX ONLY (common.js controls it) -->
-  <div id="updateBanner" style="display:none;"></div>
+    <!-- Update prompt is INDEX ONLY (common.js controls it) -->
+    <div id="updateBanner" style="display:none;"></div>
+  </header>
 
   <div class="icon-grid" id="modules">
     <div class="module-icon" role="button" tabindex="0" data-path="modules/restraint.html" aria-label="Restraint">

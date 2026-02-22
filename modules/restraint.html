@@ -70,7 +70,7 @@
 
   <!-- Required Restraint -->
   <label for="cargoWeight">Cargo Weight (lbs):</label>
-  <input id="cargoWeight" class="form-control" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 12000" />
+  <input type="text" id="cargoWeight" class="form-control" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 12000"  autocomplete="off"  autocorrect="off"  autocapitalize="off"  spellcheck="false" />
 
   <button onclick="calculateRestraint()">Calculate Required Restraint</button>
   <div id="result" class="card mt-2"></div>
@@ -82,12 +82,12 @@
 <div class="grid-2">
   <div>
     <label for="actualLength">Actual Length (in):</label>
-    <input id="actualLength" class="form-control" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 100" />
+    <input type="text" id="actualLength" class="form-control" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 100"  autocomplete="off"  autocorrect="off"  autocapitalize="off"  spellcheck="false" />
   </div>
 
   <div>
     <label for="effectiveLength">Effective Length (in):</label>
-    <input id="effectiveLength" class="form-control" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 80" />
+    <input type="text" id="effectiveLength" class="form-control" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 80"  autocomplete="off"  autocorrect="off"  autocapitalize="off"  spellcheck="false" />
   </div>
 </div>
 
@@ -124,7 +124,7 @@
   class="form-control"
   placeholder="Enter custom factor in lbs (e.g., 8000)"
   style="display:none; margin-top:.5rem;"
-/>
+ autocomplete="off"  autocorrect="off"  autocapitalize="off"  spellcheck="false" />
 <div id="factorError" style="color:#f66; font-size:.95rem; display:none;"></div>
 
 <!-- Actions -->
@@ -133,7 +133,7 @@
     <button id="multiplierBtn" class="btn btn-multiplier off" onclick="toggleMultiplier()">×2 OFF</button>
   </div>
   <div>
-    <button class="btn btn-primary" onclick="calculateActualRestraint()">Add Restraint</button>
+    <button class="btn btn-primary" onclick="calculateActualRestraint()">Add Actual Restraint</button>
   </div>
 </div>
 
@@ -371,7 +371,25 @@ function clearAll() {
       document.getElementById("result").innerHTML = "";
     }
 
-    // ---------- Init ----------
+    
+    // LM_NUMERIC_FOCUS_SCROLL: smooth focus scroll for numeric inputs (iPhone keyboard)
+    document.addEventListener("focusin", (e) => {
+      const el = e.target;
+      if (!(el instanceof HTMLInputElement)) return;
+      const im = (el.getAttribute("inputmode") || "").toLowerCase();
+      if (im !== "numeric" && im !== "decimal") return;
+
+      // Let iOS open the keyboard first, then gently center the field.
+      setTimeout(() => {
+        try {
+          el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        } catch(_) {
+          el.scrollIntoView();
+        }
+      }, 250);
+    });
+
+// ---------- Init ----------
     document.getElementById('restraintFactor').addEventListener('change', onFactorChange);
     onFactorChange();
   

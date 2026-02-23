@@ -11,7 +11,7 @@
     .home-button{display:inline-flex;align-items:center;gap:8px;text-decoration:none;-webkit-tap-highlight-color:transparent;margin:4px 0 10px;}
     .module-title{margin:0 0 12px;font-size:30px;letter-spacing:.08em;text-transform:uppercase;font-weight:950;line-height:1.05;}
 
-    .card{border:1px solid rgba(255,255,255,0.14);border-radius:16px;padding:12px;background:rgba(255,255,255,0.04);box-shadow:0 10px 26px rgba(0,0,0,0.30);}
+    .card{border:1px solid rgba(255,255,255,0.14);border-radius:16px;padding:10px;background:rgba(255,255,255,0.04);box-shadow:0 10px 26px rgba(0,0,0,0.30);}
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
     .time-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
     /* Keep 2 columns on iPhone to reduce scroll; fall back only on very narrow screens */
@@ -37,7 +37,7 @@
 
     .zulu-line{margin-top:8px;font-size:14px;opacity:.92;}
 
-    .result-card{ margin-top: 10px;border-radius:16px;border:1px solid rgba(255,255,255,0.14);background:rgba(10,14,20,0.52);padding:12px;}
+    .result-card{ margin-top: 10px;border-radius:16px;border:1px solid rgba(255,255,255,0.14);background:rgba(10,14,20,0.52);padding:10px;}
     .result-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
     .result-top .label{font-weight:950;letter-spacing:.10em;text-transform:uppercase;opacity:.9;font-size:12px;}
     .badge{display:inline-block;padding:2px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.18);font-size:12px;opacity:.9;white-space:nowrap;}
@@ -96,18 +96,19 @@
 </div>
 
 <div id="zuluClock" class="zulu-line">Zulu: --:--:--Z</div>
-
-
-    
-    <div id="result" class="result">0.0</div>
-    <div id="details" class="subtle"></div>
-    <div id="note" class="subtle"></div>
-    <div id="legs" class="subtle" style="margin-top:10px;"></div>
-    <div id="rollover" class="subtle" style="margin-top:6px;font-weight:800;"></div>
-
-
-
-    <div class="helper"><span class="badge">Time Format</span> 24‑hour clock (HH:MM) in Zulu only.</div>
+    <div class="result-card" aria-label="Results">
+      <div class="result-top">
+        <div class="label">Flight Time</div>
+        <span class="badge">Zulu • HH.MM</span>
+      </div>
+      <div id="resultMain" class="result-main">—</div>
+      <div id="resultSub" class="result-sub"></div>
+      <div id="details" class="result-sub" style="margin-top:6px;"></div>
+      <div id="note" class="result-sub"></div>
+      <div id="legs" class="result-sub" style="margin-top:8px;"></div>
+      <div id="rollover" class="result-sub" style="margin-top:6px;font-weight:950;"></div>
+    </div>
+<div class="helper"><span class="badge">Time Format</span> 24‑hour clock (HH:MM) in Zulu only.</div>
 
     <details class="conv">
   <summary>Minutes → Decimal Conversion (TO table)</summary>
@@ -127,11 +128,6 @@
         <button type="button" onclick="resetLegs()">Reset Legs</button>
       </div>
     </div>
-
-  <div class="row" style="margin-top:10px;">
-    <button type="button" onclick="addLeg()">Add Leg</button>
-    <button type="button" onclick="resetLegs()">Reset Legs</button>
-  </div>
 </div>
 
   </div>

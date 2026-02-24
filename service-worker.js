@@ -1,6 +1,6 @@
 // Loadmaster Pro service-worker.js
 // NOTE: Bump CACHE_NAME every time you want users to get a fresh cache.
-const CACHE_NAME = "v2026.02.24-ca89977";
+const CACHE_NAME = "v2026.02.24-d437a26";
 
 const CORE_FILES = [
   "./",

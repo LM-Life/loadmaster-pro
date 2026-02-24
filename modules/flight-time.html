@@ -295,6 +295,7 @@
           <div id="resultSub" class="result-sub"></div>
           <div id="details" class="result-sub" style="margin-top:6px;"></div>
           <div id="note" class="result-sub"></div>
+          <div id="totalFlight" class="result-sub" style="margin-top:10px;font-weight:900;"></div>
           <div id="legs" class="result-sub" style="margin-top:8px;"></div>
           <div id="rollover" class="result-sub" style="margin-top:6px;font-weight:950;"></div>
         </div>
@@ -573,6 +574,12 @@
   tickZulu();
   setInterval(tickZulu, 1000);
   render();
+  // Expose handlers for inline onclick attributes
+  window.setNowZ = setNowZ;
+  window.calc = calc;
+  window.clearAll = clearAll;
+  window.addLeg = addLeg;
+  window.resetLegs = resetLegs;
 })();
 </script>
 

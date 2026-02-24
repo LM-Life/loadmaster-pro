@@ -266,55 +266,46 @@
               aria-label="Set Landing to current Zulu time" class="mini">Now (Z)</button>
           </div>
           <div class="actions" role="region" aria-label="Actions">
-          <div class="action-grid">
-            <button type="button" onclick="calc()">Calculate</button>
-            <button type="button" onclick="clearAll()">Clear</button>
-          </div>
-          <div class="action-grid">
-            <button type="button" onclick="addLeg()">Add Leg</button>
-            <button type="button" onclick="resetLegs()">Reset Legs</button>
+            <div class="action-grid">
+              <button type="button" onclick="calc()">Calculate</button>
+              <button type="button" onclick="clearAll()">Clear</button>
+            </div>
+            <div class="action-grid">
+              <button type="button" onclick="addLeg()">Add Leg</button>
+              <button type="button" onclick="resetLegs()">Reset Legs</button>
+            </div>
           </div>
         </div>
-      </div>
-      <div id="zuluClock" class="zulu-line">Zulu: --:--:--Z</div>
-      <div class="result-card" aria-label="Results">
-        <div class="result-top">
-          <div class="label">Flight Time</div>
-          <span class="badge">Zulu • HH.MM</span>
+        <div id="zuluClock" class="zulu-line">Zulu: --:--:--Z</div>
+        <div class="result-card" aria-label="Results">
+          <div class="result-top">
+            <div class="label">Flight Time</div>
+            <span class="badge">Zulu • HH.MM</span>
+          </div>
+          <div id="resultMain" class="result-main">—</div>
+          <div id="resultSub" class="result-sub"></div>
+          <div id="details" class="result-sub" style="margin-top:6px;"></div>
+          <div id="note" class="result-sub"></div>
+          <div id="legs" class="result-sub" style="margin-top:8px;"></div>
+          <div id="rollover" class="result-sub" style="margin-top:6px;font-weight:950;"></div>
         </div>
-        <div id="resultMain" class="result-main">—</div>
-        <div id="resultSub" class="result-sub"></div>
-        <div id="details" class="result-sub" style="margin-top:6px;"></div>
-        <div id="note" class="result-sub"></div>
-        <div id="legs" class="result-sub" style="margin-top:8px;"></div>
-        <div id="rollover" class="result-sub" style="margin-top:6px;font-weight:950;"></div>
-      </div>
-      <div class="helper"><span class="badge">Time Format</span> 24‑hour clock (HH:MM) in Zulu only.</div>
-      <details class="conv">
-        <summary>Minutes → Decimal Conversion (TO table)</summary>
-        <div class="conv-body subtle">
+        <div class="helper"><span class="badge">Time Format</span> 24‑hour clock (HH:MM) in Zulu only.</div>
+        <details class="conv">
+          <summary>Minutes → Decimal Conversion (TO table)</summary>
+          <div class="conv-body subtle">
             1–2 = .0
             3–8 = .1
-           9–14 = .2
-          15–20 = .3
-          21–26 = .4
-          27–33 = .5
-          34–39 = .6
-          40–45 = .7
-          46–51 = .8
-          52–57 = .9
-          58–60 = Next hour
-        </div>
-      </details>
-      <div class="actions" role="region" aria-label="Actions">
-        <div class="action-grid">
-          <button type="button" onclick="calc()">Calculate</button>
-          <button type="button" onclick="clearAll()">Clear</button>
-        </div>
-        <div class="action-grid">
-          <button type="button" onclick="addLeg()">Add Leg</button>
-          <button type="button" onclick="resetLegs()">Reset Legs</button>
-        </div>
+            9–14 = .2
+            15–20 = .3
+            21–26 = .4
+            27–33 = .5
+            34–39 = .6
+            40–45 = .7
+            46–51 = .8
+            52–57 = .9
+            58–60 = Next hour
+          </div>
+        </details>
       </div>
     </div>
   </div>

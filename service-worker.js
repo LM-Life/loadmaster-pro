@@ -24,9 +24,19 @@ const MODULE_FILES = [
   "./modules/winching.html"
 ];
 
+const JS_FILES = [
+  "./js/approach.js",
+  "./js/flight-time.js",
+  "./js/loadshift.js",
+  "./js/restraint.js",
+  "./js/sleeper.js",
+  "./js/tires_over_100psi.js",
+  "./js/vehiclecg.js",
+  "./js/winching.js",
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll([...CORE_FILES, ...MODULE_FILES]))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll([...CORE_FILES, ...MODULE_FILES, ...JS_FILES]))
   );
   self.skipWaiting();
 });

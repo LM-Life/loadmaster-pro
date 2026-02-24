@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Loadmaster Pro | Flight Time</title>
   <link rel="stylesheet" href="../style.css">
-  
   <style>
     .container{max-width:820px;margin:0 auto;padding:10px 12px;}
     .home-button{display:inline-flex;align-items:center;gap:8px;text-decoration:none;-webkit-tap-highlight-color:transparent;margin:4px 0 10px;}
@@ -73,26 +72,24 @@
 <body>
 <div class="container">
   <a class="home-button" href="../index.html">🏠 Home</a>
-  <h1 class="module-title">FLIGHT TIME CALCULATOR</h1>
-
+  <h1 class="module-title">FLIGHT TIME</h1>
   <div class="card">
     <div class="time-grid">
   <div>
     <label for="startTime">Takeoff (Z)</label>
     <div class="time-row">
-      <input id="startTime" type="text" inputmode="numeric" pattern="^([01]\d|2[0-3]):[0-5]\d$" placeholder="HH:MM (24h Z)" value="12:00" />
+      <input id="startTime" type="text" inputmode="numeric" pattern="^([01]\d|2[0-3]):[0-5]\d$" placeholder="HH:MM (24h Z)" value="00:00" />
       <button class="mini" type="button" onclick="setNowZ('startTime')" aria-label="Set Takeoff to current Zulu time" class="mini">Now (Z)</button>
     </div>
   </div>
   <div>
     <label for="endTime">Landing (Z)</label>
     <div class="time-row">
-      <input id="endTime" type="text" inputmode="numeric" pattern="^([01]\d|2[0-3]):[0-5]\d$" placeholder="HH:MM (24h Z)" value="14:55" />
+      <input id="endTime" type="text" inputmode="numeric" pattern="^([01]\d|2[0-3]):[0-5]\d$" placeholder="HH:MM (24h Z)" value="00:00" />
       <button class="mini" type="button" onclick="setNowZ('endTime')" aria-label="Set Landing to current Zulu time" class="mini">Now (Z)</button>
     </div>
   </div>
 </div>
-
 <div id="zuluClock" class="zulu-line">Zulu: --:--:--Z</div>
     <div class="result-card" aria-label="Results">
       <div class="result-top">
@@ -107,11 +104,20 @@
       <div id="rollover" class="result-sub" style="margin-top:6px;font-weight:950;"></div>
     </div>
 <div class="helper"><span class="badge">Time Format</span> 24‑hour clock (HH:MM) in Zulu only.</div>
-
     <details class="conv">
   <summary>Minutes → Decimal Conversion (TO table)</summary>
   <div class="conv-body subtle">
-    1–2=.0 • 3–8=.1 • 9–14=.2 • 15–20=.3 • 21–26=.4 • 27–33=.5 • 34–39=.6 • 40–45=.7 • 46–51=.8 • 52–57=.9 • 58–60=Next hour
+    1–2=.0 
+    3–8=.1 
+    9–14=.2 
+    15–20=.3 
+    21–26=.4 
+    27–33=.5 
+    34–39=.6 
+    40–45=.7 
+    46–51=.8 
+    52–57=.9 
+    58–60=Next hour
   </div>
 </details>
   <div class="actions" role="region" aria-label="Actions">

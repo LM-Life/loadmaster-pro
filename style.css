@@ -440,158 +440,149 @@ button {
 }
 
 /* =========================
-   P1-inspired theme (v4)
-   - Primary buttons: P1 ChatOps green
-   - Clear/Destructive: P1 orange
-   - Background: green → orange ambience
-   - Multiplier toggle: outline when OFF, solid when ON
-   Strong override layer (uses !important to beat legacy blue styles)
+   P1-inspired theme (dark + tactical green)
+   Drop-in override layer
    ========================= */
 
 :root{
-  --p1-green: #29d391;
-  --p1-green-2: #1bb67b;
-  --p1-orange: #f4a340;
-  --p1-orange-2: #e8922f;
+  /* Core */
+  --bg: #0b0f10;
+  --panel: #151b1c;
+  --panel-2: #1d2526;
+  --text: #e9f1f1;
+  --muted: rgba(233,241,241,.70);
 
-  /* Remap existing palette vars so legacy rules flip automatically */
-  --af-blue: var(--p1-green);
-  --af-blue-2: var(--p1-green-2);
+  /* Borders & shadows */
+  --border: rgba(233,241,241,.14);
+  --shadow: 0 10px 30px rgba(0,0,0,.55);
+
+  /* Accent (P1 green) */
+  --accent: #29d391;
+  --accent-2: #1bb67b;
+
+  /* Status */
+  --danger: #e34d5d;
 }
 
-/* Background: green → orange ambience */
+/* App background */
 html, body{
   background:
-    radial-gradient(1100px 700px at 15% 0%, rgba(41,211,145,.20), transparent 58%),
-    radial-gradient(900px 650px at 85% 105%, rgba(244,163,64,.18), transparent 60%),
-    linear-gradient(180deg, rgba(41,211,145,.06), rgba(244,163,64,.06)),
-    var(--bg) !important;
+    radial-gradient(1200px 600px at 20% 0%, rgba(41,211,145,.10), transparent 55%),
+    radial-gradient(900px 500px at 90% 10%, rgba(41,211,145,.06), transparent 60%),
+    var(--bg);
+  color: var(--text);
 }
 
-/* Primary buttons: force green (covers plain <button> as well) */
-button,
-.btn,
-.primary-btn,
-.btn-primary,
-button.primary{
-  background: var(--p1-green) !important;
-  color: #06110c !important;
-  border-color: rgba(0,0,0,.35) !important;
-}
-button:hover,
-.btn:hover,
-.primary-btn:hover,
-.btn-primary:hover,
-button.primary:hover{
-  background: var(--p1-green-2) !important;
+/* Optional thin green strip at the very top */
+.p1-topstrip{
+  height: 10px;
+  background: var(--accent);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.35) inset;
 }
 
-/* Multiplier toggle (Restraint ×2) */
-.btn-multiplier.off{
-  background: transparent !important;
-  color: var(--p1-green) !important;
-  border: 2px solid rgba(41,211,145,.55) !important;
-}
-.btn-multiplier.on{
-  background: var(--p1-green) !important;
-  color: #06110c !important;
-  border: 2px solid rgba(0,0,0,.35) !important;
-}
-.btn-multiplier.on:hover{ background: var(--p1-green-2) !important; }
-.btn-multiplier.off:hover{ background: rgba(41,211,145,.12) !important; }
-
-/* Secondary stays outline */
-.btn-secondary,
-.btn-outline,
-.secondary-btn,
-button.secondary{
-  background: transparent !important;
-  color: var(--p1-green) !important;
-  border-color: rgba(41,211,145,.55) !important;
-}
-.btn-secondary:hover,
-.btn-outline:hover,
-.secondary-btn:hover,
-button.secondary:hover{
-  background: rgba(41,211,145,.12) !important;
+/* Cards / containers (best-effort selectors) */
+.card, .panel, .module, .container, .results-box, .result-box, .box{
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)) , var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
-/* Clear buttons: force orange */
-.btn-danger,
-button.danger,
-.danger-btn,
-.clear-btn,
-button.clear{
-  background: var(--p1-orange) !important;
-  color: #140a00 !important;
-  border-color: rgba(0,0,0,.35) !important;
+/* Inputs */
+input, select, textarea{
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.25) inset;
 }
-.btn-danger:hover,
-button.danger:hover,
-.danger-btn:hover,
-.clear-btn:hover,
-button.clear:hover{
-  background: var(--p1-orange-2) !important;
+input::placeholder, textarea::placeholder{
+  color: rgba(233,241,241,.45);
+}
+input:focus, select:focus, textarea:focus{
+  outline: none;
+  border-color: rgba(41,211,145,.65);
+  box-shadow: 0 0 0 2px rgba(41,211,145,.20), 0 0 0 1px rgba(0,0,0,.35) inset;
+}
+
+/* Buttons */
+button, .btn{ border-radius: 14px; }
+
+/* Primary (solid green) */
+.btn-primary, button.primary, .primary-btn{
+  background: var(--accent);
+  color: #06110c;
+  border: 1px solid rgba(0,0,0,.35);
+  box-shadow: 0 8px 22px rgba(0,0,0,.35);
+}
+.btn-primary:hover, button.primary:hover, .primary-btn:hover{ background: var(--accent-2); }
+.btn-primary:active, button.primary:active, .primary-btn:active{ transform: translateY(1px); }
+
+/* Secondary (outline green) */
+.btn-outline, .btn-secondary, button.secondary, .secondary-btn{
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(41,211,145,.55);
+}
+.btn-outline:hover, .btn-secondary:hover, button.secondary:hover, .secondary-btn:hover{
+  background: rgba(41,211,145,.12);
+}
+
+/* Danger */
+.btn-danger, button.danger, .danger-btn{
+  background: rgba(227,77,93,.92);
+  color: #120509;
+  border: 1px solid rgba(0,0,0,.35);
 }
 
 /* Home button */
 .home-button, .back-button{
-  background: rgba(41,211,145,.12) !important;
-  color: var(--text) !important;
-  border-color: rgba(41,211,145,.45) !important;
+  background: rgba(41,211,145,.12);
+  color: var(--text);
+  border: 1px solid rgba(41,211,145,.45);
 }
-.home-button:hover, .back-button:hover{
-  background: rgba(41,211,145,.18) !important;
-}
+.home-button:hover, .back-button:hover{ background: rgba(41,211,145,.18); }
 
-/* Inputs: green focus ring */
-input:focus, select:focus, textarea:focus{
-  border-color: rgba(41,211,145,.70) !important;
-  box-shadow: 0 0 0 3px rgba(41,211,145,.20) !important;
-}
-
-@media (max-width: 768px) {
-
-  /* Only affect the restraint module */
-  .restraint-module .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  /* Make inputs + selects fill their grid cells */
-  .restraint-module input,
-  .restraint-module select,
-  .restraint-module button {
-    width: 100%;
-  }
-
-  /* Action row spacing */
-  .restraint-module .actual-actions {
-    margin-top: 8px;
-  }
-
-  /* Clear All stays full width */
-  .restraint-module .clear-row {
-    grid-column: 1 / -1;
-  }
+/* Links + dividers */
+a{ color: var(--accent); }
+a:hover{ color: rgba(41,211,145,.85); }
+hr, .divider{
+  border: none;
+  height: 1px;
+  background: rgba(233,241,241,.10);
 }
 
-@media (max-width: 768px) {
-  .restraint-module .grid-2{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
 
-  .restraint-module input,
-  .restraint-module select,
-  .restraint-module button{
-    width: 100%;
-  }
-
-  /* Make sure Clear All spans both columns if it's inside a grid row */
-  .restraint-module .clear-row{
-    grid-column: 1 / -1;
-  }
+/* =========================
+   INDEX (Home) tile styling
+   Transparent tiles + vibrant green outline
+   ========================= */
+:root{
+  --accent-green: #29d391; /* P1 ChatOps green */
 }
+
+.index-page .module-icon{
+  background: transparent !important;
+  border: 2px solid var(--accent-green) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.index-page .module-icon:hover{
+  background: rgba(41, 211, 145, 0.06) !important;
+  transform: translateY(-1px);
+}
+
+.index-page .module-icon:active{
+  transform: translateY(0);
+}
+
+.index-page .module-icon:focus-visible{
+  outline: 3px solid rgba(41, 211, 145, 0.55);
+  outline-offset: 3px;
+}
+
+/* Keep labels crisp on transparent tiles */
+.index-page .icon-label{
+  color: #ffffff;
+}
+

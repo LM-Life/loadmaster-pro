@@ -4,90 +4,44 @@
   <link rel="stylesheet" href="../style.css" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sleeper Shoring Calculator</title>
+  <title>Loadmaster Pro | Sleeper Shoring</title>
   <script src="../common.js" defer></script>
 </head>
 <body>
-  <button type="button" class="home-button">🏠 Home</button>
+<div class="container sleeper-module">
+  <a class="home-button" href="../index.html">🏠 Home</a>
   
-  <h1>Sleeper Shoring Calculator</h1>
+  <h1>SLEEPER SHORING</h1>
 
-  <h2>Provided Shoring</h2>
-  <label for="providedAxle">Axle Weight (lbs)</label>
+  <div class="card"><h2>Provided Shoring</h2>
+  <div class="grid-2">
+<div><label for="providedAxle">Axle Weight (lbs)</label>
   <input type="number" id="providedAxle" />
 
   <label for="providedLength">Shoring Length (in)</label>
   <input type="number" id="providedLength" />
 
   <label for="providedWidth">Shoring Width (in)</label>
-  <input type="number" id="providedWidth" />
+  <input type="number" id="providedWidth" /></div></div>
 
-  <button onclick="calcProvided()">Calculate Provided</button>
-  <div id="resultProvided"></div>
+  <button type="button" id="calcProvided" class="btn-primary">Calculate Provided</button>
+  <div id="resultProvided" class="result-card mt-1"></div></div>
 
-  <hr style="margin: 2rem 0; border-color: #444;" />
+  <hr />
 
-  <h2>Shoring Not Provided</h2>
-  <label for="unprovidedAxle">Axle Weight (lbs)</label>
+  <div class="card mt-2"><h2>Shoring Not Provided</h2>
+  <div class="grid-2">
+<div><label for="unprovidedAxle">Axle Weight (lbs)</label>
   <input type="number" id="unprovidedAxle" />
 
-  <label for="desiredPSI">Desired PSI Limit</label>
-  <input type="number" id="desiredPSI" />
+  </div><div><label for="desiredPSI">Desired PSI Limit</label>
+  <input type="number" id="desiredPSI" /></div></div>
 
-  <button onclick="calcUnprovided()">Calculate Not Provided</button>
-  <div id="resultUnprovided"></div>
+  <button type="button" id="calcUnprovided" class="btn-primary">Calculate Not Provided</button>
+  <div id="resultUnprovided" class="result-card mt-1"></div></div>
 
-  <script>
-    function roundUp(num) {
-      return Math.ceil(num);
-    }
-
-    function calcProvided() {
-      const axle = parseFloat(document.getElementById("providedAxle").value);
-      const len = parseFloat(document.getElementById("providedLength").value);
-      const wid = parseFloat(document.getElementById("providedWidth").value);
-
-      if (isNaN(axle) || isNaN(len) || isNaN(wid)) {
-        document.getElementById("resultProvided").innerText = "Fill in all provided shoring fields.";
-        return;
-      }
-
-      const wheelWeight = axle / 2;
-      const area = roundUp(len * wid);
-      const psi = roundUp(wheelWeight / area);
-      const piw = Math.ceil(wheelWeight / wid);
-
-      document.getElementById("resultProvided").innerText =
-        `Wheel Weight: ${wheelWeight} lbs\n` +
-        `Area: ${area} sq in\n` +
-        `PSI: ${psi}\n` +
-        `PIW: ${piw} lbs/in\n` +
-        `Check chart for PIW ≤ 840 (In-Flight) or ≤ 1186 (On/Offload)`;
-    }
-
-    function calcUnprovided() {
-      const axle = parseFloat(document.getElementById("unprovidedAxle").value);
-      const psiLimit = parseFloat(document.getElementById("desiredPSI").value);
-
-      if (isNaN(axle) || isNaN(psiLimit) || psiLimit === 0) {
-        document.getElementById("resultUnprovided").innerText = "Fill in all unprovided shoring fields.";
-        return;
-      }
-
-      const wheelWeight = axle / 2;
-      const requiredArea = roundUp(wheelWeight / psiLimit);
-      const base = roundUp(Math.sqrt(requiredArea));
-      const piw = Math.ceil(wheelWeight / base);
-      const minHeight = roundUp(base / 2);
-
-      document.getElementById("resultUnprovided").innerText =
-        `Wheel Weight: ${wheelWeight} lbs\n` +
-        `Required Area: ${requiredArea} sq in\n` +
-        `Base Dimensions: ${base} in x ${base} in\n` +
-        `PIW: ${piw} lbs/in\n` +
-        `Min Height: ${minHeight} in\n` +
-        `Check chart for PIW ≤ 840 (In-Flight) or ≤ 1186 (On/Offload)`;
-    }
-  </script>
+  
+</div>
+<script src="../js/sleeper.js"></script>
 </body>
 </html>

@@ -4,13 +4,15 @@
   <link rel="stylesheet" href="../style.css" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vehicle CG Calculator</title>
+  <title>Loadmaster Pro | Vehicle CG</title>
   <script src="../common.js" defer></script>
 </head>
 <body>
-  <button type="button" class="home-button">🏠 Home</button>
+<div class="container vehiclecg-module">
+<div class="card">
+  <a class="home-button" href="../index.html">🏠 Home</a>
 
-  <h1>Vehicle CG Calculator</h1>
+  <h1>VEHICLE CG</h1>
 
   <label for="frontWeight">Weight on Front Axle (lbs)</label>
   <input type="number" id="frontWeight" placeholder="e.g., 8000" inputmode="numeric" pattern="[0-9]*" />
@@ -21,45 +23,16 @@
   <label for="wheelbase">Wheelbase (in)</label>
   <input type="number" id="wheelbase" placeholder="e.g., 200" inputmode="decimal" pattern="[0-9.]*" />
 
-  <div style="margin-top: 0.75rem; display: flex; gap: .5rem; flex-wrap: wrap;">
-    <button onclick="calculateVehicleCG()">Calculate CG</button>
-    <button class="btn-danger" onclick="clearAllVehicleCG()">Clear All</button>
+  <div>
+    <button type="button" id="calcVehicleCg" class="btn-primary">Calculate CG</button>
+    <button type="button" id="clearVehicleCg" class="btn-danger">Clear All</button>
   </div>
 
-  <div id="vehicleCgResult" class="card" style="margin-top: 1rem;"></div>
+  <div id="vehicleCgResult" class="result-card mt-1" aria-live="polite"></div>
 
-  <script>
-
-    function calculateVehicleCG() {
-      const front = parseFloat(document.getElementById('frontWeight').value);
-      const rear = parseFloat(document.getElementById('rearWeight').value);
-      const wheelbase = parseFloat(document.getElementById('wheelbase').value);
-      const out = document.getElementById('vehicleCgResult');
-
-      if (isNaN(front) || isNaN(rear) || isNaN(wheelbase) || wheelbase <= 0) {
-        out.innerText = "Please enter valid numeric values for all fields.";
-        return;
-      }
-
-      const totalWeight = front + rear;
-      const cgFromFront = (rear * wheelbase) / totalWeight; // CG inches aft of front axle
-
-      out.innerText =
-        `Total Weight: ${totalWeight.toLocaleString()} lbs\n` +
-        `CG Location: ${cgFromFront.toFixed(1)} in aft of front axle`;
-    }
-
-    function clearAllVehicleCG() {
-      // Clear inputs
-      ['frontWeight','rearWeight','wheelbase'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = '';
-      });
-
-      // Clear output
-      const out = document.getElementById('vehicleCgResult');
-      if (out) out.innerHTML = '';
-    }
-  </script>
+  
+</div>
+</div>
+<script src="../js/vehiclecg.js"></script>
 </body>
 </html>

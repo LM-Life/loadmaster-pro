@@ -33,10 +33,28 @@ const MODULE_FILES = [
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll([...CORE_FILES, ...MODULE_FILES]))
-  );
-  self.skipWaiting();
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+
+    // Resolve URLs relative to the SW scope to avoid path surprises.
+    const urls = [...CORE_FILES, ...MODULE_FILES].map((u) => new URL(u, self.location).toString());
+
+    // Cache what we can. If one request fails (e.g., 404), don't brick the whole install.
+    const results = await Promise.allSettled(
+      urls.map(async (url) => {
+        // cache: "reload" helps avoid stale responses on first install/update.
+        await cache.add(new Request(url, { cache: "reload" }));
+      })
+    );
+
+    results.forEach((r, i) => {
+      if (r.status === "rejected") {
+        console.warn("[SW] Precache failed:", urls[i], r.reason);
+      }
+    });
+
+    self.skipWaiting();
+  })());
 });
 
 self.addEventListener("activate", (event) => {
@@ -66,6 +84,8 @@ self.addEventListener("message", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  const url = new URL(event.request.url);
+  if (url.protocol !== "http:" && url.protocol !== "https:") return;
 
   event.respondWith(
     caches.match(event.request).then((cached) => {

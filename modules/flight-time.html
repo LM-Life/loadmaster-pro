@@ -1,355 +1,482 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Loadmaster Pro | Flight Time</title>
   <link rel="stylesheet" href="../style.css">
   <style>
-.container { max-width: 820px; margin: 0 auto; padding: 16px; }
-    .card { border: 1px solid rgba(255,255,255,0.14); border-radius: 16px; padding: 14px; background: rgba(255,255,255,0.05); }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 640px){ .grid { grid-template-columns: 1fr; } }
-    label { display:block; font-weight: 700; margin-bottom: 6px; }
-    input, button {
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 10px 12px;
+    }
+
+    .home-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      margin: 4px 0 10px;
+    }
+
+    .module-title {
+      margin: 0 0 12px;
+      font-size: 30px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 950;
+      line-height: 1.05;
+    }
+
+    .card {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.30);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .time-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Keep 2 columns on iPhone to reduce scroll; fall back only on very narrow screens */
+    @media (max-width: 340px) {
+      .time-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    label {
+      display: block;
+      font-weight: 900;
+      margin: 0 0 4px;
+      letter-spacing: .02em;
+    }
+
+    input,
+    select,
+    button {
       width: 100%;
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(10, 14, 20, 0.35);
       color: #fff;
       font-size: 16px;
       box-sizing: border-box;
-    }
-    button { font-weight: 800; cursor: pointer; }
-    .row { display:flex; gap:10px; margin-top:12px; flex-wrap: wrap; }
-    .row button { flex: 1 1 180px; }
-    .result { margin-top: 12px; font-size: 18px; font-weight: 900; }
-    .subtle { opacity:.85; font-size:13px; margin-top:8px; line-height: 1.35; }
-    .error { opacity: 1; font-weight: 800; }
-    .badge { display:inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); font-size: 12px; opacity: .9; }
-      .time-row { display: flex; gap: 10px; align-items: center; }
-    .time-row input { flex: 1 1 auto; }
-    .mini { width: auto; flex: 0 0 auto; padding: 10px 12px; border-radius: 12px; font-weight: 900; }
-    @media (max-width: 640px){
-      .time-row { flex-direction: row; }
-      .mini { padding: 10px 10px; }
+      min-height: 44px;
     }
 
-/* One-hand iPhone optimization */
-.sticky-actions{
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin-top: 14px;
-  padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
-  background: rgba(15,15,18,0.92);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255,255,255,0.12);
-  border-radius: 16px 16px 0 0;
-}
-.sticky-actions .row { margin-top: 0; }
-.sticky-actions button{ min-height: 48px; }
-.mini{ min-height: 44px; }
-input{ min-height: 48px; }
-h2{ margin: 8px 0 10px; letter-spacing: 0.08em; }
-.container{ max-width: 900px; margin: 0 auto; padding: 12px 14px 18px; }
-/* Keep primary buttons closest to thumb on the right (common right-hand use) */
-.row.primary { justify-content: space-between; }
-.row.primary button:nth-child(1){ order: 2; } /* Calculate */
-.row.primary button:nth-child(2){ order: 1; } /* Clear */
-.row.primary button:nth-child(3){ order: 3; } /* Home */
-/* Optional: slightly bigger text on small screens */
-@media (max-width: 430px){
-  .result{ margin-top: 10px; padding: 12px 12px; border-radius: 14px; background: rgba(10,14,20,0.55); border: 1px solid rgba(255,255,255,0.12); font-size: 22px; }
-  .subtle{ font-size: 13px; }
-}
-/* Collapsible details for reduced scroll */
-details.conv { margin-top: 12px; }
-details.conv summary{
-  cursor: pointer;
-  list-style: none;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.05);
-  font-weight: 800;
-}
-details.conv summary::-webkit-details-marker{ display:none; }
-details.conv .conv-body{ padding: 10px 6px 2px; }
+    button {
+      font-weight: 950;
+      cursor: pointer;
+    }
 
-/* Home pill (matches other modules) */
-.home-btn{
-  display:inline-flex; align-items:center; gap:10px;
-  padding:10px 14px; border-radius:999px;
-  text-decoration:none; color:#e9f0ff; font-weight:800;
-  border:1px solid rgba(78, 255, 163, 0.35);
-  background: rgba(0,0,0,0.22);
-  margin-bottom: 10px;
-}
+    .time-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-/* Actions under the time inputs (less scroll) */
-.actions{ margin-top: 10px; }
-.btn-grid{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.btn-grid button{
-  width:100%;
-  padding: 12px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.06);
-  color: #e9f0ff;
-  font-weight: 900;
-}
-.btn-grid button:active{ transform: scale(0.99); }
-.btn-grid .btn-primary{
-  border-color: rgba(78, 255, 163, 0.55);
-  background: rgba(78, 255, 163, 0.20);
-}
-.btn-grid .btn-secondary{
-  border-color: rgba(255, 174, 66, 0.55);
-  background: rgba(255, 174, 66, 0.18);
-}
+    .time-row input {
+      width: 100%;
+    }
 
-</style>
+    .mini {
+      flex: 0 0 auto;
+      width: 100%;
+      min-width: 100%;
+      padding: 10px 10px;
+      font-weight: 950;
+    }
 
+    .zulu-line {
+      margin-top: 8px;
+      font-size: 14px;
+      opacity: .92;
+    }
+
+    .result-card {
+      margin-top: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(10, 14, 20, 0.52);
+      padding: 10px;
+    }
+
+    .result-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .result-top .label {
+      font-weight: 950;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      opacity: .9;
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-size: 12px;
+      opacity: .9;
+      white-space: nowrap;
+    }
+
+    .result-main {
+      font-size: 44px;
+      font-weight: 950;
+      line-height: 1;
+      margin: 0 0 6px;
+    }
+
+    .result-sub {
+      font-size: 13px;
+      opacity: .92;
+      line-height: 1.25;
+    }
+
+    .helper {
+      margin-top: 6px;
+      font-size: 12.5px;
+      opacity: .92;
+      line-height: 1.3;
+    }
+
+    .error {
+      opacity: 1;
+      font-weight: 950;
+    }
+
+    .actions {
+      margin-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.10);
+      padding-top: 10px;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .action-grid+.action-grid {
+      margin-top: 10px;
+    }
+
+    @media (max-width: 340px) {
+      .action-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    details.conv {
+      margin-top: 10px;
+    }
+
+    details.conv summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.05);
+      font-weight: 950;
+    }
+
+    details.conv summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.conv .conv-body {
+      padding: 10px 4px 2px;
+      font-size: 13px;
+      opacity: .92;
+      line-height: 1.35;
+    }
+
+    /* iPhone tighten */
+    @media (max-width: 430px) {
+      .module-title {
+        font-size: 28px;
+        margin-bottom: 10px;
+      }
+
+      .card {
+        padding: 10px;
+      }
+
+      input,
+      select,
+      button {
+        padding: 10px 12px;
+      }
+
+      .result-main {
+        font-size: 42px;
+      }
+
+      .mini {
+        min-width: 78px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <a class="home-btn" href="../index.html">🏠 Home</a>
-  <h2>Flight Time</h2>
-
-  <div class="card">
-    <div class="grid">
-  <div>
-    <label for="startTime">Takeoff (Z)</label>
-    <div class="time-row">
-      <input id="startTime" type="text" inputmode="numeric" pattern="^([01]\d|2[0-3]):[0-5]\d$" placeholder="HH:MM (24h Z)" value="12:00" />
-      <button class="mini" type="button" onclick="setNowZ('startTime')" aria-label="Set Takeoff to current Zulu time">Now (Z)</button>
+  <div class="container">
+    <a class="home-button" href="../index.html">🏠 Home</a>
+    <h1 class="module-title">FLIGHT TIME</h1>
+    <div class="card">
+      <div class="time-grid">
+        <div>
+          <label for="startTime">Takeoff (Z)</label>
+          <div class="time-row">
+            <input id="startTime" type="text" inputmode="numeric" pattern="^([01]\d|2[0-3]):[0-5]\d$"
+              placeholder="HH:MM (24h Z)" value="12:00" />
+            <button class="mini" type="button" onclick="setNowZ('startTime')"
+              aria-label="Set Takeoff to current Zulu time" class="mini">Now (Z)</button>
+          </div>
+        </div>
+        <div>
+          <label for="endTime">Landing (Z)</label>
+          <div class="time-row">
+            <input id="endTime" type="text" inputmode="numeric" pattern="^([01]\d|2[0-3]):[0-5]\d$"
+              placeholder="HH:MM (24h Z)" value="14:55" />
+            <button class="mini" type="button" onclick="setNowZ('endTime')"
+              aria-label="Set Landing to current Zulu time" class="mini">Now (Z)</button>
+          </div>
+          <div class="actions" role="region" aria-label="Actions">
+            <div class="action-grid">
+              <button type="button" onclick="calc()">Calculate</button>
+              <button type="button" onclick="clearAll()">Clear</button>
+            </div>
+            <div class="action-grid">
+              <button type="button" onclick="addLeg()">Add Leg</button>
+              <button type="button" onclick="resetLegs()">Reset Legs</button>
+            </div>
+          </div>
+        </div>
+        <div id="zuluClock" class="zulu-line">Zulu: --:--:--Z</div>
+        <div class="result-card" aria-label="Results">
+          <div class="result-top">
+            <div class="label">Flight Time</div>
+            <span class="badge">Zulu • HH.MM</span>
+          </div>
+          <div id="resultMain" class="result-main">—</div>
+          <div id="resultSub" class="result-sub"></div>
+          <div id="details" class="result-sub" style="margin-top:6px;"></div>
+          <div id="note" class="result-sub"></div>
+          <div id="legs" class="result-sub" style="margin-top:8px;"></div>
+          <div id="rollover" class="result-sub" style="margin-top:6px;font-weight:950;"></div>
+        </div>
+        <div class="helper"><span class="badge">Time Format</span> 24‑hour clock (HH:MM) in Zulu only.</div>
+        <details class="conv">
+          <summary>Minutes → Decimal Conversion (TO table)</summary>
+          <div class="conv-body subtle">
+              1–2 = .0
+              3–8 = .1
+             9–14 = .2
+            15–20 = .3
+            21–26 = .4
+            27–33 = .5
+            34–39 = .6
+            40–45 = .7
+            46–51 = .8
+            52–57 = .9
+            58–60 = Next hour
+          </div>
+        </details>
+      </div>
     </div>
   </div>
-  <div>
-    <label for="endTime">Landing (Z)</label>
-    <div class="time-row">
-      <input id="endTime" type="text" inputmode="numeric" pattern="^([01]\d|2[0-3]):[0-5]\d$" placeholder="HH:MM (24h Z)" value="14:55" />
-      <button class="mini" type="button" onclick="setNowZ('endTime')" aria-label="Set Landing to current Zulu time">Now (Z)</button>
-    </div>
   </div>
-</div>
+  <script>
+    // Conversion table from your photo
+    function convertMinutes(min) {
+      // min: 0-60
+      min = Math.max(0, Math.min(60, Math.floor(min || 0)));
 
-<div class="actions" role="region" aria-label="Actions">
-  <div class="btn-grid">
-    <button type="button" class="btn-primary" onclick="calc()">Calculate</button>
-    <button type="button" class="btn-secondary" onclick="clearAll()">Clear</button>
-    <button type="button" onclick="addLeg()">Add Leg</button>
-    <button type="button" onclick="resetLegs()">Reset Legs</button>
-  </div>
-</div>
-
-<div id="zuluClock" class="subtle" style="margin-top:6px;"></div>
-
-
-    
-    <div id="result" class="result">Flight Time: 0.0</div>
-    <div id="details" class="subtle"></div>
-    <div id="note" class="subtle"></div>
-    <div id="legs" class="subtle" style="margin-top:4px;"></div>
-    <div id="rollover" class="subtle" style="margin-top:4px;font-weight:800;"></div>
-
-
-
-    <div class="subtle"><span class="badge">Time Format</span> 24‑hour clock (HH:MM) in Zulu only.</div>
-
-    <details class="conv">
-  <summary>Minutes → Decimal Conversion (TO table)</summary>
-  <div class="conv-body subtle">
-    1–2=.0 • 3–8=.1 • 9–14=.2 • 15–20=.3 • 21–26=.4 • 27–33=.5 • 34–39=.6 • 40–45=.7 • 46–51=.8 • 52–57=.9 • 58–60=Next hour
-  </div>
-</details>
-
-  <div class="row" style="margin-top:10px;">
-    <button type="button" onclick="addLeg()">Add Leg</button>
-    <button type="button" onclick="resetLegs()">Reset Legs</button>
-  </div>
-</div>
-
-  </div>
-</div>
-
-<script>
-  // Conversion table from your photo
-  function convertMinutes(min){
-    // min: 0-60
-    min = Math.max(0, Math.min(60, Math.floor(min||0)));
-
-    if(min >= 58) return {dec: 0.0, addHour: true, band: "58–60 = Next hour"};
-    if(min <= 2)  return {dec: 0.0, band: "1–2 = .0"};
-    if(min <= 8)  return {dec: 0.1, band: "3–8 = .1"};
-    if(min <= 14) return {dec: 0.2, band: "9–14 = .2"};
-    if(min <= 20) return {dec: 0.3, band: "15–20 = .3"};
-    if(min <= 26) return {dec: 0.4, band: "21–26 = .4"};
-    if(min <= 33) return {dec: 0.5, band: "27–33 = .5"};
-    if(min <= 39) return {dec: 0.6, band: "34–39 = .6"};
-    if(min <= 45) return {dec: 0.7, band: "40–45 = .7"};
-    if(min <= 51) return {dec: 0.8, band: "46–51 = .8"};
-    if(min <= 57) return {dec: 0.9, band: "52–57 = .9"};
-    return {dec: 0.0, band: "0 = .0"};
-  }
-
-  function parseHHMM(value){
-    // value like "14:55"
-    if(!value || typeof value !== "string") return null;
-    const m = value.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
-    if(!m) return null;
-    return { h: Number(m[1]), min: Number(m[2]) };
-  }
-
-  function minutesSinceMidnight(t){
-    return (t.h * 60) + t.min;
-  }
-
-  function calc(){
-    const s = parseHHMM(document.getElementById("startTime").value);
-    const e = parseHHMM(document.getElementById("endTime").value);
-
-    const resultEl  = document.getElementById("result");
-    const detailsEl = document.getElementById("details");
-    const noteEl    = document.getElementById("note");
-
-    detailsEl.classList.remove("error");
-    noteEl.classList.remove("error");
-
-    if(!s || !e){
-      resultEl.textContent = "Flight Time: —";
-      detailsEl.textContent = "Enter times in HH:MM format.";
-      detailsEl.classList.add("error");
-      noteEl.textContent = "";
-      return;
+      if (min >= 58) return { dec: 0.0, addHour: true, band: "58–60 = Next hour" };
+      if (min <= 2) return { dec: 0.0, band: "1–2 = .0" };
+      if (min <= 8) return { dec: 0.1, band: "3–8 = .1" };
+      if (min <= 14) return { dec: 0.2, band: "9–14 = .2" };
+      if (min <= 20) return { dec: 0.3, band: "15–20 = .3" };
+      if (min <= 26) return { dec: 0.4, band: "21–26 = .4" };
+      if (min <= 33) return { dec: 0.5, band: "27–33 = .5" };
+      if (min <= 39) return { dec: 0.6, band: "34–39 = .6" };
+      if (min <= 45) return { dec: 0.7, band: "40–45 = .7" };
+      if (min <= 51) return { dec: 0.8, band: "46–51 = .8" };
+      if (min <= 57) return { dec: 0.9, band: "52–57 = .9" };
+      return { dec: 0.0, band: "0 = .0" };
     }
 
-    let start = minutesSinceMidnight(s);
-    let end   = minutesSinceMidnight(e);
-
-    // If landing is earlier than takeoff, assume it landed next day
-    if(end < start) end += 24 * 60;
-
-    let baseDiff = end - start; // minutes
-    let diff = baseDiff + legs.reduce((a,b)=>a+b,0);
-    let hours = Math.floor(diff / 60);
-    let mins  = diff % 60;
-
-    const conv = convertMinutes(mins);
-    if(conv.addHour){
-      hours += 1;
+    function parseHHMM(value) {
+      // value like "14:55"
+      if (!value || typeof value !== "string") return null;
+      const m = value.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+      if (!m) return null;
+      return { h: Number(m[1]), min: Number(m[2]) };
     }
 
-    const total = (hours + (conv.dec || 0)).toFixed(1);
-    resultEl.textContent = "Flight Time: " + total;
-
-    const rolloverEl=document.getElementById('rollover');
-    rolloverEl.textContent = end < start ? '+1 DAY (UTC rollover)' : '';
-
-    detailsEl.textContent = `Elapsed: ${hours - (conv.addHour ? 1 : 0)}:${String(mins).padStart(2,'0')} (H:MM)`;
-    if(conv.addHour){
-      noteEl.textContent = "Minutes 58–60 round to next hour (+1.0).";
-    } else {
-      noteEl.textContent = `Minutes ${mins} → ${conv.band}`;
+    function minutesSinceMidnight(t) {
+      return (t.h * 60) + t.min;
     }
-  }
 
+    function calc() {
+      const s = parseHHMM(document.getElementById("startTime").value);
+      const e = parseHHMM(document.getElementById("endTime").value);
 
-function pad2(n){ return String(n).padStart(2,'0'); }
+      const resultEl = document.getElementById("resultMain");
+      const noteEl = document.getElementById("note");
 
-function getNowZuluHHMM(){
-  const d = new Date();
-  return pad2(d.getUTCHours()) + ":" + pad2(d.getUTCMinutes());
-}
+      noteEl.classList.remove("error");
 
-function setNowZ(targetId){
-  const v = getNowZuluHHMM();
-  document.getElementById(targetId).value = v;
-  calc();
-}
+      if (!s || !e) {
+        resultEl.textContent = "—";
+        const subEl = document.getElementById("resultSub");
+        if (subEl) subEl.textContent = "Enter times in HH:MM.";
+        noteEl.textContent = "";
+        return;
+      }
 
-function updateZuluClock(){
-  const d = new Date();
-  const z = pad2(d.getUTCHours()) + ":" + pad2(d.getUTCMinutes()) + ":" + pad2(d.getUTCSeconds()) + "Z";
-  const el = document.getElementById("zuluClock");
-  if(el) el.textContent = "Current Zulu: " + z;
-}
+      let start = minutesSinceMidnight(s);
+      let end = minutesSinceMidnight(e);
 
+      // If landing is earlier than takeoff, assume it landed next day
+      if (end < start) end += 24 * 60;
 
+      let baseDiff = end - start; // minutes
+      let diff = baseDiff + legs.reduce((a, b) => a + b, 0);
+      let hours = Math.floor(diff / 60);
+      let mins = diff % 60;
 
-// Auto-format HHMM -> HH:MM while typing
-function autoFormatTime(el){
-  let v = el.value.replace(/[^0-9]/g,'');
-  if(v.length >= 3){
-    v = v.slice(0,2) + ":" + v.slice(2,4);
-  }
-  el.value = v.slice(0,5);
-}
+      const conv = convertMinutes(mins);
+      if (conv.addHour) {
+        hours += 1;
+      }
 
-["startTime","endTime"].forEach(id=>{
-  const el=document.getElementById(id);
-  el.addEventListener("input",()=>autoFormatTime(el));
-});
+      const total = (hours + (conv.dec || 0)).toFixed(1);
+      resultEl.textContent = "" + total;
 
-let legs=[];
+      const rolloverEl = document.getElementById('rollover');
+      rolloverEl.textContent = end < start ? '+1 DAY (UTC rollover)' : '';
 
-function diffMinutes(s,e){
-  let start=s.h*60+s.min;
-  let end=e.h*60+e.min;
-  let rollover=false;
-  if(end<start){ end+=1440; rollover=true; }
-  return {mins:end-start, rollover};
-}
+      if (conv.addHour) {
+        noteEl.textContent = "Minutes 58–60 round to next hour (+1.0).";
+      } else {
+        noteEl.textContent = `Minutes ${mins} → ${conv.band}`;
+        const subEl = document.getElementById("resultSub");
+        if (subEl) subEl.textContent = `Elapsed: ${hours}:${String(mins).padStart(2, "0")} (H:MM)`;
+      }
+    }
 
-function addLeg(){
-  const s=parseHHMM(startTime.value);
-  const e=parseHHMM(endTime.value);
-  if(!s||!e) return;
-  const d=diffMinutes(s,e);
-  legs.push(d.mins);
-  renderLegs();
-  calc();
-}
+    function pad2(n) { return String(n).padStart(2, '0'); }
 
-function resetLegs(){
-  legs=[];
-  renderLegs();
-  calc();
-}
+    function getNowZuluHHMM() {
+      const d = new Date();
+      return pad2(d.getUTCHours()) + ":" + pad2(d.getUTCMinutes());
+    }
 
-function renderLegs(){
-  const el=document.getElementById("legs");
-  if(!legs.length){ el.textContent=""; return; }
-  el.textContent="Legs (minutes): "+legs.join(" + ");
-}
+    function setNowZ(targetId) {
+      const v = getNowZuluHHMM();
+      document.getElementById(targetId).value = v;
+      calc();
+    }
 
+    function updateZuluClock() {
+      const d = new Date();
+      const z = pad2(d.getUTCHours()) + ":" + pad2(d.getUTCMinutes()) + ":" + pad2(d.getUTCSeconds()) + "Z";
+      const el = document.getElementById("zuluClock");
+      if (el) el.textContent = "Current Zulu: " + z;
+    }
 
-  function clearAll(){
-    document.getElementById("startTime").value = "00:00";
-    document.getElementById("endTime").value = "00:00";
-    document.getElementById("result").textContent = "Flight Time: 0.0";
-    document.getElementById("details").textContent = "";
-    document.getElementById("note").textContent = "";
-  }
+    // Auto-format HHMM -> HH:MM while typing
+    function autoFormatTime(el) {
+      let v = el.value.replace(/[^0-9]/g, '');
+      if (v.length >= 3) {
+        v = v.slice(0, 2) + ":" + v.slice(2, 4);
+      }
+      el.value = v.slice(0, 5);
+    }
 
-  // Auto-calc on change for convenience
-  ["startTime","endTime"].forEach(id => {
-    document.getElementById(id).addEventListener("change", calc);
-  });
+    ["startTime", "endTime"].forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener("input", () => autoFormatTime(el));
+    });
 
-  // Zulu clock
-  updateZuluClock();
-  setInterval(updateZuluClock, 1000);
+    let legs = [];
 
-  // Initial example calc
-  calc();
-</script>
+    function diffMinutes(s, e) {
+      let start = s.h * 60 + s.min;
+      let end = e.h * 60 + e.min;
+      let rollover = false;
+      if (end < start) { end += 1440; rollover = true; }
+      return { mins: end - start, rollover };
+    }
+
+    function addLeg() {
+      const s = parseHHMM(startTime.value);
+      const e = parseHHMM(endTime.value);
+      if (!s || !e) return;
+      const d = diffMinutes(s, e);
+      legs.push(d.mins);
+      renderLegs();
+      calc();
+    }
+
+    function resetLegs() {
+      legs = [];
+      renderLegs();
+      calc();
+    }
+
+    function renderLegs() {
+      const el = document.getElementById("legs");
+      if (!legs.length) { el.textContent = ""; return; }
+      el.textContent = "Legs (minutes): " + legs.join(" + ");
+    }
+
+    function clearAll() {
+      document.getElementById("startTime").value = "00:00";
+      document.getElementById("endTime").value = "00:00";
+      document.getElementById("resultMain").textContent = "0.0";
+      const subEl = document.getElementById("resultSub");
+      if (subEl) subEl.textContent = "Elapsed: —";
+      document.getElementById("details").textContent = "";
+      document.getElementById("note").textContent = "";
+    }
+
+    // Auto-calc on change for convenience
+    ["startTime", "endTime"].forEach(id => {
+      document.getElementById(id).addEventListener("change", calc);
+    });
+
+    // Zulu clock
+    updateZuluClock();
+    setInterval(updateZuluClock, 1000);
+
+    // Initial example calc
+    calc();
+  </script>
 </body>
+
 </html>

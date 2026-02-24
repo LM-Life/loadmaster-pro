@@ -15,28 +15,26 @@ const CORE_FILES = [
 
 const MODULE_FILES = [
   "./modules/approach.html",
-  "./modules/flight-time.html",
-  "./modules/loadshift.html",
-  "./modules/restraint.html",
-  "./modules/sleeper.html",
-  "./modules/tires_over_100psi.html",
-  "./modules/vehiclecg.html",
-  "./modules/winching.html"
-];
-
-const JS_FILES = [
   "./js/approach.js",
+  "./modules/flight-time.html",
   "./js/flight-time.js",
+  "./modules/loadshift.html",
   "./js/loadshift.js",
+  "./modules/restraint.html",
   "./js/restraint.js",
+  "./modules/sleeper.html",
   "./js/sleeper.js",
+  "./modules/tires_over_100psi.html",
   "./js/tires_over_100psi.js",
+  "./modules/vehiclecg.html",
   "./js/vehiclecg.js",
-  "./js/winching.js",
+  "./modules/winching.html",
+  "./js/winching.js"
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll([...CORE_FILES, ...MODULE_FILES, ...JS_FILES]))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll([...CORE_FILES, ...MODULE_FILES]))
   );
   self.skipWaiting();
 });

@@ -69,8 +69,6 @@
       .mini{min-width:78px;}
     }
   </style>
-
-
 </head>
 <body>
 <div class="container">
@@ -116,9 +114,7 @@
     1–2=.0 • 3–8=.1 • 9–14=.2 • 15–20=.3 • 21–26=.4 • 27–33=.5 • 34–39=.6 • 40–45=.7 • 46–51=.8 • 52–57=.9 • 58–60=Next hour
   </div>
 </details>
-
-
-    <div class="actions" role="region" aria-label="Actions">
+  <div class="actions" role="region" aria-label="Actions">
       <div class="action-grid">
         <button type="button" onclick="calc()">Calculate</button>
         <button type="button" onclick="clearAll()">Clear</button>
@@ -129,10 +125,8 @@
       </div>
     </div>
 </div>
-
   </div>
 </div>
-
 <script>
   // Conversion table from your photo
   function convertMinutes(min){
@@ -212,8 +206,7 @@
     if(subEl) subEl.textContent = `Elapsed: ${hours}:${String(mins).padStart(2,"0")} (H:MM)`;
     }
   }
-
-
+  
 function pad2(n){ return String(n).padStart(2,'0'); }
 
 function getNowZuluHHMM(){
@@ -233,8 +226,6 @@ function updateZuluClock(){
   const el = document.getElementById("zuluClock");
   if(el) el.textContent = "Current Zulu: " + z;
 }
-
-
 
 // Auto-format HHMM -> HH:MM while typing
 function autoFormatTime(el){
@@ -281,7 +272,6 @@ function renderLegs(){
   if(!legs.length){ el.textContent=""; return; }
   el.textContent="Legs (minutes): "+legs.join(" + ");
 }
-
 
   function clearAll(){
     document.getElementById("startTime").value = "00:00";

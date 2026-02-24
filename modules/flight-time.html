@@ -23,7 +23,7 @@
     }
 
     .module-title {
-      margin: 0 0 6px;
+      margin: 0 0 8px;
       font-size: 30px;
       letter-spacing: .08em;
       text-transform: uppercase;
@@ -109,11 +109,11 @@
     }
 
     .result-card {
-      margin-top: 4px;
+      margin-top: 8px;
       border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, 0.14);
       background: rgba(10, 14, 20, 0.52);
-      padding: 4px 4px 2px;
+      padding: 8px;
     }
 
     .result-top {
@@ -153,7 +153,6 @@
       font-size: 12.5px;
       opacity: .92;
       line-height: 1.2;
-      margin-bottom: 2px;      
     }
 
     .helper {
@@ -244,8 +243,8 @@
 
     /* --- Compact layout tweaks (Feb 2026) --- */
     .module-title { margin: 0 0 10px; font-size: 30px; }
-    .card { padding: 5px; }
-    .time-grid { gap: 5px; margin-top: 1px; }
+    .card { padding: 14px; }
+    .time-grid { gap: 12px; margin-top: 8px; }
     .time-col { gap: 8px; }
     .time-row { gap: 10px; }
     .actions { margin-top: 12px; }
@@ -253,8 +252,15 @@
     .btn { padding: 12px 12px; min-height: 46px; }
     .zulu-line { margin-top: 10px; }
     .result-card { margin-top: 12px; }
-    .helper { margin: 6px 0 4px; }
+    .helper { margin: 12px 0 10px; }
     .conv { margin-top: 10px; }
+
+/* Leg list inside result card */
+.legs-list{ margin-top:10px; display:flex; flex-direction:column; gap:6px; }
+.leg-row{ display:flex; justify-content:space-between; font-size:14px; opacity:0.95; }
+.leg-row.current{ opacity:1; }
+.leg-label{ font-weight:700; }
+.leg-val{ font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
@@ -262,7 +268,7 @@
 <a aria-label="Home" class="home-button" href="../index.html">
 <span class="home-icon">🏠</span><span>Home</span>
 </a>
-<h1 class="module-title">FLIGHT TIME</h1>
+<h1 class="module-title">FLIGHT TIME<br/>CALCULATOR</h1>
 <div aria-label="Flight Time Calculator" class="card" role="region">
 <div class="time-grid">
 <div class="time-col">
@@ -350,6 +356,36 @@
     function minutesSinceMidnight(t) {
       return (t.h * 60) + t.min;
     }
+function computeCurrentLegMeta() {
+  const startStr = document.getElementById("startTime").value.trim();
+  const endStr   = document.getElementById("endTime").value.trim();
+
+  const start = parseHHMM(startStr);
+  const end   = parseHHMM(endStr);
+  if (!start || !end) return null;
+
+  let startMin = minutesSinceMidnight(start.h, start.m);
+  let endMin   = minutesSinceMidnight(end.h, end.m);
+
+  // handle rollover across midnight
+  if (endMin < startMin) endMin += 24 * 60;
+
+  const diff = endMin - startMin;
+  const hh = Math.floor(diff / 60);
+  const mm = diff % 60;
+
+  const conv = convertMinutes(mm);
+  const dec = (hh + (conv.addHour ? 1 : 0)) + conv.dec;
+
+  const hhmm = `${hh}:${String(mm).padStart(2, "0")}`;
+
+  return { hh, mm, hhmm, conv, decimal: dec };
+}
+
+// renderLegs implemented above
+
+
+
 
     function calc() {
       const s = parseHHMM(document.getElementById("startTime").value);
@@ -434,7 +470,7 @@
       el.addEventListener("input", () => autoFormatTime(el));
     });
 
-    let legs = [];
+    let legs = []; // decimal flight-time legs (e.g., 2.1)
 
     function diffMinutes(s, e) {
       let start = s.h * 60 + s.min;
@@ -463,18 +499,26 @@
     function renderLegs() {
       const el = document.getElementById("legs");
       if (!legs.length) { el.textContent = ""; return; }
-      el.textContent = "Legs (minutes): " + legs.join(" + ");
+      el.textContent = "Legs: " + legs.join(" + ");
     }
 
     function clearAll() {
-      document.getElementById("startTime").value = "00:00";
-      document.getElementById("endTime").value = "00:00";
-      document.getElementById("resultMain").textContent = "0.0";
-      const subEl = document.getElementById("resultSub");
-      if (subEl) subEl.textContent = "Elapsed: —";
-      document.getElementById("details").textContent = "";
-      document.getElementById("note").textContent = "";
-    }
+  document.getElementById("startTime").value = "00:00";
+  document.getElementById("endTime").value = "00:00";
+  legs = [];
+  document.getElementById("resultMain").textContent = "0.0";
+
+  const subEl = document.getElementById("resultSub");
+  if (subEl) subEl.textContent = "Elapsed: 0:00 (H:MM)";
+
+  const detailsEl = document.getElementById("details");
+  if (detailsEl) detailsEl.textContent = "";
+
+  const noteEl = document.getElementById("note");
+  if (noteEl) noteEl.textContent = "Minutes → Decimal";
+
+  renderLegs(null);
+}
 
     // Auto-calc on change for convenience
     ["startTime", "endTime"].forEach(id => {

@@ -265,6 +265,15 @@
             <button class="mini" type="button" onclick="setNowZ('endTime')"
               aria-label="Set Landing to current Zulu time" class="mini">Now (Z)</button>
           </div>
+          <div class="actions" role="region" aria-label="Actions">
+          <div class="action-grid">
+            <button type="button" onclick="calc()">Calculate</button>
+            <button type="button" onclick="clearAll()">Clear</button>
+          </div>
+          <div class="action-grid">
+            <button type="button" onclick="addLeg()">Add Leg</button>
+            <button type="button" onclick="resetLegs()">Reset Legs</button>
+          </div>
         </div>
       </div>
       <div id="zuluClock" class="zulu-line">Zulu: --:--:--Z</div>
@@ -284,9 +293,9 @@
       <details class="conv">
         <summary>Minutes → Decimal Conversion (TO table)</summary>
         <div class="conv-body subtle">
-          1–2 = .0
-          3–8 = .1
-          9–14 = .2
+            1–2 = .0
+            3–8 = .1
+           9–14 = .2
           15–20 = .3
           21–26 = .4
           27–33 = .5

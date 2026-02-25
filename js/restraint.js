@@ -198,5 +198,22 @@ VERT: ${requiredRestraint.VERT} lbs`;
     }
 
     // ---------- Init ----------
-    document.getElementById('restraintFactor').addEventListener('change', onFactorChange);
     onFactorChange();
+
+function initRestraintUI(){
+      const byId = (id)=>document.getElementById(id);
+
+      byId('calcRequiredBtn')?.addEventListener('click', calculateRestraint);
+      byId('multiplierBtn')?.addEventListener('click', toggleMultiplier);
+      byId('addRestraintBtn')?.addEventListener('click', calculateActualRestraint);
+      byId('undoBtn')?.addEventListener('click', undoLast);
+      byId('clearAllBtn')?.addEventListener('click', clearAll);
+
+      // Existing factor change binding (if present)
+      const factorSel = byId('restraintFactor');
+      if (factorSel){
+        factorSel.addEventListener('change', onFactorChange);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initRestraintUI);

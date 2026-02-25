@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <link rel="stylesheet" href="../style.css" />
-  </head>
+    <script src="../common.js" defer></script>
+</head>
 <body>
   
   <a class="home-button" href="../index.html">🏠 Home</a>
@@ -14,7 +15,7 @@
   <label for="cargoWeight">Cargo Weight (lbs):</label>
   <input id="cargoWeight" class="form-control" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 12000" />
 
-  <button onclick="calculateRestraint()">Calculate Required Restraint</button>
+  <button type="button" id="calcRequiredBtn" class="btn-primary">Calculate Required Restraint</button>
   <div id="result" class="card mt-2"></div>
 
   <hr class="divider" />
@@ -72,12 +73,12 @@
 
 <div class="actual-actions">
   <div class="grid-2 action-grid">
-    <button id="multiplierBtn" class="btn btn-multiplier off" onclick="toggleMultiplier()">×2 OFF</button>
-    <button onclick="calculateActualRestraint()">Add Restraint</button>
+    <button type="button" id="multiplierBtn" class="btn btn-multiplier off">×2 OFF</button>
+    <button type="button" id="addRestraintBtn" class="btn-primary">Add Restraint</button>
   </div>
   <div class="grid-2 action-grid">
-    <button id="undoBtn" class="btn-secondary" onclick="undoLast()" disabled>Undo</button>
-    <button class="btn-danger" onclick="clearAll()">Clear All</button>
+    <button type="button" id="undoBtn" class="btn-secondary" disabled>Undo</button>
+    <button type="button" id="clearAllBtn" class="btn-danger">Clear All</button>
   </div>
 </div>
 

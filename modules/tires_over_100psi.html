@@ -1,45 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="../style.css" />
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tires > 100 PSI Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Loadmaster Pro | Tires &gt; 100 PSI</title>
+  <link rel="stylesheet" href="../style.css">
   <script src="../common.js" defer></script>
 </head>
 <body>
   <div class="container tires100-module">
-    <div class="card"><a class="home-button" href="../index.html">🏠 Home</a>
+    <a class="home-button" href="../index.html">🏠 Home</a>
+    <h1>TIRES &gt; 100 PSI</h1>
 
-  <h1>TIRES &gt; 100 PSI</h1>
-
-  
-
-  
-
-  
-
-  
-
-  
-    
-<div class="grid-2">
-        <div><label for="psiWeight">Axle Weight (lbs)</label>
-  <input type="number" id="psiWeight" inputmode="numeric" pattern="[0-9]*" / autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
-        <div><label for="psiTires">Number of Tires</label>
-  <input type="number" id="psiTires" inputmode="numeric" pattern="[0-9]*" / autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+    <div class="card">
+      <div class="grid-2">
+        <div>
+          <label for="psiWeight">Weight on Tires (lbs)</label>
+          <input id="psiWeight" type="number" inputmode="decimal" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. 18000">
+        </div>
+        <div>
+          <label for="psiTires">Number of Tires</label>
+          <input id="psiTires" type="number" inputmode="numeric" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. 4">
+        </div>
       </div>
 
       <div class="grid-2 mt-1">
-        <div><label for="psiLength">Tire Contact Length (in)</label>
-  <input type="number" id="psiLength" inputmode="decimal" pattern="[0-9.]*" / autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
-        <div><label for="psiWidth">Tire Contact Width (in)</label>
-  <input type="number" id="psiWidth" inputmode="decimal" pattern="[0-9.]*" / autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+        <div>
+          <label for="psiLength">Contact Length (in)</label>
+          <input id="psiLength" type="number" inputmode="decimal" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. 10">
+        </div>
+        <div>
+          <label for="psiWidth">Contact Width (in)</label>
+          <input id="psiWidth" type="number" inputmode="decimal" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. 8">
+        </div>
       </div>
 
       <div class="mt-1">
         <label for="psiType">Tire Type</label>
-  <select id="psiType">
+        <select id="psiType">
+          <option value="radial">Radial</option>
+          <option value="bias">Bias</option>
+        </select>
       </div>
 
       <div class="grid-2 mt-1">
@@ -47,18 +48,10 @@
         <button type="button" id="clearTires100Btn" class="btn-danger">Clear All</button>
       </div>
 
-<option value="aviation">Aviation</option>
-    <option value="vehicle">Vehicle</option>
-  </select>
-
-  <div>
-    <button type="button" id="calcTires100Btn" class="btn-primary">Calculate</button>
-    <button type="button" id="clearTires100Btn" class="btn-danger">Clear All</button>
+      <div id="psiResult" class="result-card mt-1" aria-live="polite"></div>
+    </div>
   </div>
 
-  <div id="psiResult" class="result-card mt-1" aria-live="polite"></div>
-
-  
-
-
+  <script src="../js/tires_over_100psi.js"></script>
+</body>
 </html>

@@ -1,27 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="../style.css" />
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Winching Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Loadmaster Pro | Winching</title>
+  <link rel="stylesheet" href="../style.css">
   <script src="../common.js" defer></script>
 </head>
 <body>
   <div class="container winching-module">
     <a class="home-button" href="../index.html">🏠 Home</a>
+    <h1>WINCHING</h1>
 
-  <h1>WINCHING</h1>
+    <div class="card">
+      <div class="grid-2">
+        <div>
+          <label for="winchWeight">Cargo Weight (lbs)</label>
+          <input id="winchWeight" type="number" inputmode="decimal" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. 25000">
+        </div>
+        <div>
+          <label for="winchRamp">Ramp Angle</label>
+          <select id="winchRamp">
+            <option value="level">Level</option>
+            <option value="3deg">3°</option>
+            <option value="6deg">6°</option>
+            <option value="9deg">9°</option>
+            <option value="12deg">12°</option>
+            <option value="15deg">15°</option>
+          </select>
+        </div>
+      </div>
 
-  
-    <div class=\"card\">
+      <div class="mt-1">
+        <label for="winchSurface">Surface</label>
+        <select id="winchSurface">
+          <option value="wheels">Wheels</option>
+          <option value="skids">Skids</option>
+          <option value="rollers">Rollers</option>
+        </select>
+      </div>
 
-  
+      <div class="grid-2 mt-1">
+        <button type="button" id="calcWinchingBtn" class="btn-primary">Calculate Required Snatch Blocks</button>
+        <button type="button" id="clearWinchingBtn" class="btn-danger">Clear All</button>
+      </div>
 
-  
-
-  <div id="winchResult"></div>
+      <div id="winchResult" class="result-card mt-1" aria-live="polite"></div>
     </div>
   </div>
-</body
+
+  <script src="../js/winching.js"></script>
+</body>
 </html>

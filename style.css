@@ -1,4 +1,4 @@
-/* Loadmaster Pro — unified theme (AF Blue / White / Black) */
+/* Loadmaster Pro — unified theme (P1 ChatOps-inspired: Green + Orange) */
 
 :root{
   --bg: #0b0f14;
@@ -6,14 +6,17 @@
   --card-2:#0f1620;
   --border: rgba(255,255,255,.14);
 
-  --af-blue:#1f6f8b;
-  --af-blue-2:#2a86a8;
+  /* Primary (P1 ChatOps green) */
+  --af-blue:#2ad18d;
+  --af-blue-2:#1fbf7e;
 
   --text:#ffffff;
   --muted: rgba(255,255,255,.75);
 
-  --good:#18a558;
-  --warn:#ffb020;
+  --good:#2ad18d;
+  /* “Clear” / warning actions should be orange */
+  --warn:#ff9f2f;
+  /* Keep red for true “bad/fail” indicators if you need them */
   --bad:#db4455;
 
   --shadow: 0 8px 20px rgba(0,0,0,.35);
@@ -26,7 +29,11 @@ html, body{ height:100%; }
 body{
   margin:0;
   padding:16px;
-  background: var(--bg);
+  /* Green → orange ambience, with dark base */
+  background:
+    radial-gradient(1200px 700px at 25% -10%, rgba(42,209,141,.35), rgba(0,0,0,0) 60%),
+    radial-gradient(1200px 700px at 85% 120%, rgba(255,159,47,.22), rgba(0,0,0,0) 60%),
+    var(--bg);
   color: var(--text);
   font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
 }
@@ -62,8 +69,8 @@ input, select, textarea{
 }
 
 input:focus, select:focus, textarea:focus{
-  border-color: rgba(31,111,139,.7);
-  box-shadow: 0 0 0 3px rgba(31,111,139,.18);
+  border-color: rgba(42,209,141,.7);
+  box-shadow: 0 0 0 3px rgba(42,209,141,.18);
 }
 
 textarea{
@@ -88,7 +95,8 @@ button{
 button:hover{ background: var(--af-blue-2); }
 
 .btn-danger{
-  background: var(--bad);
+  /* Clear/Reset actions: orange */
+  background: var(--warn);
   border-color: rgba(255,255,255,.18);
 }
 .btn-danger:hover{ filter: brightness(1.05); }
@@ -125,15 +133,15 @@ button:hover{ background: var(--af-blue-2); }
 /* OFF = outline only */
 .btn-multiplier.off {
   background: transparent;
-  color: #7fd3ff; /* or your accent text color */
-  border: 2px solid rgba(127, 211, 255, 0.6);
+  color: rgba(42,209,141,.95);
+  border: 2px solid rgba(42,209,141,.55);
 }
 
 /* ON = solid */
 .btn-multiplier.on {
-  background: #2b8fb8; /* same as your primary buttons */
+  background: var(--af-blue); /* same as your primary buttons */
   color: #fff;
-  border: 2px solid #2b8fb8;
+  border: 2px solid var(--af-blue);
 }
 
 .btn-multiplier.on:active {
@@ -549,78 +557,3 @@ hr, .divider{
   height: 1px;
   background: rgba(233,241,241,.10);
 }
-
-
-/* --- Module helpers: keep 2-column grids on mobile when desired --- */
-@media (max-width: 720px) {
-  .grid-2.keep-2 { grid-template-columns: 1fr 1fr; }
-}
-
-/* --- Restraint module: totals "bubbles" --- */
-.status-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-@media (max-width: 720px) {
-  .status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-.status-card {
-  background: rgba(10, 14, 20, 0.55);
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 16px;
-  padding: 12px 12px 10px;
-  min-height: 86px;
-  display: grid;
-  grid-template-rows: auto auto auto;
-  gap: 6px;
-}
-
-.status-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-
-.status-top .dir { opacity: 0.95; }
-
-.status-top .icon {
-  font-weight: 900;
-  font-size: 1.05em;
-  line-height: 1;
-}
-
-.status-card .act,
-.status-card .rem {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-  font-weight: 650;
-}
-
-.status-card .label {
-  opacity: 0.75;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  font-size: 0.85em;
-}
-
-.status-card .value {
-  font-variant-numeric: tabular-nums;
-  font-weight: 800;
-}
-
-.status-card.pass .icon,
-.status-card.pass .dir { color: #2fe28f; }
-
-.status-card.fail .icon,
-.status-card.fail .dir { color: #ff5b5b; }
-
-/* Ensure action grids in restraint stay tight */
-.actual-actions .action-grid { gap: 12px; }

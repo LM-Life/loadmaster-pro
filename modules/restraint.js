@@ -265,3 +265,10 @@
     wire();
   }
 })();
+
+  // ---- expose handlers for inline onclick buttons (safe shim) ----
+  window.calculateRestraint = window.calculateRestraint || calculateRestraint;
+  window.calculateActualRestraint = window.calculateActualRestraint || calculateActualRestraint;
+  window.toggleMultiplier = window.toggleMultiplier || toggleMultiplier;
+  window.clearAll = window.clearAll || clearAll;
+  window.undoLast = window.undoLast || undoLast;

@@ -19,6 +19,16 @@
   --shadow: 0 8px 20px rgba(0,0,0,.35);
 }
 
+
+
+/* ===== P1 ChatOps core color tokens (global) ===== */
+:root{
+  --p1-green: #2ddc90;
+  --p1-green-2: #19b874;
+  --p1-orange: #f0a840;
+  --p1-orange-2: #d98c24;
+}
+
 /* Base */
 *{ box-sizing:border-box; }
 html, body{ height:100%; }
@@ -75,29 +85,34 @@ textarea{
 button{
   width: 100%;
   padding: 12px 12px;
-  border-radius: 10px;
+  border-radius: 14px;
   border: 2px solid rgba(255,255,255,.18);
-  background: var(--af-blue);
-  color: #fff;
-  font-weight: 800;
+
+  /* Default = P1 green (so modules without classes still match) */
+  background: var(--p1-green);
+  color: #06120d;
+  font-weight: 900;
   letter-spacing: .4px;
   cursor: pointer;
   margin-top: 10px;
-}
 
-button:hover{ background: var(--af-blue-2); }
+  box-shadow: 0 8px 20px rgba(0,0,0,.35);
+}
+button:hover{ background: var(--p1-green-2); }
 
 .btn-danger{
-  background: var(--bad);
-  border-color: rgba(255,255,255,.18);
+  background: var(--p1-orange);
+  border-color: var(--p1-orange-2);
+  color: #1a1205;
 }
-.btn-danger:hover{ filter: brightness(1.05); }
+.btn-danger:hover{ background: var(--p1-orange-2); }
 
 .btn-secondary{
   background: transparent;
-  border-color: rgba(255,255,255,.22);
+  color: var(--p1-green);
+  border-color: rgba(45,220,144,0.55);
 }
-.btn-secondary:hover{ background: rgba(255,255,255,.06); }
+.btn-secondary:hover{ background: rgba(45,220,144,0.12); }
 
 /* Home button */
 .home-button, .back-button{
@@ -598,4 +613,21 @@ button.btn-danger{
   background: var(--p1-orange) !important;
   border-color: var(--p1-orange-2) !important;
   color: #1a1205 !important;
+}
+
+
+/* ===== Restraint: tighten bottom actions + force 2x2 grid on mobile ===== */
+.actual-actions{
+  margin: 8px 0;            /* less dead space */
+}
+.actual-actions .grid-2,
+.actual-actions .row{
+  gap: 10px;
+}
+.actual-actions button{
+  margin-top: 0;            /* grid handles spacing */
+}
+@media (max-width: 640px){
+  /* Always keep action buttons 2-up for restraint */
+  .actual-actions .grid-2{ grid-template-columns: 1fr 1fr; }
 }

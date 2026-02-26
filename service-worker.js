@@ -15,21 +15,21 @@ const CORE_FILES = [
 
 const MODULE_FILES = [
   "./modules/approach.html",
-  "./js/approach.js",
+  "./modules/approach.js",
   "./modules/flight-time.html",
-  "./js/flight-time.js",
+  "./modules/flight-time.js",
   "./modules/loadshift.html",
-  "./js/loadshift.js",
+  "./modules/loadshift.js",
   "./modules/restraint.html",
-  "./js/restraint.js",
+  "./modules/restraint.js",
   "./modules/sleeper.html",
-  "./js/sleeper.js",
+  "./modules/sleeper.js",
   "./modules/tires_over_100psi.html",
-  "./js/tires_over_100psi.js",
+  "./modules/tires_over_100psi.js",
   "./modules/vehiclecg.html",
-  "./js/vehiclecg.js",
+  "./modules/vehiclecg.js",
   "./modules/winching.html",
-  "./js/winching.js"
+  "./modules/winching.js"
 ];
 
 self.addEventListener("install", (event) => {

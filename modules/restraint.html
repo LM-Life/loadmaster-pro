@@ -4,8 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <link rel="stylesheet" href="../style.css" />
-  <script src="../common.js" defer></script>
-<style>
+  
+  <button onclick="goHome()" class="home-button">🏠 Home</button>
+
+  <style>
     /* Restraint results: compact status grid */
     .status-grid{
       display: grid;
@@ -62,9 +64,6 @@
   </style>
 </head>
 <body>
-  <div class="restraint-module">
-    <button onclick="goHome()" class="home-button">🏠 Home</button>
-
   
   <h1>Restraint Calculator</h1>
 
@@ -72,15 +71,14 @@
   <label for="cargoWeight">Cargo Weight (lbs):</label>
   <input id="cargoWeight" class="form-control" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 12000" />
 
-  <button id="calcRequiredBtn" onclick="calculateRestraint()">
-  Calculate Required Restraint
-  </button>
-  <div id="requiredRestraintDisplay" class="card mt-2"></div>
+  <button onclick="calculateRestraint()" class="btn btn-primary">Calculate Required Restraint</button>
+  <div id="result" class="card mt-2"></div>
 
   <hr class="divider" />
 
 <!-- Actual Restraint -->
 <h2>Actual Restraint Calculator</h2>
+
 <div class="grid-2">
   <div>
     <label for="actualLength">Actual Length (in):</label>
@@ -129,26 +127,15 @@
 />
 <div id="factorError" style="color:#f66; font-size:.95rem; display:none;"></div>
 
-<!-- Actions -->
-<div class="grid-2 keep-2 mt-1 actual-actions">
-  <div>
-    <button id="multiplierBtn" class="btn btn-multiplier off" onclick="toggleMultiplier()">×2 OFF</button>
-  </div>
-  <div>
-    <button class="btn btn-primary" id="addRestraintBtn" onclick="calculateActualRestraint()">Add Restraint</button>
-  </div>
+<div class="center mt-1">
+  <button id="multiplierBtn" class="btn btn-multiplier off" onclick="toggleMultiplier()">×2 OFF</button>
+
 </div>
 
-<!-- Undo + Clear -->
-<div class="grid-2 keep-2 mt-1 actual-actions">
-  <div>
-    <button id="undoBtn" class="btn btn-secondary" onclick="undoLast()" disabled>Undo</button>
-  </div>
-  <div>
-    <button id="clearAllBtn" class="btn btn-danger" onclick="clearAll()">Clear All</button>
-  </div>
-</div>
-</div>
-  <script src="restraint.js" defer></script>
+<button onclick="calculateActualRestraint()" class="btn btn-primary">Add Actual Restraint</button>
+<button class="btn-danger" onclick="clearAll()">Clear All</button>
+
+  
+  <script src="./restraint.js" defer></script>
 </body>
 </html>

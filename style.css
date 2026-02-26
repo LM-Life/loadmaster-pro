@@ -174,6 +174,8 @@ button:hover{ background: var(--af-blue-2); }
 @media (max-width: 640px){
   body{ padding: 12px; }
   .grid-2, .grid-3{ grid-template-columns: 1fr; }
+  /* Some action rows should stay 2-up even on small screens */
+  .grid-2.keep-2{ grid-template-columns: 1fr 1fr; }
 }
 
 /* Button rows (this replaces your broken row CSS) */
@@ -427,9 +429,12 @@ body.restraint-page{
 }
 
 .actual-actions{
-  /* Extra room above the fixed bar when you reach the buttons */
-  margin-bottom: 140px;
+  /* Keep action rows tight by default */
+  margin: 12px 0;
 }
+
+/* If a page uses a sticky summary footer, allow extra bottom space */
+body:has(#stickySummary.sticky-summary) .actual-actions:last-of-type{ margin-bottom: 140px; }
 
 /* Prevent iOS input zoom */
 input,
@@ -550,77 +555,47 @@ hr, .divider{
   background: rgba(233,241,241,.10);
 }
 
-
-/* --- Module helpers: keep 2-column grids on mobile when desired --- */
-@media (max-width: 720px) {
-  .grid-2.keep-2 { grid-template-columns: 1fr 1fr; }
+/* ============================================================
+   P1 ChatOps color lock (prevent legacy blue/red button styles)
+   ============================================================ */
+:root{
+  --p1-green: #2ddc90;
+  --p1-green-2: #19b874;
+  --p1-orange: #f0a840;
+  --p1-orange-2: #d98c24;
 }
 
-/* --- Restraint module: totals "bubbles" --- */
-.status-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+/* Primary / success */
+.btn-primary,
+.btn-success,
+button.btn-primary,
+button.btn-success{
+  background: var(--p1-green) !important;
+  border-color: var(--p1-green-2) !important;
+  color: #06120d !important;
 }
 
-@media (max-width: 720px) {
-  .status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* Outline / toggles */
+.btn-outline,
+.btn-multiplier,
+button.btn-outline,
+button.btn-multiplier{
+  background: transparent !important;
+  color: var(--p1-green) !important;
+  border-color: rgba(45,220,144,0.55) !important;
 }
 
-.status-card {
-  background: rgba(10, 14, 20, 0.55);
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 16px;
-  padding: 12px 12px 10px;
-  min-height: 86px;
-  display: grid;
-  grid-template-rows: auto auto auto;
-  gap: 6px;
+/* ON state */
+.btn-multiplier.on,
+button.btn-multiplier.on{
+  background: var(--p1-green) !important;
+  color: #06120d !important;
 }
 
-.status-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+/* Clear / danger => orange */
+.btn-danger,
+button.btn-danger{
+  background: var(--p1-orange) !important;
+  border-color: var(--p1-orange-2) !important;
+  color: #1a1205 !important;
 }
-
-.status-top .dir { opacity: 0.95; }
-
-.status-top .icon {
-  font-weight: 900;
-  font-size: 1.05em;
-  line-height: 1;
-}
-
-.status-card .act,
-.status-card .rem {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-  font-weight: 650;
-}
-
-.status-card .label {
-  opacity: 0.75;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  font-size: 0.85em;
-}
-
-.status-card .value {
-  font-variant-numeric: tabular-nums;
-  font-weight: 800;
-}
-
-.status-card.pass .icon,
-.status-card.pass .dir { color: #2fe28f; }
-
-.status-card.fail .icon,
-.status-card.fail .dir { color: #ff5b5b; }
-
-/* Ensure action grids in restraint stay tight */
-.actual-actions .action-grid { gap: 12px; }

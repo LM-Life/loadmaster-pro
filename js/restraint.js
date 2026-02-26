@@ -1,219 +1,267 @@
-// ---------- State ----------
-    let requiredText = "";
-    let requiredRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 }; // LAT = per side requirement
-    let totalRestraint = { FWD: 0, AFT: 0, "LAT-LEFT": 0, "LAT-RIGHT": 0, VERT: 0 };
-    let doubleMultiplier = false;
+// restraint.js - Loadmaster Pro (P1 theme compatible)
+// Keeps all styling in global CSS; this file only handles logic + minimal markup rendering.
 
-    // ---------- Helpers ----------
-    function nl2br(s){ return (s || "").replace(/\n/g, "<br/>"); }
+(function () {
+  'use strict';
 
-    function hasRequirementSet() {
-      return (requiredRestraint.FWD + requiredRestraint.AFT + requiredRestraint.LAT + requiredRestraint.VERT) > 0;
+  // ---- Helpers ----
+  const $ = (id) => document.getElementById(id);
+
+  function toNumber(v) {
+    const n = Number(String(v ?? '').replace(/,/g, '').trim());
+    return Number.isFinite(n) ? n : NaN;
+  }
+
+  function clamp0(n) { return n < 0 ? 0 : n; }
+
+  function formatLbs(n) {
+    if (!Number.isFinite(n)) return '—';
+    return Math.round(n).toLocaleString('en-US');
+  }
+
+  // Minutes -> decimal mapping (TO table style buckets)
+  function minuteToDecimal(min) {
+    // Buckets: 0-2=.0, 3-8=.1, 9-14=.2, 15-20=.3, 21-26=.4, 27-32=.5,
+    // 33-38=.6, 39-44=.7, 45-51=.8, 52-57=.9, 58-59=1.0
+    if (min <= 2) return 0.0;
+    if (min <= 8) return 0.1;
+    if (min <= 14) return 0.2;
+    if (min <= 20) return 0.3;
+    if (min <= 26) return 0.4;
+    if (min <= 32) return 0.5;
+    if (min <= 38) return 0.6;
+    if (min <= 44) return 0.7;
+    if (min <= 51) return 0.8;
+    if (min <= 57) return 0.9;
+    return 1.0;
+  }
+
+  // ---- State ----
+  let multiplierOn = false; // x2
+  let required = { FWD: 0, AFT: 0, LATL: 0, LATR: 0, VERT: 0 };
+  let actual   = { FWD: 0, AFT: 0, LATL: 0, LATR: 0, VERT: 0 };
+  const undoStack = [];
+
+  function snapshotState() {
+    return {
+      multiplierOn,
+      required: { ...required },
+      actual: { ...actual }
+    };
+  }
+
+  function restoreState(s) {
+    multiplierOn = !!s.multiplierOn;
+    required = { ...s.required };
+    actual = { ...s.actual };
+    updateMultiplierUI();
+    renderStatus();
+  }
+
+  function pushUndo() {
+    undoStack.push(snapshotState());
+    // keep it sane
+    if (undoStack.length > 30) undoStack.shift();
+  }
+
+  // ---- UI hooks ----
+  function updateMultiplierUI() {
+    const btn = $('multiplierBtn');
+    if (!btn) return;
+    btn.classList.toggle('is-on', multiplierOn);
+    btn.textContent = multiplierOn ? '×2 ON' : '×2 OFF';
+  }
+
+  function getSelectedFactor() {
+    const sel = $('restraintFactor');
+    const custom = $('restraintFactorCustom');
+    const err = $('factorError');
+
+    if (!sel) return { value: NaN, ok: false };
+
+    const raw = sel.value;
+
+    let val;
+    if (raw === 'custom') {
+      val = toNumber(custom?.value);
+    } else {
+      val = toNumber(raw);
     }
 
-    function getRequiredForDirection(dir) {
-      if (dir === "LAT-LEFT" || dir === "LAT-RIGHT") return requiredRestraint.LAT || 0; // per side
-      return requiredRestraint[dir] || 0;
+    const ok = Number.isFinite(val) && val > 0;
+
+    if (err) {
+      err.style.display = ok ? 'none' : 'block';
+    }
+    return { value: val, ok };
+  }
+
+  function effectiveRatio() {
+    const a = toNumber($('actualLength')?.value);
+    const e = toNumber($('effectiveLength')?.value);
+    if (!Number.isFinite(a) || !Number.isFinite(e) || a <= 0 || e <= 0) return NaN;
+    return e / a;
+  }
+
+  function dirKey() {
+    const dir = $('restraintDirection')?.value || 'FWD';
+    if (dir === 'FWD') return 'FWD';
+    if (dir === 'AFT') return 'AFT';
+    if (dir === 'LAT-L') return 'LATL';
+    if (dir === 'LAT-R') return 'LATR';
+    if (dir === 'VERT') return 'VERT';
+    return 'FWD';
+  }
+
+  // ---- Core calculations ----
+  function calculateRestraint() {
+    const w = toNumber($('cargoWeight')?.value);
+    if (!Number.isFinite(w) || w <= 0) {
+      required = { FWD: 0, AFT: 0, LATL: 0, LATR: 0, VERT: 0 };
+      renderStatus();
+      return;
     }
 
-    function remaining(req, actual) {
-      return Math.max(req - actual, 0);
+    pushUndo();
+
+    required = {
+      FWD: 3.0 * w,
+      AFT: 1.5 * w,
+      LATL: 1.5 * w,
+      LATR: 1.5 * w,
+      VERT: 2.0 * w
+    };
+
+    // do not wipe actual when recalculating required; user may want to keep their restraints
+    renderStatus();
+  }
+
+  function calculateActualRestraint() {
+    const { value: factor, ok } = getSelectedFactor();
+    if (!ok) return;
+
+    const ratio = effectiveRatio();
+    if (!Number.isFinite(ratio)) return;
+
+    pushUndo();
+
+    const base = factor * ratio * (multiplierOn ? 2 : 1);
+    const key = dirKey();
+    actual[key] = (actual[key] || 0) + base;
+
+    renderStatus();
+  }
+
+  function clearAll() {
+    pushUndo();
+    multiplierOn = false;
+    required = { FWD: 0, AFT: 0, LATL: 0, LATR: 0, VERT: 0 };
+    actual = { FWD: 0, AFT: 0, LATL: 0, LATR: 0, VERT: 0 };
+
+    const w = $('cargoWeight'); if (w) w.value = '';
+    const a = $('actualLength'); if (a) a.value = '';
+    const e = $('effectiveLength'); if (e) e.value = '';
+    const custom = $('restraintFactorCustom'); if (custom) custom.value = '';
+
+    updateMultiplierUI();
+    renderStatus();
+  }
+
+  function undoLast() {
+    const last = undoStack.pop();
+    if (!last) return;
+    restoreState(last);
+  }
+
+  function toggleMultiplier() {
+    pushUndo();
+    multiplierOn = !multiplierOn;
+    updateMultiplierUI();
+    renderStatus();
+  }
+
+  // ---- Rendering ----
+  function statusItem(label, key, requiredVal) {
+    const act = actual[key] || 0;
+    const req = requiredVal || 0;
+    const rem = req - act;
+
+    const done = req > 0 && rem <= 0;
+    const bubble = done ? '✔' : '✖';
+
+    return `
+      <div class="status-item ${done ? 'is-good' : 'is-bad'}">
+        <div class="status-head">
+          <div class="status-label">${label}</div>
+          <div class="status-bubble" aria-hidden="true">${bubble}</div>
+        </div>
+        <div class="status-lines">
+          <div class="status-line"><span class="k">ACT</span><span class="v">${formatLbs(act)}</span></div>
+          <div class="status-line"><span class="k">REM</span><span class="v">${formatLbs(clamp0(rem))}</span></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderStatus() {
+    const box = $('requiredRestraintDisplay');
+    if (!box) return;
+
+    // If required is all zeros, keep box minimal
+    const anyReq = Object.values(required).some(v => v > 0);
+
+    if (!anyReq) {
+      box.innerHTML = '';
+      return;
     }
 
-    // Custom factor UI
-    function onFactorChange() {
-      const sel = document.getElementById('restraintFactor').value;
-      const custom = document.getElementById('restraintFactorCustom');
-      const err = document.getElementById('factorError');
-      if (!custom || !err) return;
-      custom.hidden = (sel !== 'custom');
-      if (sel !== 'custom') { custom.value = ''; err.hidden = true; }
-    }
+    box.innerHTML = `
+      <div class="status-grid" role="group" aria-label="Restraint status">
+        ${statusItem('FWD',  'FWD',  required.FWD)}
+        ${statusItem('AFT',  'AFT',  required.AFT)}
+        ${statusItem('LAT-L','LATL', required.LATL)}
+        ${statusItem('LAT-R','LATR', required.LATR)}
+        ${statusItem('VERT', 'VERT', required.VERT)}
+      </div>
+    `;
+  }
 
-    function getSelectedFactor() {
-      const selVal = document.getElementById('restraintFactor').value;
-      if (selVal !== 'custom') return parseFloat(selVal);
-
-      const err = document.getElementById('factorError');
-      const raw = (document.getElementById('restraintFactorCustom').value || "").replace(/,/g,'');
-      const v = parseFloat(raw);
-
-      if (!Number.isFinite(v) || v <= 0) {
-        err.textContent = 'Enter a valid custom factor (lbs).';
-        err.hidden = false;
-        return null;
-      }
-      err.hidden = true;
-      return v;
-    }
-
-    function toggleMultiplier() {
-      doubleMultiplier = !doubleMultiplier;
-    
-      const btn = document.getElementById("multiplierBtn");
-      btn.textContent = doubleMultiplier ? "×2 ON" : "×2 OFF";
-    
-      btn.classList.toggle("on", doubleMultiplier);
-      btn.classList.toggle("off", !doubleMultiplier);
-    }
-
-    // Build display (tight “column” totals)
-    function buildDisplay(extraMessageHtml = "") {
-      
-
-      const statusItems = [
-        { key: "FWD",       label: "FWD" },
-        { key: "AFT",       label: "AFT" },
-        { key: "LAT-LEFT",  label: "LAT-L" },
-        { key: "LAT-RIGHT", label: "LAT-R" },
-        { key: "VERT",      label: "VERT" }
-      ];
-
-      let statusGridHtml = "";
-      if (hasRequirementSet()) {
-        statusGridHtml = '<div class="status-grid">' + statusItems.map(it => {
-          const act = Number(totalRestraint[it.key] || 0);
-          const req = Number(getRequiredForDirection(it.key) || 0);
-          const ok  = act >= req;
-          const rem = remaining(req, act);
-          return (
-            '<div class="status-card ' + (ok ? 'pass' : 'fail') + '">' +
-              '<div class="status-top">' + it.label + ' <span class="status-emoji">' + (ok ? '✅' : '❌') + '</span></div>' +
-              '<div class="status-mid">ACT ' + act.toLocaleString() + '</div>' +'<div class="status-bot">REM ' + rem.toLocaleString() + '</div>' +
-            '</div>'
-          );
-        }).join('') + '</div>';
-      }
-
-const reqSet = hasRequirementSet();
-
-      const rows = [
-        { key: "FWD",       label: "FWD" },
-        { key: "AFT",       label: "AFT" },
-        { key: "LAT-LEFT",  label: "LAT-LEFT" },
-        { key: "LAT-RIGHT", label: "LAT-RIGHT" },
-        { key: "VERT",      label: "VERT" }
-      ];
-
-      let html = "";
-
-      if (reqSet) {
-        html += statusGridHtml;
-      } else {
-        html += `<div class="result-block">Enter cargo weight and tap <b>Calculate Required Restraint</b> to populate totals.</div>`;
-      }
-
-      if (extraMessageHtml) {
-        html += `<div>${extraMessageHtml}</div>`;
-      }
-
-      return html;
-    }
-
-    // ---------- Calculations ----------
-    function calculateRestraint() {
-      const weight = parseFloat(document.getElementById("cargoWeight").value);
-      if (!Number.isFinite(weight) || weight <= 0) {
-        document.getElementById("result").innerHTML = "Enter a valid cargo weight.";
-        return;
-      }
-
-      const g = { FWD: 3.0, AFT: 1.5, LAT: 1.5, VERT: 2.0 };
-
-      requiredRestraint = {
-        FWD: Math.round(weight * g.FWD),
-        AFT: Math.round(weight * g.AFT),
-        LAT: Math.round(weight * g.LAT), // per side
-        VERT: Math.round(weight * g.VERT)
+  // ---- Init ----
+  function wire() {
+    // factor custom toggle
+    const sel = $('restraintFactor');
+    const custom = $('restraintFactorCustom');
+    if (sel && custom) {
+      const refresh = () => {
+        const show = sel.value === 'custom';
+        custom.style.display = show ? 'block' : 'none';
+        custom.toggleAttribute('aria-hidden', !show);
       };
-
-      requiredText =
-`Required Restraint for ${Math.round(weight)} lbs:
-FWD:  ${requiredRestraint.FWD} lbs
-AFT:  ${requiredRestraint.AFT} lbs
-LAT:  ${requiredRestraint.LAT} lbs (each side)
-VERT: ${requiredRestraint.VERT} lbs`;
-
-      document.getElementById("result").innerHTML = buildDisplay();
+      sel.addEventListener('change', refresh);
+      refresh();
     }
 
-    function calculateActualRestraint() {
-      const actual = parseFloat(document.getElementById("actualLength").value);
-      const effective = parseFloat(document.getElementById("effectiveLength").value);
-      const direction = document.getElementById("restraintDirection").value;
+    // buttons by id (in addition to inline onclicks, for safety)
+    $('calcRequiredBtn')?.addEventListener('click', (e) => { e.preventDefault(); calculateRestraint(); });
+    $('addRestraintBtn')?.addEventListener('click', (e) => { e.preventDefault(); calculateActualRestraint(); });
+    $('clearAllBtn')?.addEventListener('click', (e) => { e.preventDefault(); clearAll(); });
+    $('undoBtn')?.addEventListener('click', (e) => { e.preventDefault(); undoLast(); });
+    $('multiplierBtn')?.addEventListener('click', (e) => { e.preventDefault(); toggleMultiplier(); });
 
-      if (!Number.isFinite(actual) || actual <= 0 || !Number.isFinite(effective) || effective <= 0) {
-        document.getElementById("result").innerHTML = buildDisplay("Enter valid actual and effective lengths.");
-        return;
-      }
+    updateMultiplierUI();
+    renderStatus();
+  }
 
-      const factor = getSelectedFactor();
-      if (factor === null) return; // invalid custom factor
+  // Expose for inline onclicks (non-module script)
+  window.calculateRestraint = calculateRestraint;
+  window.calculateActualRestraint = calculateActualRestraint;
+  window.clearAll = clearAll;
+  window.undoLast = undoLast;
+  window.toggleMultiplier = toggleMultiplier;
 
-      let value = (effective / actual) * factor;
-      if (doubleMultiplier) value *= 2;
-      value = Math.round(value);
-
-      if (!(direction in totalRestraint)) {
-        document.getElementById("result").innerHTML = buildDisplay("Invalid direction selection.");
-        return;
-      }
-
-      totalRestraint[direction] += value;
-      document.getElementById("result").innerHTML = buildDisplay();
-    }
-
-    function clearAll() {
-      // Clear inputs
-      document.getElementById("cargoWeight").value = "";
-      document.getElementById("actualLength").value = "";
-      document.getElementById("effectiveLength").value = "";
-    
-      // Reset dropdowns
-      document.getElementById("restraintDirection").value = "FWD";
-      document.getElementById("restraintFactor").value = "25000"; // match your default option
-      document.getElementById("restraintFactorCustom").value = "";
-      document.getElementById("restraintFactorCustom").style.display = "none";
-      document.getElementById("factorError").style.display = "none";
-    
-      // Reset state
-      totalRestraint = { FWD: 0, AFT: 0, "LAT-LEFT": 0, "LAT-RIGHT": 0, VERT: 0 };
-      requiredRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 };
-      requiredText = "";
-    
-      // Reset 2x toggle (supports BOTH old + new IDs/classes)
-      doubleMultiplier = false;
-      const tgl =
-        document.getElementById("multiplierBtn") ||
-        document.getElementById("multiplierToggle");
-    
-      if (tgl) {
-        tgl.textContent = "×2 OFF";
-        tgl.classList.remove("on", "active");
-        tgl.classList.add("off");
-      }
-    
-      // Clear results
-      document.getElementById("result").innerHTML = "";
-    }
-
-    // ---------- Init ----------
-    onFactorChange();
-
-function initRestraintUI(){
-      const byId = (id)=>document.getElementById(id);
-
-      byId('calcRequiredBtn')?.addEventListener('click', calculateRestraint);
-      byId('multiplierBtn')?.addEventListener('click', toggleMultiplier);
-      byId('addRestraintBtn')?.addEventListener('click', calculateActualRestraint);
-      byId('undoBtn')?.addEventListener('click', undoLast);
-      byId('clearAllBtn')?.addEventListener('click', clearAll);
-
-      // Existing factor change binding (if present)
-      const factorSel = byId('restraintFactor');
-      if (factorSel){
-        factorSel.addEventListener('change', onFactorChange);
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', initRestraintUI);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wire);
+  } else {
+    wire();
+  }
+})();

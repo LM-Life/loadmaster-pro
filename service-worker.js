@@ -29,7 +29,11 @@ const MODULE_FILES = [
   "./modules/vehiclecg.html",
   "./modules/vehiclecg.js",
   "./modules/winching.html",
-  "./modules/winching.js"
+  "./modules/winching.js",
+  "./modules/load_planning.html",
+  "./modules/load_planning.js",
+  "./modules/loadability_5_steps.html",
+  "./modules/loadability_5_steps.js",
 ];
 
 self.addEventListener("install", (event) => {

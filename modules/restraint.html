@@ -5,13 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <link rel="stylesheet" href="../style.css" />
   
-  <a class="home-button" href="../index.html">🏠 Home</a>
+  <button onclick="goHome()" class="home-button">🏠 Home</button>
 
-    <script src="../common.js" defer></script>
+  <style>
+    /* Restraint results: compact status grid */
+    .status-grid{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0 10px;
+    }
+    .status-card{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      border-radius: 14px;
+      padding: 10px 10px;
+      text-align: center;
+    }
+    .status-card.pass{ border-color: rgba(80, 220, 140, .45); }
+    .status-card.fail{ border-color: rgba(255, 90, 90, .55); }
+    .status-top{
+      font-weight: 900;
+      letter-spacing: .04em;
+      opacity: .95;
+      font-size: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      white-space: nowrap;
+    }
+    .status-mid{
+      margin-top: 6px;
+      font-weight: 800;
+      font-size: 12px;
+      opacity: .9;
+      white-space: nowrap;
+    }
+    .status-bot{
+
+      margin-top: 4px;
+      font-weight: 900;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    @media (max-width: 420px){
+      .status-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .status-mid{
+      margin-top: 6px;
+      font-weight: 800;
+      font-size: 12px;
+      opacity: .9;
+      white-space: nowrap;
+    }
+    .status-bot{
+     font-size: 13px; }
+    }
+  </style>
 </head>
-<body class="restraint-page">
+<body>
   
-  <h1>RESTRAINT</h1>
+  <h1>Restraint Calculator</h1>
 
   <!-- Required Restraint -->
   <label for="cargoWeight">Cargo Weight (lbs):</label>
@@ -69,19 +123,22 @@
   id="restraintFactorCustom"
   class="form-control"
   placeholder="Enter custom factor in lbs (e.g., 8000)"
- 
+  hidden
 />
-<div id="factorError"></div>
+<div id="factorError" class="error mt-1" hidden></div>
 
-<div class="center mt-1">
+<div class="mt-1">
   <button id="multiplierBtn" class="btn btn-multiplier off" onclick="toggleMultiplier()">×2 OFF</button>
 
 </div>
 
-<button onclick="calculateActualRestraint()" class="btn btn-primary">Add Actual Restraint</button>
+<div class="grid-2 mt-1 actual-actions">
+  <button onclick="calculateActualRestraint()" class="btn btn-primary">Add Actual Restraint</button>
+  <button id="undoBtn" class="btn btn-secondary" onclick="undoLast()">Undo</button>
+</div>
 <button class="btn-danger" onclick="clearAll()">Clear All</button>
 
   
-    <script src="./restraint.js" defer></script>
+  <script src="./restraint.js" defer></script>
 </body>
 </html>

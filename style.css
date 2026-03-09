@@ -141,7 +141,7 @@ label{
   letter-spacing: .02em;
 }
 
-.field + .field{ margin-top: 12px; }
+.field + .field{ margin-top: 0px; }
 
 /* =========================================================
    Inputs

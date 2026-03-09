@@ -231,3 +231,38 @@
 
   document.addEventListener('DOMContentLoaded', init);
 })();
+
+
+function initFlightTimeModule(){
+  const nowStart = document.getElementById('nowStartBtn');
+  const nowEnd = document.getElementById('nowEndBtn');
+  const calcBtn = document.getElementById('calcBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const addLegBtn = document.getElementById('addLegBtn');
+  const resetLegsBtn = document.getElementById('resetLegsBtn');
+
+  nowStart?.addEventListener('click', () => setNowZ('startTime'));
+  nowEnd?.addEventListener('click', () => setNowZ('endTime'));
+  calcBtn?.addEventListener('click', calc);
+  clearBtn?.addEventListener('click', clearAll);
+  addLegBtn?.addEventListener('click', addLeg);
+  resetLegsBtn?.addEventListener('click', resetLegs);
+
+  ['startTime','endTime'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('input', ()=>autoFormatTime(el));
+    el.addEventListener('change', calc);
+  });
+
+  updateZuluClock();
+  setInterval(updateZuluClock, 1000);
+  renderLegs?.();
+  calc?.();
+}
+document.addEventListener('DOMContentLoaded', initFlightTimeModule);
+window.setNowZ = setNowZ;
+window.calc = calc;
+window.clearAll = clearAll;
+window.addLeg = addLeg;
+window.resetLegs = resetLegs;

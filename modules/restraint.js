@@ -69,7 +69,7 @@ function undoLast() {
   else if (dir === "LAT-RIGHT") totalRestraint["LAT-RIGHT"] = Math.max(totalRestraint["LAT-RIGHT"] - actual, 0);
   else totalRestraint[dir] = Math.max((totalRestraint[dir] || 0) - actual, 0);
 
-  document.getElementById("actualResult").innerHTML = nl2br(buildDisplay());
+  document.getElementById("result").innerHTML = nl2br(buildDisplay());
 }
 
 // Build display (tight “column” totals)
@@ -188,8 +188,8 @@ function clearAll() {
   document.getElementById("restraintDirection").value = "FWD";
   document.getElementById("restraintFactor").value = "25000"; // match your default option
   document.getElementById("restraintFactorCustom").value = "";
-  document.getElementById("restraintFactorCustom").style.display = "none";
-  document.getElementById("factorError").style.display = "none";
+  document.getElementById("restraintFactorCustom").hidden = true;
+  document.getElementById("factorError").hidden = true;
 
   // Reset state
   totalRestraint = { FWD: 0, AFT: 0, "LAT-LEFT": 0, "LAT-RIGHT": 0, VERT: 0 };
@@ -213,7 +213,6 @@ function clearAll() {
 }
 
 // ---------- Init ----------
-document.getElementById('restraintFactor').addEventListener('change', onFactorChange);
 onFactorChange();
 
 const requiredStatus = document.getElementById("requiredStatus");
@@ -236,3 +235,18 @@ window.calculateActualRestraint = calculateActualRestraint;
 window.undoLast = undoLast;
 window.clearAll = clearAll;
 window.onFactorChange = onFactorChange;
+
+
+function initRestraintModule(){
+  document.getElementById('restraintFactor')?.addEventListener('change', onFactorChange);
+  onFactorChange();
+}
+
+document.addEventListener('DOMContentLoaded', initRestraintModule);
+
+// Expose for legacy inline handlers if any remain
+window.calculateRestraint = calculateRestraint;
+window.toggleMultiplier = toggleMultiplier;
+window.calculateActualRestraint = calculateActualRestraint;
+window.undoLast = undoLast;
+window.clearAll = clearAll;

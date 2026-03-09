@@ -73,10 +73,7 @@ function calculateWinching() {
     `Surface: ${surfaceText}`,
     `Ramp: ${rampText}`,
     `Max Single Line Capacity: ${singleLineCap.toLocaleString()} lbs`,
-    `Required Lines: ${requiredLines}  (Displays up to ${maxLines}-line config)`,
-    `Recommended Configuration: ${displayLines}-line winch  |  Snatch Blocks: ${displaySnatch}`,
-    `Maximum Allowable Cargo (with ${maxLines}-line): ${maxAllowable.toLocaleString()} lbs`,
-    marginLine
+    `Required Configuration: ${displayLines}-line winch  |  Snatch Blocks: ${displaySnatch}`
   ];
 
   if (!withinCapability) {

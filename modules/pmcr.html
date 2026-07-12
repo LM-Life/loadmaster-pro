@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Loadmaster Pro | POST-MISSION CREW REST</title>
+  <link rel="stylesheet" href="../style.css" />
+  <script src="../common.js" defer></script>
+  <script src="./pmcr.js" defer></script>
+</head>
+<body class="module-page pmcr-page">
+  <div class="container">
+    <a class="home-button" href="../index.html">🏠 Home</a>
+    <h1>POST-MISSION CREW REST</h1>
+
+    <div class="card">
+      <div class="grid-2">
+        <button type="button" id="dateModeBtn" class="btn-multiplier on" aria-pressed="true">Date / Time</button>
+        <button type="button" id="manualModeBtn" class="btn-multiplier off" aria-pressed="false">Manual Duration</button>
+      </div>
+
+      <section id="dateMode" class="pmcr-input-section mt-2">
+        <div class="field">
+          <label for="departureTime">Departed Home Station (Z)</label>
+          <input id="departureTime" type="datetime-local" step="60" autocomplete="off">
+          <button type="button" id="nowDepartureBtn" class="mini mt-1">Now (Z)</button>
+        </div>
+
+        <div class="field mt-2">
+          <label for="returnTime">Returned Home Station (Z)</label>
+          <input id="returnTime" type="datetime-local" step="60" autocomplete="off">
+          <button type="button" id="nowReturnBtn" class="mini mt-1">Now (Z)</button>
+        </div>
+      </section>
+
+      <section id="manualMode" class="pmcr-input-section mt-2" hidden>
+        <label>Off-Station Duration</label>
+        <div class="grid-3">
+          <div>
+            <label class="subtle" for="offDays">Days</label>
+            <input id="offDays" type="text" inputmode="numeric" placeholder="0" autocomplete="off">
+          </div>
+          <div>
+            <label class="subtle" for="offHours">Hours</label>
+            <input id="offHours" type="text" inputmode="numeric" placeholder="0" autocomplete="off">
+          </div>
+          <div>
+            <label class="subtle" for="offMinutes">Minutes</label>
+            <input id="offMinutes" type="text" inputmode="numeric" placeholder="0" autocomplete="off">
+          </div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label for="dutiesCompleteTime">Post-Flight / Post-Mission Duties Complete (Z)</label>
+        <input id="dutiesCompleteTime" type="datetime-local" step="60" autocomplete="off">
+        <button type="button" id="nowDutiesBtn" class="mini mt-1">Now (Z)</button>
+        <div class="subtle mt-1">PMCR begins when all post-flight and post-mission duties are complete.</div>
+      </div>
+
+      <div id="zuluClock" class="subtle mt-2"></div>
+
+      <div class="grid-2 mt-2">
+        <button type="button" id="calcBtn" class="btn-primary">Calculate PMCR</button>
+        <button type="button" id="clearBtn" class="btn-danger">Clear</button>
+      </div>
+
+      <div id="result" class="result-card mt-2" aria-live="polite">
+        <div id="statusPill" class="pill">READY</div>
+        <div id="pmcrMain" class="result-main mt-1">—</div>
+        <div id="pmcrSub" class="result-sub">Enter the mission information.</div>
+        <div id="resultDetails" class="pmcr-result-grid mt-2"></div>
+        <div id="resultNote" class="subtle mt-2"></div>
+      </div>
+
+      <details class="conversion mt-2">
+        <summary>PMCR Rule Used</summary>
+        <div class="subtle mt-1">
+          Missions off station for 16 hours or more receive at least 1 hour of PMCR for each 3 hours off station, up to 96 hours. PMCR begins after all post-flight and post-mission duties are complete. Do not enter pre-departure crew rest until PMCR expires.
+        </div>
+      </details>
+
+      <div class="subtle mt-2">
+        <span class="badge">Calculation</span> Exact 1:3 ratio, displayed to the nearest minute. This tool supports planning and does not replace SQ/CC direction or governing guidance.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

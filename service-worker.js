@@ -1,6 +1,6 @@
 // Loadmaster Pro service-worker.js
 // NOTE: Bump CACHE_NAME every time you want users to get a fresh cache.
-const CACHE_NAME = "v2026.07.12-a9ed5a8";
+const CACHE_NAME = "v2026.07.12-pmcr";
 
 const CORE_FILES = [
   "./",
@@ -10,7 +10,8 @@ const CORE_FILES = [
   "./common.js",
   "./manifest.json",
   "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icons/icon-512.png",
+  "./icons/pmcr-icon.png"
 ];
 
 const MODULE_FILES = [
@@ -18,6 +19,8 @@ const MODULE_FILES = [
   "./modules/approach.js",
   "./modules/flight-time.html",
   "./modules/flight-time.js",
+  "./modules/pmcr.html",
+  "./modules/pmcr.js",
   "./modules/loadshift.html",
   "./modules/loadshift.js",
   "./modules/restraint.html",

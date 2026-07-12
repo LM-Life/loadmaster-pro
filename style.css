@@ -592,3 +592,52 @@ details.conversion summary::-webkit-details-marker{
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* =========================================================
+   Post-Mission Crew Rest specific
+   ========================================================= */
+body.pmcr-page{
+  max-width: var(--container-w);
+  margin: 0 auto;
+}
+
+.pmcr-page .pmcr-input-section[hidden]{
+  display: none;
+}
+
+.pmcr-page .pmcr-result-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pmcr-page .pmcr-result-item{
+  padding: 11px;
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-sm);
+  background: rgba(0,0,0,.15);
+}
+
+.pmcr-page .pmcr-result-item span,
+.pmcr-page .pmcr-result-item strong{
+  display: block;
+}
+
+.pmcr-page .pmcr-result-item span{
+  color: var(--text-dim);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.pmcr-page .pmcr-result-item strong{
+  margin-top: 5px;
+  line-height: 1.25;
+}
+
+@media (max-width: 520px){
+  .pmcr-page .pmcr-result-grid{
+    grid-template-columns: 1fr;
+  }
+}
